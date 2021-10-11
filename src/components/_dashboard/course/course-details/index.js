@@ -1,0 +1,8 @@
+// export { default as CourseDetailsCarousel } from './CourseDetailsCarousel'
+// export { default as CourseDetailsReview } from './CourseDetailsReview'
+// export { default as CourseDetailsReviewForm } from './CourseDetailsReview'
+// export { default as CourseDetailsReviewList } from './CourseDetailsReviewList'
+// export { default as CourseDetailsReviewOverview } from './CourseDetailsReviewOverview'
+// export { default as CourseDetailsSumary } from './CourseDetailsSumary'
+export { default as CourseHero } from './CourseHero'
+export { default as CourseProfessorDetails } from './CourseProfessorDetails'

@@ -22,25 +22,25 @@ const SOCIALS = [
 
 const LINKS = [
   {
-    headline: 'Minimal',
+    headline: 'M-Coding Edu',
     children: [
-      { name: 'About us', href: '#' },
-      { name: 'Contact us', href: '#' },
+      { name: 'Về chúng tôi', href: '#' },
+      { name: 'Liên hệ', href: '#' },
       { name: 'FAQs', href: '#' },
     ],
   },
   {
-    headline: 'Legal',
+    headline: 'Chính sách',
     children: [
-      { name: 'Terms and Condition', href: '#' },
-      { name: 'Privacy Policy', href: '#' },
+      { name: 'Điều khoản sử dụng', href: '#' },
+      { name: 'Chính sách bảo mật', href: '#' },
     ],
   },
   {
-    headline: 'Contact',
+    headline: 'Liên hệ',
     children: [
-      { name: 'support@minimals.cc', href: '#' },
-      { name: 'Los Angeles, 359  Hidden Valley Road', href: '#' },
+      { name: 'support@mcoing.edu.vn', href: '#' },
+      { name: '9700 Man Thiện, Hiệp Phú, TP. Thủ Đức', href: '#' },
     ],
   },
 ]
@@ -69,8 +69,7 @@ export default function MainFooter() {
           </Grid>
           <Grid item xs={8} md={3}>
             <Typography variant="body2" sx={{ pr: { md: 5 } }}>
-              The starting point for your next project with Minimal UI Kit, built on the newest version of Material-UI
-              ©, ready to be customized to your style.
+              Học lập trình miễn phí ngay hôm nay
             </Typography>
 
             <Stack

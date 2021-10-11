@@ -21,15 +21,18 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material'
+// routes
+import { PATH_DASHBOARD } from '../../routes/paths'
 // components
-import Page from '../components/Page'
-import Label from '../components/Label'
-import Scrollbar from '../components/Scrollbar'
-import SearchNotFound from '../components/SearchNotFound'
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user'
+import Page from '../../components/Page'
+import Label from '../../components/Label'
+import Scrollbar from '../../components/Scrollbar'
+import SearchNotFound from '../../components/SearchNotFound'
+import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
+import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user'
 //
-import { getUsers } from '../redux/actions'
-import { usersState$ } from '../redux/selectors'
+import { getUsers } from '../../redux/actions'
+import { usersState$, userLoginState$ } from '../../redux/selectors'
 
 // ----------------------------------------------------------------------
 
@@ -83,10 +86,11 @@ export default function UserList() {
 
   const dispatch = useDispatch()
   const userList = useSelector(usersState$)
+  const { data: userLogin } = useSelector(userLoginState$)
 
   useEffect(() => {
-    dispatch(getUsers.getUsersRequest())
-  }, [dispatch])
+    dispatch(getUsers.getUsersRequest(userLogin))
+  }, [dispatch, userLogin])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -138,16 +142,29 @@ export default function UserList() {
   const isUserNotFound = filteredUsers.length === 0
 
   return (
-    <Page title="User | M-Coding Edu">
+    <Page title="Danh sách người dùng">
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Danh sách người dùng
-          </Typography>
-          <Button variant="contained" component={RouterLink} to="#" startIcon={<Icon icon={plusFill} />}>
-            Thêm mới
-          </Button>
-        </Stack>
+        <HeaderBreadcrumbs
+          heading="Danh sách người dùng"
+          links={[
+            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            {
+              name: 'Người dùng',
+              href: PATH_DASHBOARD.users.root,
+            },
+            { name: 'Danh sách người dùng' },
+          ]}
+          action={
+            <Button
+              variant="contained"
+              component={RouterLink}
+              to={PATH_DASHBOARD.users.newUser}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              Thêm mới
+            </Button>
+          }
+        />
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />

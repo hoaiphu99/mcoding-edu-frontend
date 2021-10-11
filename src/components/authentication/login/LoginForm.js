@@ -1,5 +1,7 @@
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useSnackbar } from 'notistack'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useFormik, Form, FormikProvider } from 'formik'
 import { Icon } from '@iconify/react'
@@ -8,31 +10,50 @@ import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-
 // ----------------------------------------------------------------------
+import { authUser } from '../../../redux/actions/userActions'
+import { userLoginState$ } from '../../../redux/selectors/index'
 
 export default function LoginForm() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { loading, error, data } = useSelector(userLoginState$)
+
   const [showPassword, setShowPassword] = useState(false)
 
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(`${error}`, {
+        variant: 'error',
+      })
+    } else if (data) {
+      enqueueSnackbar('Đăng nhập thành công', {
+        variant: 'success',
+      })
+      navigate('/dashboard', { replace: true })
+    }
+  }, [error, data, navigate, enqueueSnackbar])
+
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Địa chỉ Email không hợp lệ').required('Email bắt buộc'),
+    username: Yup.string().required('Tên tài khoản bắt buộc'),
     password: Yup.string().min(6, 'Mật khẩu từ 6 ký tự trở lên').required('Mật khẩu bắt buộc'),
   })
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
       remember: true,
     },
     validationSchema: LoginSchema,
     onSubmit: () => {
-      navigate('/dashboard', { replace: true })
+      dispatch(authUser.authUserRequest(values))
     },
   })
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik
+  const { errors, touched, values, handleSubmit, getFieldProps } = formik
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show)
@@ -45,11 +66,11 @@ export default function LoginForm() {
           <TextField
             fullWidth
             autoComplete="username"
-            type="email"
-            label="Địa chỉ Email"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            type="text"
+            label="Tên tài khoản"
+            {...getFieldProps('username')}
+            error={Boolean(touched.username && errors.username)}
+            helperText={touched.username && errors.username}
           />
 
           <TextField
@@ -83,7 +104,7 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
           Đăng nhập
         </LoadingButton>
       </Form>

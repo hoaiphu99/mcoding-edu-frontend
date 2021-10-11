@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux'
-import users from './users'
+import { userReducers, userLoginReducers } from './users'
+import { coursesReducers, courseDetailsReducers } from './courses'
 
 export default combineReducers({
-  users,
+  users: userReducers,
+  userLogin: userLoginReducers,
+  courses: coursesReducers,
+  courseDetails: courseDetailsReducers,
 })

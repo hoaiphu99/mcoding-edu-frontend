@@ -41,7 +41,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Login() {
   return (
-    <RootStyle title="Login | M-Coding Edu">
+    <RootStyle title="Đăng nhập | M-Coding Edu">
       <AuthLayout>
         Chưa có tài khoản? &nbsp;
         <Link underline="none" variant="subtitle2" component={RouterLink} to="/register">

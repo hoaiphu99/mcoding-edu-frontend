@@ -1,5 +1,5 @@
 {
-  "name": "@minimal/minimal-kit-react",
+  "name": "@mcoding-edu/frontend",
   "proxy": "http://127.0.0.1:3030",
   "author": "hoaiphu",
   "version": "2.6.0",

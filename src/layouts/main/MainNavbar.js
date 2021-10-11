@@ -1,4 +1,5 @@
 import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 // material
 import { styled } from '@mui/material/styles'
 import { Box, Button, AppBar, Toolbar, Container } from '@mui/material'
@@ -12,8 +13,10 @@ import { MHidden } from '../../components/@material-extend'
 import MenuDesktop from './MenuDesktop'
 import MenuMobile from './MenuMobile'
 import navConfig from './MenuConfig'
+import MenuAccount from './MenuAccount'
 
 // ----------------------------------------------------------------------
+import { userLoginState$ } from '../../redux/selectors'
 
 const APP_BAR_MOBILE = 64
 const APP_BAR_DESKTOP = 88
@@ -45,9 +48,10 @@ const ToolbarShadowStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function MainNavbar() {
-  const isOffset = useOffSetTop(100)
+  const isOffset = useOffSetTop(50)
   const { pathname } = useLocation()
   const isHome = pathname === '/'
+  const { data } = useSelector(userLoginState$)
 
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent' }}>
@@ -79,9 +83,13 @@ export default function MainNavbar() {
           <MHidden width="mdDown">
             <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
           </MHidden>
-          <RouterLink to="/login">
-            <Button variant="contained">Login</Button>
-          </RouterLink>
+          {!data ? (
+            <RouterLink to="/login">
+              <Button variant="contained">Đăng nhập</Button>
+            </RouterLink>
+          ) : (
+            <MenuAccount userLogin={data} />
+          )}
           <MHidden width="mdUp">
             <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
           </MHidden>

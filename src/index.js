@@ -1,5 +1,12 @@
+// highlight
+import './utils/highlight'
+
 // scroll bar
 import 'simplebar/src/simplebar.css'
+
+// editor
+import 'react-quill/dist/quill.snow.css'
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
 import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'

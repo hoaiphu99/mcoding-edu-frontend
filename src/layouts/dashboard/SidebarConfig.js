@@ -38,8 +38,18 @@ const sidebarConfig = [
         path: PATH_DASHBOARD.users.root,
         icon: ICONS.user,
         children: [
-          { title: 'tất cả', path: PATH_DASHBOARD.users.pageUserList },
-          { title: 'thêm mới', path: PATH_DASHBOARD.users.pageFive },
+          { title: 'tất cả', path: PATH_DASHBOARD.users.userList },
+          { title: 'thêm mới', path: PATH_DASHBOARD.users.newUser },
+          // { title: 'Six', path: PATH_DASHBOARD.users.pageSix }
+        ],
+      },
+      {
+        title: 'khóa học',
+        path: PATH_DASHBOARD.courses.root,
+        icon: ICONS.ecommerce,
+        children: [
+          { title: 'tất cả', path: PATH_DASHBOARD.courses.courseList },
+          { title: 'thêm mới', path: PATH_DASHBOARD.courses.newCourse },
           // { title: 'Six', path: PATH_DASHBOARD.users.pageSix }
         ],
       },

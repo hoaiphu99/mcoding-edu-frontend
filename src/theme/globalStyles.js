@@ -69,6 +69,21 @@ export default function GlobalStyles() {
           WebkitFilter: 'blur(0)',
           filter: 'blur(0)',
         },
+        '::-webkit-scrollbar': {
+          width: '20px',
+        },
+        '::-webkit-scrollbar-track': {
+          backgroundColor: 'transparent',
+        },
+        '::-webkit-scrollbar-thumb': {
+          backgroundColor: theme.palette.text.disabled,
+          borderRadius: '10px',
+          border: '6px solid transparent',
+          backgroundClip: 'content-box',
+        },
+        '::-webkit-scrollbar-thumb:hover': {
+          backgroundColor: theme.palette.text.secondary,
+        },
       }}
     />
   )

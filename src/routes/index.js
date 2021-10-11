@@ -48,10 +48,18 @@ export default function Router() {
         {
           path: 'users',
           children: [
-            { element: <Navigate to="/dashboard/users/four" replace /> },
-            { path: 'list-user', element: <UserList /> },
+            { element: <Navigate to="/dashboard/users/user-list" replace /> },
+            { path: 'user-list', element: <UserList /> },
             { path: 'five', element: <PageFive /> },
             { path: 'six', element: <PageSix /> },
+          ],
+        },
+        {
+          path: 'courses',
+          children: [
+            { element: <Navigate to="/dashboard/courses/course-list" replace /> },
+            { path: 'course-list', element: <CourseList /> },
+            { path: 'new-course', element: <NewCourse /> },
           ],
         },
       ],
@@ -69,7 +77,17 @@ export default function Router() {
     {
       path: '/',
       element: <MainLayout />,
-      children: [{ element: <LandingPage /> }],
+      children: [
+        { element: <LandingPage /> },
+        {
+          path: '/khoa-hoc',
+          element: <Courses />,
+        },
+        {
+          path: '/khoa-hoc/:slug',
+          element: <CourseDetails />,
+        },
+      ],
     },
     {
       path: 'login',
@@ -89,11 +107,15 @@ export default function Router() {
 const PageOne = Loadable(lazy(() => import('../pages/PageOne')))
 const PageTwo = Loadable(lazy(() => import('../pages/PageTwo')))
 const PageThree = Loadable(lazy(() => import('../pages/PageThree')))
-const UserList = Loadable(lazy(() => import('../pages/UserList')))
+const UserList = Loadable(lazy(() => import('../pages/dashboard/UserList')))
 const PageFive = Loadable(lazy(() => import('../pages/PageFive')))
 const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
 const Login = Loadable(lazy(() => import('../pages/Login')))
 const Register = Loadable(lazy(() => import('../pages/Register')))
+const Courses = Loadable(lazy(() => import('../pages/Courses')))
+const CourseList = Loadable(lazy(() => import('../pages/dashboard/CourseList')))
+const NewCourse = Loadable(lazy(() => import('../pages/dashboard/CourseCreate')))
+const CourseDetails = Loadable(lazy(() => import('../pages/CourseDetails')))
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/LandingPage')))
