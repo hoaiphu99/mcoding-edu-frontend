@@ -112,9 +112,3 @@ export default function CourseLessonList({ course }) {
     </>
   )
 }
-
-/*
-<List component="div" disablePadding>
-                              
-                            </List>
-                            */
