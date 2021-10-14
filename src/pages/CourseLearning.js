@@ -1,28 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 // import { Icon } from '@iconify/react'
 import { useSnackbar } from 'notistack'
 // import { sentenceCase } from 'change-case'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 // import clockFill from '@iconify/icons-eva/clock-fill'
 // import roundVerified from '@iconify/icons-ic/round-verified'
 // import roundVerifiedUser from '@iconify/icons-ic/round-verified-user'
 // material
 // import { alpha, styled } from '@mui/material/styles'
-import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '@mui/material'
-import { TabContext, TabList, TabPanel } from '@mui/lab'
+import { Grid, Skeleton, Container, Typography } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetails } from '../redux/actions'
-import { courseDetailsState$ } from '../redux/selectors'
+import { getCourseLearning } from '../redux/actions'
+import { courseLearningState$, userLoginState$ } from '../redux/selectors'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
 import Page from '../components/Page'
-import Markdown from '../components/Markdown'
+// import Markdown from '../components/Markdown'
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs'
-import { CourseHero, CourseProfessorDetails, CourseLessonList } from '../components/course/course-details'
-
-// ----------------------------------------------------------------------
+import { CourseLessonList } from '../components/course/course-learning'
 
 // ----------------------------------------------------------------------
 
@@ -38,25 +35,27 @@ const SkeletonLoad = (
   </Grid>
 )
 
-export default function CourseDetails() {
+export default function CourseLearning() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { slug } = useParams()
   const { enqueueSnackbar } = useSnackbar()
-  const [value, setValue] = useState('1')
-  const { data: course, error } = useSelector(courseDetailsState$)
+
+  const { data: userLogin } = useSelector(userLoginState$)
+  const { data: course, error } = useSelector(courseLearningState$)
 
   useEffect(() => {
+    if (!userLogin) {
+      navigate('/login')
+    }
     if (!course || course.slug !== slug) {
-      dispatch(getCourseDetails.getCourseDetailsRequest(slug))
+      dispatch(getCourseLearning.getCourseLearningRequest({ data: slug, userLogin }))
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, course, slug, error, enqueueSnackbar])
+  }, [dispatch, course, slug, error, enqueueSnackbar, userLogin, navigate])
 
-  const handleChangeTab = (event, newValue) => {
-    setValue(newValue)
-  }
   return (
     <Page title={`${course && course.name}`}>
       <Container>
@@ -72,39 +71,8 @@ export default function CourseDetails() {
 
         {course && (
           <>
-            <Card sx={{ mb: 2 }}>
-              <CourseHero course={course} />
-            </Card>
-
-            <Card sx={{ mb: 2, mt: 2 }}>
-              <TabContext value={value}>
-                <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
-                  <TabList onChange={handleChangeTab}>
-                    <Tab disableRipple value="1" label="Thông tin khóa học" />
-                    <Tab
-                      disableRipple
-                      value="2"
-                      label="Danh sách bài học"
-                      sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
-                    />
-                  </TabList>
-                </Box>
-
-                <Divider />
-
-                <TabPanel value="1">
-                  <Box sx={{ p: 3 }}>
-                    <Markdown children={course.description} />
-                  </Box>
-                </TabPanel>
-                <TabPanel value="2">
-                  <Box>
-                    <CourseLessonList course={course} />
-                  </Box>
-                </TabPanel>
-              </TabContext>
-            </Card>
-            <CourseProfessorDetails course={course} />
+            <CourseLessonList course={course} />
+            {/* <CourseProfessorDetails course={course} /> */}
           </>
         )}
 

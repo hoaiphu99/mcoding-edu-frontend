@@ -87,6 +87,10 @@ export default function Router() {
           path: '/khoa-hoc/:slug',
           element: <CourseDetails />,
         },
+        {
+          path: '/:slug',
+          element: <CourseLearning />,
+        },
       ],
     },
     {
@@ -117,5 +121,6 @@ const Courses = Loadable(lazy(() => import('../pages/Courses')))
 const CourseList = Loadable(lazy(() => import('../pages/dashboard/CourseList')))
 const NewCourse = Loadable(lazy(() => import('../pages/dashboard/CourseCreate')))
 const CourseDetails = Loadable(lazy(() => import('../pages/CourseDetails')))
+const CourseLearning = Loadable(lazy(() => import('../pages/CourseLearning')))
 // Main
-const LandingPage = Loadable(lazy(() => import('../pages/LandingPage')))
+const LandingPage = Loadable(lazy(() => import('../pages/HomePage')))

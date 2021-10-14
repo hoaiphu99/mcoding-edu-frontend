@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles'
 // utils
 // import { fCurrency } from '../../../utils/formatNumber'
 //
-import Label from '../Label'
+import Label from '../../Label'
 // import ColorPreview from '../../ColorPreview'
 
 // ----------------------------------------------------------------------
@@ -46,13 +46,13 @@ export default function ShopCourseCard({ course }) {
             {status_code}
           </Label>
         )}
-        <Link to={`${slug}`} color="inherit" component={RouterLink}>
+        <Link to={`/khoa-hoc/${slug}`} color="inherit" component={RouterLink}>
           <CourseImgStyle alt={name} src={image_url} />
         </Link>
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to={`${slug}`} color="inherit" underline="hover" component={RouterLink}>
+        <Link to={`/khoa-hoc/${slug}`} color="inherit" underline="hover" component={RouterLink}>
           <Typography variant="subtitle2" noWrap>
             {name}
           </Typography>

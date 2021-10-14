@@ -17,18 +17,14 @@ export default function CourseProfessorDetails({ course }) {
     <Card sx={{ mt: 2, mb: 2 }}>
       <CardHeader title="Thông tin giảng viên" />
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center' }}>
-        <Avatar src={professor && professor.user.avatar_url} />
+        <Avatar sx={{ width: 80, height: 80 }} src={professor && professor.user.avatar_url} />
         <Typography variant="h6" component="h2" sx={{ pl: 2 }}>
           {professor && professor.user.name}
         </Typography>
       </Box>
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          Nghề nghiệp: {professor && professor.job}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Kỹ năng: {professor && professor.skill}
-        </Typography>
+        <Typography color="text.secondary">Nghề nghiệp: {professor && professor.job}</Typography>
+        <Typography color="text.secondary">Kỹ năng: {professor && professor.skill}</Typography>
       </CardContent>
     </Card>
   )

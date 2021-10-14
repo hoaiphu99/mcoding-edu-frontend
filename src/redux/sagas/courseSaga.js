@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { getAllCourses, createCourse, getCourseDetails } from '../actions'
-import { fetchAllCourses, addNewCourse, fetchCourse } from '../../api'
+import { getAllCourses, createCourse, getCourseDetails, getCourseLearning } from '../actions'
+import { fetchAllCourses, addNewCourse, fetchCourse, fetchCourseLearning } from '../../api'
 
 function* getAllCoursesSaga() {
   try {
@@ -27,7 +27,6 @@ function* createCourseSaga(action) {
 }
 
 function* getCourseDetailsSaga(action) {
-  console.log('vo saga', action.payload)
   try {
     const course = yield call(fetchCourse, action.payload)
     yield put(getCourseDetails.getCourseDetailsSuccess(course.data))
@@ -36,10 +35,25 @@ function* getCourseDetailsSaga(action) {
   }
 }
 
+function* getCourseLearningSaga(action) {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${action.payload.userLogin.token}`,
+    },
+  }
+  try {
+    const course = yield call(fetchCourseLearning, { data: action.payload.data, config })
+    yield put(getCourseLearning.getCourseLearningSuccess(course.data))
+  } catch (error) {
+    yield put(getCourseLearning.getCourseLearningFailure(error.response.data))
+  }
+}
+
 function* courseSaga() {
   yield takeLatest(getAllCourses.getAllCoursesRequest, getAllCoursesSaga)
   yield takeLatest(createCourse.createCourseRequest, createCourseSaga)
   yield takeLatest(getCourseDetails.getCourseDetailsRequest, getCourseDetailsSaga)
+  yield takeLatest(getCourseLearning.getCourseLearningRequest, getCourseLearningSaga)
 }
 
 export default courseSaga

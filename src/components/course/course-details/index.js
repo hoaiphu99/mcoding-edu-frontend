@@ -6,3 +6,4 @@
 // export { default as CourseDetailsSumary } from './CourseDetailsSumary'
 export { default as CourseHero } from './CourseHero'
 export { default as CourseProfessorDetails } from './CourseProfessorDetails'
+export { default as CourseLessonList } from './CourseLessonList'

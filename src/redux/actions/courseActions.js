@@ -17,3 +17,9 @@ export const getCourseDetails = createActions({
   getCourseDetailsSuccess: (payload) => payload,
   getCourseDetailsFailure: (err) => err,
 })
+
+export const getCourseLearning = createActions({
+  getCourseLearningRequest: (payload) => payload,
+  getCourseLearningSuccess: (payload) => payload,
+  getCourseLearningFailure: (err) => err,
+})

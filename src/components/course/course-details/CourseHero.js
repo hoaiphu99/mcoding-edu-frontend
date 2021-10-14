@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
+import { Link as RouterLink } from 'react-router-dom'
 // material
 import { alpha, styled } from '@mui/material/styles'
-import { Box, Avatar, Typography, Button } from '@mui/material'
+import { Box, Avatar, Typography, Button, Link } from '@mui/material'
 // utils
-import { fDate } from '../../../../utils/formatTime'
+import { fDate } from '../../../utils/formatTime'
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +77,7 @@ CourseHero.propTypes = {
 }
 
 export default function CourseHero({ course, ...other }) {
-  const { image_url, name, professor, created_at } = course
+  const { image_url, name, professor, created_at, slug } = course
 
   return (
     <RootStyle {...other}>
@@ -102,7 +103,9 @@ export default function CourseHero({ course, ...other }) {
             </Typography>
           </Box>
         </Box>
-        <Button variant="contained"> Đăng ký học miễn phí </Button>
+        <Link to={`/${slug}`} component={RouterLink}>
+          <Button variant="contained"> Đăng ký học miễn phí </Button>
+        </Link>
       </FooterStyle>
     </RootStyle>
   )

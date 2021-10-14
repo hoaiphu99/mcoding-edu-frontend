@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Container, Typography } from '@mui/material'
 // components
 import Page from '../components/Page'
-import { CourseList } from '../components/courses'
+import { CourseList } from '../components/course/course-list'
 // redux
 import { coursesState$ } from '../redux/selectors'
 import { getAllCourses } from '../redux/actions/courseActions'
@@ -123,7 +123,7 @@ export default function EcommerceShop() {
   // }
 
   return (
-    <Page title="Khóa học">
+    <Page title="Khóa học" id="move_top">
       <Container>
         <Typography variant="h4" sx={{ mb: 5, mt: 15 }}>
           DANH SÁCH KHÓA HỌC

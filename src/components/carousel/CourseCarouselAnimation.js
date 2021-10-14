@@ -2,9 +2,10 @@ import Slider from 'react-slick'
 import PropTypes from 'prop-types'
 import { motion } from 'framer-motion'
 import { useState, useRef } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
 // material
 import { alpha, useTheme, styled } from '@mui/material/styles'
-import { Box, Card, Paper, Button, Typography, CardContent } from '@mui/material'
+import { Box, Card, Paper, Button, Typography, CardContent, Avatar, Link } from '@mui/material'
 // utils
 import mockData from '../../utils/mock-data'
 //
@@ -37,7 +38,7 @@ CarouselItem.propTypes = {
 
 function CarouselItem({ item, isActive }) {
   const theme = useTheme()
-  const { image, title } = item
+  const { image_url, name, professor, slug } = item
 
   return (
     <Paper
@@ -46,7 +47,8 @@ function CarouselItem({ item, isActive }) {
         paddingTop: { xs: '100%', md: '50%' },
       }}
     >
-      <CarouselImgStyle alt={title} src={image} />
+      <CarouselImgStyle alt={name} src={image_url} />
+
       <Box
         sx={{
           top: 0,
@@ -71,19 +73,22 @@ function CarouselItem({ item, isActive }) {
       >
         <MotionContainer open={isActive}>
           <motion.div variants={varFadeInRight}>
-            <Typography variant="h3" gutterBottom>
-              {item.title}
-            </Typography>
+            <Link to={`/khoa-hoc/${slug}`} underline="none" color="inherit" component={RouterLink}>
+              <Typography variant="h3" gutterBottom>
+                {name}
+              </Typography>
+            </Link>
           </motion.div>
           <motion.div variants={varFadeInRight}>
+            <Avatar src={professor.user.avatar_url} />
             <Typography variant="body2" noWrap gutterBottom>
-              {item.description}
+              {professor.user.name}
             </Typography>
           </motion.div>
           <motion.div variants={varFadeInRight}>
-            <Button variant="contained" sx={{ mt: 3 }}>
-              View More
-            </Button>
+            <Link to={`/${slug}`} component={RouterLink}>
+              <Button variant="contained"> Đăng ký học miễn phí </Button>
+            </Link>
           </motion.div>
         </MotionContainer>
       </CardContent>
@@ -91,7 +96,11 @@ function CarouselItem({ item, isActive }) {
   )
 }
 
-export default function CarouselAnimation() {
+CourseCarouselAnimation.propTypes = {
+  course: PropTypes.array,
+}
+
+export default function CourseCarouselAnimation({ course }) {
   const theme = useTheme()
   const carouselRef = useRef()
   const [currentIndex, setCurrentIndex] = useState(theme.direction === 'rtl' ? MOCK_CAROUSELS.length - 1 : 0)
@@ -116,16 +125,16 @@ export default function CarouselAnimation() {
   }
 
   return (
-    <Card>
+    <Card sx={{ mb: 2 }}>
       <Slider ref={carouselRef} {...settings}>
-        {MOCK_CAROUSELS.map((item, index) => (
-          <CarouselItem key={item.title} item={item} isActive={index === currentIndex} />
+        {course.map((item, index) => (
+          <CarouselItem key={item.course_id} item={item} isActive={index === currentIndex} />
         ))}
       </Slider>
 
       <CarouselControlsArrowsIndex
         index={currentIndex}
-        total={MOCK_CAROUSELS.length}
+        total={course.length}
         onNext={handleNext}
         onPrevious={handlePrevious}
       />

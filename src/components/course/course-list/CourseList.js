@@ -11,7 +11,7 @@ CourseList.propTypes = {
 
 export default function CourseList({ courses, ...other }) {
   return (
-    <Grid container spacing={3} {...other}>
+    <Grid container spacing={3} sx={{ mb: 2 }} {...other}>
       {courses.map((course) => {
         if (course.status_code)
           return (

@@ -1,5 +1,5 @@
 import { INIT_STATE } from '../initialState'
-import { getType, getAllCourses, createCourse, getCourseDetails } from '../actions'
+import { getType, getAllCourses, createCourse, getCourseDetails, getCourseLearning } from '../actions'
 
 export const coursesReducers = (state = INIT_STATE.courses, action) => {
   switch (action.type) {
@@ -63,6 +63,32 @@ export const courseDetailsReducers = (state = INIT_STATE.courseDetails, action) 
         error: null,
       }
     case getType(getCourseDetails.getCourseDetailsFailure()):
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    default:
+      return state
+  }
+}
+
+export const courseLearningReducers = (state = INIT_STATE.courseLearning, action) => {
+  switch (action.type) {
+    case getType(getCourseLearning.getCourseLearningRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(getCourseLearning.getCourseLearningSuccess()):
+      return {
+        ...state,
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(getCourseLearning.getCourseLearningFailure()):
       return {
         ...state,
         loading: false,
