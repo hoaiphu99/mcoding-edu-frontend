@@ -18,8 +18,44 @@ export const getCourseDetails = createActions({
   getCourseDetailsFailure: (err) => err,
 })
 
-export const getCourseLearning = createActions({
-  getCourseLearningRequest: (payload) => payload,
-  getCourseLearningSuccess: (payload) => payload,
-  getCourseLearningFailure: (err) => err,
+export const getCourseLesson = createActions({
+  getCourseLessonRequest: (payload) => payload,
+  getCourseLessonSuccess: (payload) => payload,
+  getCourseLessonFailure: (err) => err,
+})
+
+export const createSection = createActions({
+  createSectionRequest: (payload) => payload,
+  createSectionSuccess: (payload) => payload,
+  createSectionFailure: (err) => err,
+})
+
+export const updateSection = createActions({
+  updateSectionRequest: (payload) => payload,
+  updateSectionSuccess: (payload) => payload,
+  updateSectionFailure: (err) => err,
+})
+
+export const deleteSection = createActions({
+  deleteSectionRequest: (payload) => payload,
+  deleteSectionSuccess: (payload) => payload,
+  deleteSectionFailure: (err) => err,
+})
+
+export const createLesson = createActions({
+  createLessonRequest: (payload) => payload,
+  createLessonSuccess: (payload) => payload,
+  createLessonFailure: (err) => err,
+})
+
+export const updateLesson = createActions({
+  updateLessonRequest: (payload) => payload,
+  updateLessonSuccess: (payload) => payload,
+  updateLessonFailure: (err) => err,
+})
+
+export const deleteLesson = createActions({
+  deleteLessonRequest: (payload) => payload,
+  deleteLessonSuccess: (payload) => payload,
+  deleteLessonFailure: (err) => err,
 })

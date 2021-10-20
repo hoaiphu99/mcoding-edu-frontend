@@ -21,7 +21,7 @@ export const INIT_STATE = {
     data: null,
     error: null,
   },
-  courseLearning: {
+  courseLesson: {
     loading: false,
     data: null,
     error: null,

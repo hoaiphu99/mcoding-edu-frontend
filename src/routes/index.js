@@ -60,6 +60,7 @@ export default function Router() {
             { element: <Navigate to="/dashboard/courses/course-list" replace /> },
             { path: 'course-list', element: <CourseList /> },
             { path: 'new-course', element: <NewCourse /> },
+            { path: 'manage/:slug', element: <CourseManage /> },
           ],
         },
       ],
@@ -117,9 +118,12 @@ const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
 const Login = Loadable(lazy(() => import('../pages/Login')))
 const Register = Loadable(lazy(() => import('../pages/Register')))
-const Courses = Loadable(lazy(() => import('../pages/Courses')))
 const CourseList = Loadable(lazy(() => import('../pages/dashboard/CourseList')))
 const NewCourse = Loadable(lazy(() => import('../pages/dashboard/CourseCreate')))
+const CourseManage = Loadable(lazy(() => import('../pages/dashboard/CourseManage')))
+
+// Page
+const Courses = Loadable(lazy(() => import('../pages/Courses')))
 const CourseDetails = Loadable(lazy(() => import('../pages/CourseDetails')))
 const CourseLearning = Loadable(lazy(() => import('../pages/CourseLearning')))
 // Main

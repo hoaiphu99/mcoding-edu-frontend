@@ -2,23 +2,23 @@ import PropTypes from 'prop-types'
 import { Icon } from '@iconify/react'
 import { useRef, useState } from 'react'
 import editFill from '@iconify/icons-eva/edit-fill'
-import { Link as RouterLink } from 'react-router-dom'
 import trash2Outline from '@iconify/icons-eva/trash-2-outline'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
 import bookOpenFill from '@iconify/icons-eva/book-open-fill'
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material'
-// routes
-import { PATH_DASHBOARD } from '../../../../routes/paths'
 
 // ----------------------------------------------------------------------
 
 CourseMoreMenu.propTypes = {
   onDelete: PropTypes.func,
-  courseSlug: PropTypes.string,
+  onOpen: PropTypes.func,
+  onOpenSection: PropTypes.func,
+  onEdit: PropTypes.func,
+  isLesson: PropTypes.bool,
 }
 
-export default function CourseMoreMenu({ onDelete, courseSlug }) {
+export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onEdit, isLesson }) {
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -38,33 +38,37 @@ export default function CourseMoreMenu({ onDelete, courseSlug }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem
-          component={RouterLink}
-          to={`${PATH_DASHBOARD.courses.root}/manage/${courseSlug}`}
-          sx={{ color: 'text.secondary' }}
-        >
-          <ListItemIcon>
-            <Icon icon={bookOpenFill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Quản lý bài học" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-
-        <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {!isLesson && (
+          <MenuItem onClick={onOpen} sx={{ color: 'text.secondary' }}>
+            <ListItemIcon>
+              <Icon icon={bookOpenFill} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Bài học mới" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
 
         <MenuItem
-          component={RouterLink}
-          to={`${PATH_DASHBOARD.courses.root}/course/${courseSlug}/edit`}
+          onClick={() => {
+            if (!isLesson) {
+              onOpenSection()
+            } else {
+              onOpen()
+            }
+            onEdit()
+          }}
           sx={{ color: 'text.secondary' }}
         >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Sửa" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+
+        <MenuItem onClick={onDelete} sx={{ color: 'red' }}>
+          <ListItemIcon>
+            <Icon icon={trash2Outline} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="Xóa" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

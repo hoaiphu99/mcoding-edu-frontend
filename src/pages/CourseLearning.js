@@ -11,8 +11,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Grid, Skeleton, Container, Typography } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseLearning } from '../redux/actions'
-import { courseLearningState$, userLoginState$ } from '../redux/selectors'
+import { getCourseLesson } from '../redux/actions'
+import { courseLessonState$, userLoginState$ } from '../redux/selectors'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
@@ -42,14 +42,14 @@ export default function CourseLearning() {
   const { enqueueSnackbar } = useSnackbar()
 
   const { data: userLogin } = useSelector(userLoginState$)
-  const { data: course, error } = useSelector(courseLearningState$)
+  const { data: course, error } = useSelector(courseLessonState$)
 
   useEffect(() => {
     if (!userLogin) {
       navigate('/login')
     }
     if (!course || course.slug !== slug) {
-      dispatch(getCourseLearning.getCourseLearningRequest({ data: slug, userLogin }))
+      dispatch(getCourseLesson.getCourseLessonRequest({ data: slug, userLogin }))
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })

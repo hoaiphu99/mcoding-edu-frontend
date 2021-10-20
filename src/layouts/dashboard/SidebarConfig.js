@@ -40,7 +40,6 @@ const sidebarConfig = [
         children: [
           { title: 'tất cả', path: PATH_DASHBOARD.users.userList },
           { title: 'thêm mới', path: PATH_DASHBOARD.users.newUser },
-          // { title: 'Six', path: PATH_DASHBOARD.users.pageSix }
         ],
       },
       {
@@ -50,7 +49,6 @@ const sidebarConfig = [
         children: [
           { title: 'tất cả', path: PATH_DASHBOARD.courses.courseList },
           { title: 'thêm mới', path: PATH_DASHBOARD.courses.newCourse },
-          // { title: 'Six', path: PATH_DASHBOARD.users.pageSix }
         ],
       },
     ],
