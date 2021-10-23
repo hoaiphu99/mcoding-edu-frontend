@@ -1,5 +1,11 @@
+import { useEffect } from 'react'
+import { useSnackbar } from 'notistack'
+import { useNavigate } from 'react-router-dom'
 // material
 import { Container, Typography } from '@mui/material'
+// redux
+import { useSelector } from 'react-redux'
+import { userLoginState$ } from '../redux/selectors'
 // hooks
 import useSettings from '../hooks/useSettings'
 // components
@@ -9,6 +15,22 @@ import Page from '../components/Page'
 
 export default function PageOne() {
   const { themeStretch } = useSettings()
+
+  const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar()
+  const { data: userLogin, error } = useSelector(userLoginState$)
+
+  useEffect(() => {
+    if (!userLogin) {
+      navigate('/login', { replace: true })
+    }
+    if (userLogin && userLogin.student) {
+      navigate('/', { replace: true })
+    }
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' })
+    }
+  }, [userLogin, navigate, enqueueSnackbar, error])
 
   return (
     <Page title="Page One | Minimal-UI">

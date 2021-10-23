@@ -1,5 +1,5 @@
 import { INIT_STATE } from '../initialState'
-import { getType, getUsers, authUser } from '../actions'
+import { getType, getUsers, authUser, registerUser } from '../actions'
 
 export function userReducers(state = INIT_STATE.users, action) {
   switch (action.type) {
@@ -53,6 +53,28 @@ export function userLoginReducers(state = INIT_STATE.userLogin, action) {
         loading: false,
         data: null,
         error: null,
+      }
+    // Register
+    case getType(registerUser.registerUserRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(registerUser.registerUserSuccess()):
+      localStorage.setItem('userInfo', JSON.stringify(action.payload.data))
+      return {
+        success: action.payload.success,
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(registerUser.registerUserFailure()):
+      return {
+        ...state,
+        success: action.payload.success,
+        loading: false,
+        error: action.payload.error.message,
       }
     default:
       return state

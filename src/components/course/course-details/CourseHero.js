@@ -74,10 +74,11 @@ const CoverImgStyle = styled('img')({
 
 CourseHero.propTypes = {
   course: PropTypes.object.isRequired,
+  studentCourse: PropTypes.object,
 }
 
-export default function CourseHero({ course, ...other }) {
-  const { image_url, name, professor, created_at, slug } = course
+export default function CourseHero({ course, studentCourse, ...other }) {
+  const { course_id, image_url, name, professor, created_at, slug } = course
 
   return (
     <RootStyle {...other}>
@@ -104,7 +105,9 @@ export default function CourseHero({ course, ...other }) {
           </Box>
         </Box>
         <Link to={`/${slug}`} component={RouterLink}>
-          <Button variant="contained"> Đăng ký học miễn phí </Button>
+          <Button variant="contained">
+            {`${studentCourse && course_id === studentCourse.course_id ? 'Học ngay' : 'Đăng ký học miễn phí'}`}
+          </Button>
         </Link>
       </FooterStyle>
     </RootStyle>

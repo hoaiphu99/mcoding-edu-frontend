@@ -3,6 +3,9 @@ import {
   getType,
   getAllCourses,
   createCourse,
+  updateCourse,
+  deleteCourse,
+  updateCourseStatus,
   getCourseDetails,
   getCourseLesson,
   createSection,
@@ -53,7 +56,83 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         loading: false,
         error: action.payload.error.message,
       }
-
+    case getType(updateCourse.updateCourseRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(updateCourse.updateCourseSuccess()): {
+      const newData = state.data.map((item) => {
+        if (item.course_id === action.payload.data.course_id) {
+          return action.payload.data
+        }
+        return item
+      })
+      return {
+        ...state,
+        loading: false,
+        data: newData,
+        error: null,
+      }
+    }
+    case getType(updateCourse.updateCourseFailure()):
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    case getType(deleteCourse.deleteCourseRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(deleteCourse.deleteCourseSuccess()): {
+      const newData = state.data.filter((item) => item.course_id !== action.payload)
+      return {
+        ...state,
+        loading: false,
+        data: newData,
+        error: null,
+      }
+    }
+    case getType(deleteCourse.deleteCourseFailure()):
+      return {
+        ...state,
+        success: action.payload.success,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    case getType(updateCourseStatus.updateCourseStatusRequest()):
+      return {
+        ...state,
+        success: false,
+        loading: true,
+        error: null,
+      }
+    case getType(updateCourseStatus.updateCourseStatusSuccess()): {
+      const newData = state.data.map((item) => {
+        if (item.course_id === action.payload.data.course_id) {
+          return action.payload.data
+        }
+        return item
+      })
+      return {
+        ...state,
+        success: action.payload.success,
+        loading: false,
+        data: newData,
+        error: null,
+      }
+    }
+    case getType(updateCourseStatus.updateCourseStatusFailure()):
+      return {
+        ...state,
+        success: action.payload.success,
+        loading: false,
+        error: action.payload.error.message,
+      }
     default:
       return state
   }
@@ -115,7 +194,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     case getType(createSection.createSectionSuccess()): {
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections = [...newData.sections, action.payload.data]
 
       return {
@@ -139,7 +218,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     case getType(updateSection.updateSectionSuccess()): {
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections = newData.sections.map((item) => {
         if (item.section_id === action.payload.data.section_id) {
           item = action.payload.data
@@ -167,7 +246,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     case getType(deleteSection.deleteSectionSuccess()): {
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections = newData.sections.filter((item) => item.section_id !== action.payload)
 
       return {
@@ -192,7 +271,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       }
     case getType(createLesson.createLessonSuccess()): {
       const newLesson = action.payload.data
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections.map((item) => {
         if (item.section_id === newLesson.section_id) {
           item.lessons = [...item.lessons, newLesson]
@@ -209,6 +288,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
     case getType(createLesson.createLessonFailure()):
       return {
         ...state,
+        success: action.payload.success,
         loading: false,
         error: action.payload.error.message,
       }
@@ -220,7 +300,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     case getType(updateLesson.updateLessonSuccess()): {
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections.map((item) => {
         item.lessons = item.lessons.map((lesson) => {
           if (lesson.lesson_id === action.payload.data.lesson_id) {
@@ -251,7 +331,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     case getType(deleteLesson.deleteLessonSuccess()): {
-      const newData = { ...state.data }
+      const newData = state.data
       newData.sections.map((item) => {
         item.lessons = item.lessons.filter((lesson) => lesson.lesson_id !== action.payload)
         return item

@@ -12,8 +12,8 @@ import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetails } from '../redux/actions'
-import { courseDetailsState$ } from '../redux/selectors'
+import { getCourseDetails, getStudentCourseByCourseID } from '../redux/actions'
+import { courseDetailsState$, studentCourseState$, userLoginState$ } from '../redux/selectors'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
@@ -21,8 +21,6 @@ import Page from '../components/Page'
 import Markdown from '../components/Markdown'
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs'
 import { CourseHero, CourseProfessorDetails, CourseLessonList } from '../components/course/course-details'
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
@@ -43,16 +41,23 @@ export default function CourseDetails() {
   const { slug } = useParams()
   const { enqueueSnackbar } = useSnackbar()
   const [value, setValue] = useState('1')
+
+  const { data: userLogin } = useSelector(userLoginState$)
+
   const { data: course, error } = useSelector(courseDetailsState$)
+  const { data: studentCourse } = useSelector(studentCourseState$)
 
   useEffect(() => {
     if (!course || course.slug !== slug) {
       dispatch(getCourseDetails.getCourseDetailsRequest(slug))
     }
+    if (userLogin && course) {
+      dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: course.course_id, userLogin }))
+    }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, course, slug, error, enqueueSnackbar])
+  }, [dispatch, course, slug, error, enqueueSnackbar, userLogin])
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)
@@ -73,7 +78,7 @@ export default function CourseDetails() {
         {course && (
           <>
             <Card sx={{ mb: 2 }}>
-              <CourseHero course={course} />
+              <CourseHero course={course} studentCourse={studentCourse} />
             </Card>
 
             <Card sx={{ mb: 2, mt: 2 }}>

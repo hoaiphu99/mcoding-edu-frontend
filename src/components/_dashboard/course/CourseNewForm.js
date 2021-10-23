@@ -23,7 +23,7 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { createCourse } from '../../../redux/actions'
+import { createCourse, updateCourse } from '../../../redux/actions'
 import { coursesState$, userLoginState$ } from '../../../redux/selectors'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
@@ -92,16 +92,24 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
     validationSchema: NewProductSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
       try {
-        const urlImg = await handleUpload(values.image_url)
         const arrCourseLanguage = values.course_languages.map((item) => item.id)
         const data = {
           name: values.name,
           description: values.description,
-          image_url: urlImg,
           category_id: values.category_id,
           course_languages: arrCourseLanguage,
         }
-        dispatch(createCourse.createCourseRequest({ data, userLogin }))
+        if (!isEdit) {
+          const urlImg = await handleUpload(values.image_url)
+          data.image_url = urlImg
+
+          dispatch(createCourse.createCourseRequest({ data, userLogin }))
+        } else {
+          data.id = currentCourse.course_id
+
+          dispatch(updateCourse.updateCourseRequest({ data, userLogin }))
+        }
+
         resetForm()
         setSubmitting(false)
         enqueueSnackbar(!isEdit ? 'Tạo thành công' : 'Cập nhật thành công', { variant: 'success' })

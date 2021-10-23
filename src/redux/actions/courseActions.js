@@ -12,6 +12,24 @@ export const createCourse = createActions({
   createCourseFailure: (err) => err,
 })
 
+export const updateCourse = createActions({
+  updateCourseRequest: (payload) => payload,
+  updateCourseSuccess: (payload) => payload,
+  updateCourseFailure: (err) => err,
+})
+
+export const deleteCourse = createActions({
+  deleteCourseRequest: (payload) => payload,
+  deleteCourseSuccess: (payload) => payload,
+  deleteCourseFailure: (err) => err,
+})
+
+export const updateCourseStatus = createActions({
+  updateCourseStatusRequest: (payload) => payload,
+  updateCourseStatusSuccess: (payload) => payload,
+  updateCourseStatusFailure: (err) => err,
+})
+
 export const getCourseDetails = createActions({
   getCourseDetailsRequest: (payload) => payload,
   getCourseDetailsSuccess: (payload) => payload,

@@ -1,4 +1,5 @@
 import { filter } from 'lodash'
+import { useSnackbar } from 'notistack'
 import { Icon } from '@iconify/react'
 import { useState, useEffect } from 'react'
 import plusFill from '@iconify/icons-eva/plus-fill'
@@ -21,8 +22,8 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCourses } from '../../redux/actions'
-import { coursesState$ } from '../../redux/selectors'
+import { getAllCourses, deleteCourse, updateCourseStatus } from '../../redux/actions'
+import { coursesState$, userLoginState$ } from '../../redux/selectors'
 // utils
 import { fDate } from '../../utils/formatTime'
 // routes
@@ -42,6 +43,7 @@ const TABLE_HEAD = [
   { id: 'created_at', label: 'Đã tạo', alignRight: false },
   { id: 'status_code', label: 'Trạng thái', alignRight: false },
   { id: 'professor', label: 'Người tạo', alignRight: true },
+  { id: 'action' },
   { id: '' },
 ]
 
@@ -96,12 +98,26 @@ export default function CourseList() {
   const [filterName, setFilterName] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [orderBy, setOrderBy] = useState('created_at')
+  const [tag, setTag] = useState('')
 
-  const { data: courses } = useSelector(coursesState$)
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { data: courses, error, success } = useSelector(coursesState$)
+  const { data: userLogin } = useSelector(userLoginState$)
 
   useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' })
+    }
+    if (tag === 'delete' && success) {
+      enqueueSnackbar('Xóa khóa học thành công', { variant: 'success' })
+      setTag('')
+    } else if (tag === 'update' && success) {
+      enqueueSnackbar('Cập nhật trạng thái thành công', { variant: 'success' })
+      setTag('')
+    }
     dispatch(getAllCourses.getAllCoursesRequest())
-  }, [dispatch])
+  }, [dispatch, error, enqueueSnackbar, tag, success])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -146,9 +162,34 @@ export default function CourseList() {
     setFilterName(event.target.value)
   }
 
-  const handleDeleteProduct = (courseId) => {
+  const handleDeleteCourse = (courseId) => {
     console.log(courseId)
-    // dispatch(deleteProduct(productId))
+    dispatch(deleteCourse.deleteCourseRequest({ id: courseId, userLogin }))
+    setTag('delete')
+  }
+
+  const handleUpdateCourseStatus = (courseId, statusCode) => {
+    const data = {
+      id: courseId,
+      status_code: statusCode,
+    }
+
+    switch (statusCode) {
+      case 'PEN':
+        data.status_code = 'APP'
+        break
+      case 'APP':
+        data.status_code = 'CAN'
+        break
+      case 'REJ':
+        data.status_code = 'APP'
+        break
+      default:
+        data.status_code = 'PEN'
+        break
+    }
+    dispatch(updateCourseStatus.updateCourseStatusRequest({ data, userLogin }))
+    setTag('update')
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - courses.length) : 0
@@ -237,20 +278,29 @@ export default function CourseList() {
                               (status_code === 'PEN' && 'warning') ||
                               (status_code === 'PUB' && 'success') ||
                               (status_code === 'APP' && 'primary') ||
-                              (status_code === 'REF' && 'info') ||
+                              (status_code === 'REJ' && 'info') ||
                               'error'
                             }
                           >
                             {(status_code === 'PEN' && 'Chờ duyệt') ||
                               (status_code === 'PUB' && 'Công khai') ||
                               (status_code === 'APP' && 'Đã duyệt') ||
-                              (status_code === 'REF' && 'Không được duyệt') ||
+                              (status_code === 'REJ' && 'Không được duyệt') ||
                               'Đã hủy'}
                           </Label>
                         </TableCell>
                         <TableCell align="right">{professor.username}</TableCell>
                         <TableCell align="right">
-                          <CourseMoreMenu onDelete={() => handleDeleteProduct(course_id)} courseSlug={slug} />
+                          {status_code !== 'PUB' && status_code !== 'CAN' && userLogin.admin && (
+                            <Button variant="outlined" onClick={() => handleUpdateCourseStatus(course_id, status_code)}>
+                              {(status_code === 'PEN' && 'Duyệt') ||
+                                (status_code === 'APP' && 'Hủy') ||
+                                (status_code === 'REJ' && 'Duyệt lại')}
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          <CourseMoreMenu onDelete={() => handleDeleteCourse(course_id)} courseSlug={slug} />
                         </TableCell>
                       </TableRow>
                     )

@@ -3,3 +3,4 @@ export const userLoginState$ = (state) => state.userLogin
 export const coursesState$ = (state) => state.courses
 export const courseDetailsState$ = (state) => state.courseDetails
 export const courseLessonState$ = (state) => state.courseLesson
+export const studentCourseState$ = (state) => state.studentCourse

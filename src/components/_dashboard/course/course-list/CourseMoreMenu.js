@@ -46,25 +46,25 @@ export default function CourseMoreMenu({ onDelete, courseSlug }) {
           <ListItemIcon>
             <Icon icon={bookOpenFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Quản lý bài học" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
-
-        <MenuItem onClick={onDelete} sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Quản lý khóa học" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
         <MenuItem
           component={RouterLink}
-          to={`${PATH_DASHBOARD.courses.root}/course/${courseSlug}/edit`}
+          to={`${PATH_DASHBOARD.courses.root}/${courseSlug}/edit`}
           sx={{ color: 'text.secondary' }}
         >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Sửa" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+
+        <MenuItem onClick={onDelete} sx={{ color: 'red' }}>
+          <ListItemIcon>
+            <Icon icon={trash2Outline} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="Xóa" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

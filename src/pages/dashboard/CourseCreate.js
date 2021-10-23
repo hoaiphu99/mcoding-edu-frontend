@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { paramCase } from 'change-case'
 import { useParams, useLocation } from 'react-router-dom'
 // material
 import { Container } from '@mui/material'
@@ -20,10 +19,10 @@ import ProductNewForm from '../../components/_dashboard/course/CourseNewForm'
 export default function CourseCreate() {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const { name } = useParams()
+  const { slug } = useParams()
   const { data: courses } = useSelector(coursesState$)
   const isEdit = pathname.includes('edit')
-  const currentCourse = courses.find((course) => paramCase(course.name) === name)
+  const currentCourse = courses.find((course) => course.slug === slug)
 
   useEffect(() => {
     if (!courses.length) {
@@ -42,7 +41,7 @@ export default function CourseCreate() {
               name: 'Khóa học',
               href: PATH_DASHBOARD.courses.root,
             },
-            { name: !isEdit ? 'Tạo khoá học mới' : name },
+            { name: !isEdit ? 'Tạo khoá học mới' : currentCourse?.name },
           ]}
         />
 

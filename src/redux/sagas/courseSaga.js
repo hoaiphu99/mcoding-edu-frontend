@@ -2,6 +2,9 @@ import { takeLatest, call, put } from 'redux-saga/effects'
 import {
   getAllCourses,
   createCourse,
+  updateCourse,
+  deleteCourse,
+  updateCourseStatus,
   getCourseDetails,
   getCourseLesson,
   createSection,
@@ -14,6 +17,9 @@ import {
 import {
   fetchAllCourses,
   addNewCourse,
+  editCourse,
+  removeCourse,
+  editCourseStatus,
   fetchCourse,
   fetchCourseLearning,
   addNewSection,
@@ -48,6 +54,36 @@ function* createCourseSaga(action) {
   }
 }
 
+function* updateCourseSaga(action) {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${action.payload.userLogin.token}`,
+    },
+  }
+  try {
+    const course = yield call(editCourse, { data: action.payload.data, config })
+    yield put(updateCourse.updateCourseSuccess(course.data))
+  } catch (error) {
+    yield put(updateCourse.updateCourseFailure(error.response.data))
+  }
+}
+
+function* deleteCourseSaga(action) {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${action.payload.userLogin.token}`,
+    },
+  }
+  try {
+    yield call(removeCourse, { id: action.payload.id, config })
+    yield put(deleteCourse.deleteCourseSuccess(action.payload.id))
+  } catch (error) {
+    yield put(deleteCourse.deleteCourseFailure(error.response.data))
+  }
+}
+
 function* getCourseDetailsSaga(action) {
   try {
     const course = yield call(fetchCourse, action.payload)
@@ -68,6 +104,21 @@ function* getCourseLessonSaga(action) {
     yield put(getCourseLesson.getCourseLessonSuccess(course.data))
   } catch (error) {
     yield put(getCourseLesson.getCourseLessonFailure(error.response.data))
+  }
+}
+
+function* updateCourseStatusSaga(action) {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${action.payload.userLogin.token}`,
+    },
+  }
+  try {
+    const course = yield call(editCourseStatus, { data: action.payload.data, config })
+    yield put(updateCourseStatus.updateCourseStatusSuccess(course.data))
+  } catch (error) {
+    yield put(updateCourseStatus.updateCourseStatusFailure(error.response.data))
   }
 }
 
@@ -169,8 +220,11 @@ function* deleteLessonSaga(action) {
 function* courseSaga() {
   yield takeLatest(getAllCourses.getAllCoursesRequest, getAllCoursesSaga)
   yield takeLatest(createCourse.createCourseRequest, createCourseSaga)
+  yield takeLatest(updateCourse.updateCourseRequest, updateCourseSaga)
+  yield takeLatest(deleteCourse.deleteCourseRequest, deleteCourseSaga)
   yield takeLatest(getCourseDetails.getCourseDetailsRequest, getCourseDetailsSaga)
   yield takeLatest(getCourseLesson.getCourseLessonRequest, getCourseLessonSaga)
+  yield takeLatest(updateCourseStatus.updateCourseStatusRequest, updateCourseStatusSaga)
   yield takeLatest(createSection.createSectionRequest, createSectionSaga)
   yield takeLatest(updateSection.updateSectionRequest, updateSectionSaga)
   yield takeLatest(deleteSection.deleteSectionRequest, deleteSectionSaga)

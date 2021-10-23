@@ -1,6 +1,7 @@
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
+import { useSnackbar } from 'notistack'
 import { useFormik, Form, FormikProvider } from 'formik'
 import eyeFill from '@iconify/icons-eva/eye-fill'
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
@@ -8,11 +9,20 @@ import { useNavigate } from 'react-router-dom'
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+// redux
+import { useDispatch, useSelector } from 'react-redux'
+import { registerUser } from '../../../redux/actions'
+import { userLoginState$ } from '../../../redux/selectors'
 
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { enqueueSnackbar } = useSnackbar()
+
+  const { error, success } = useSelector(userLoginState$)
+
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
 
@@ -24,6 +34,16 @@ export default function RegisterForm() {
     passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
   })
 
+  useEffect(() => {
+    if (success) {
+      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
+      navigate('/dashboard', { replace: true })
+    }
+    if (error) {
+      enqueueSnackbar('Đăng ký thất bại!', { variant: 'error' })
+    }
+  }, [success, error, enqueueSnackbar, navigate])
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -33,8 +53,8 @@ export default function RegisterForm() {
       passwordConfirmation: '',
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true })
+    onSubmit: (values) => {
+      dispatch(registerUser.registerUserRequest(values))
     },
   })
 

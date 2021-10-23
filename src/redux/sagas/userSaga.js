@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { getUsers, authUser } from '../actions'
-import { fetchUsers, login } from '../../api'
+import { getUsers, registerUser, authUser } from '../actions'
+import { fetchUsers, login, register } from '../../api'
 
 function* authUserSaga(action) {
   try {
@@ -8,6 +8,15 @@ function* authUserSaga(action) {
     yield put(authUser.authUserSuccess(user.data))
   } catch (error) {
     yield put(authUser.authUserFailure(error.response.data))
+  }
+}
+
+function* registerUserSaga(action) {
+  try {
+    const user = yield call(register, action.payload)
+    yield put(registerUser.registerUserSuccess(user.data))
+  } catch (error) {
+    yield put(registerUser.registerUserFailure(error.response.data))
   }
 }
 
@@ -29,6 +38,7 @@ function* getUsersSaga(action) {
 function* userSaga() {
   yield takeLatest(getUsers.getUsersRequest, getUsersSaga)
   yield takeLatest(authUser.authUserRequest, authUserSaga)
+  yield takeLatest(registerUser.registerUserRequest, registerUserSaga)
 }
 
 export default userSaga

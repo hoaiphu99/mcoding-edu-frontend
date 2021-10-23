@@ -60,6 +60,7 @@ export default function Router() {
             { element: <Navigate to="/dashboard/courses/course-list" replace /> },
             { path: 'course-list', element: <CourseList /> },
             { path: 'new-course', element: <NewCourse /> },
+            { path: ':slug/edit', element: <NewCourse /> },
             { path: 'manage/:slug', element: <CourseManage /> },
           ],
         },

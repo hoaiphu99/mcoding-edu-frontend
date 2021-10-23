@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+
 // material
 import { styled, useTheme } from '@mui/material/styles'
+
 // hooks
 import useCollapseDrawer from '../../hooks/useCollapseDrawer'
 //
@@ -36,6 +38,7 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const theme = useTheme()
+
   const { collapseClick } = useCollapseDrawer()
   const [open, setOpen] = useState(false)
 

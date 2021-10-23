@@ -7,6 +7,12 @@ export const authUser = createActions({
   authUserLogout: () => undefined,
 })
 
+export const registerUser = createActions({
+  registerUserRequest: (payload) => payload,
+  registerUserSuccess: (payload) => payload,
+  registerUserFailure: (err) => err,
+})
+
 export const getUsers = createActions({
   getUsersRequest: (payload) => payload,
   getUsersSuccess: (payload) => payload,
