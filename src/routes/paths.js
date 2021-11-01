@@ -10,7 +10,7 @@ const ROOTS_DASHBOARD = '/dashboard'
 
 export const PATH_PAGE = {
   courses: '/khoa-hoc',
-  courseDetails: '/khoa-hoc/:slug',
+  profile: '/trang-ca-nhan',
 }
 
 export const PATH_DASHBOARD = {

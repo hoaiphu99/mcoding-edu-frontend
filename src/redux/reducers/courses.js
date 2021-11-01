@@ -1,4 +1,4 @@
-import { INIT_STATE } from '../initialState'
+import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
 import {
   getType,
   getAllCourses,
@@ -14,8 +14,12 @@ import {
   createLesson,
   updateLesson,
   deleteLesson,
+  getMyCourses,
+  getStudentsInCourse,
+  deleteStudentInCourse,
 } from '../actions'
 
+// @desc reducer for courses
 export const coursesReducers = (state = INIT_STATE.courses, action) => {
   switch (action.type) {
     case getType(getAllCourses.getAllCoursesRequest()):
@@ -138,6 +142,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
   }
 }
 
+// @desc reducer for course details
 export const courseDetailsReducers = (state = INIT_STATE.courseDetails, action) => {
   switch (action.type) {
     case getType(getCourseDetails.getCourseDetailsRequest()):
@@ -164,6 +169,7 @@ export const courseDetailsReducers = (state = INIT_STATE.courseDetails, action) 
   }
 }
 
+// @desc reducer for course lessons
 export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) => {
   switch (action.type) {
     // Get Course Lesson
@@ -343,6 +349,100 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         error: null,
       }
     }
+    default:
+      return state
+  }
+}
+
+// @desc reducer for my courses
+export const myCoursesReducers = (state = INIT_STATE.coursesMy, action) => {
+  switch (action.type) {
+    // Get My Courses
+    case getType(getMyCourses.getMyCoursesRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(getMyCourses.getMyCoursesSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.LOAD,
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(getMyCourses.getMyCoursesFailure()):
+      return {
+        ...state,
+        success: null,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    case 'RESET_STATE':
+      return {
+        ...state,
+        success: null,
+      }
+    default:
+      return state
+  }
+}
+
+export const studentsInCourseReducers = (state = INIT_STATE.studentsInCourse, action) => {
+  switch (action.type) {
+    // Get Students In Course
+    case getType(getStudentsInCourse.getStudentsInCourseRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(getStudentsInCourse.getStudentsInCourseSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.LOAD,
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(getStudentsInCourse.getStudentsInCourseFailure()):
+      return {
+        ...state,
+        success: null,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    // Delete Student In Course
+    case getType(deleteStudentInCourse.deleteStudentInCourseRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(deleteStudentInCourse.deleteStudentInCourseSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.DELETE,
+        loading: false,
+        data: state.data.filter((item) => item.student_id !== action.payload.studentId),
+        error: null,
+      }
+    case getType(deleteStudentInCourse.deleteStudentInCourseFailure()):
+      return {
+        ...state,
+        success: null,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    case 'RESET_STATE':
+      return {
+        ...state,
+        success: null,
+      }
     default:
       return state
   }

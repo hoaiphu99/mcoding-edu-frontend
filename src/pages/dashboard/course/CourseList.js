@@ -22,19 +22,19 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCourses, deleteCourse, updateCourseStatus } from '../../redux/actions'
-import { coursesState$, userLoginState$ } from '../../redux/selectors'
+import { getAllCourses, deleteCourse, updateCourseStatus } from '../../../redux/actions'
+import { coursesState$, userLoginState$ } from '../../../redux/selectors'
 // utils
-import { fDate } from '../../utils/formatTime'
+import { fDate } from '../../../utils/formatTime'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths'
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import Page from '../../components/Page'
-import Label from '../../components/Label'
-import Scrollbar from '../../components/Scrollbar'
-import SearchNotFound from '../../components/SearchNotFound'
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
-import { CourseListHead, CourseListToolbar, CourseMoreMenu } from '../../components/_dashboard/course/course-list'
+import Page from '../../../components/Page'
+import Label from '../../../components/Label'
+import Scrollbar from '../../../components/Scrollbar'
+import SearchNotFound from '../../../components/SearchNotFound'
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import { CourseListHead, CourseListToolbar, CourseMoreMenu } from '../../../components/_dashboard/course/course-list'
 
 // ----------------------------------------------------------------------
 
@@ -300,7 +300,11 @@ export default function CourseList() {
                           )}
                         </TableCell>
                         <TableCell align="right">
-                          <CourseMoreMenu onDelete={() => handleDeleteCourse(course_id)} courseSlug={slug} />
+                          <CourseMoreMenu
+                            onDelete={() => handleDeleteCourse(course_id)}
+                            courseSlug={slug}
+                            courseId={course_id}
+                          />
                         </TableCell>
                       </TableRow>
                     )

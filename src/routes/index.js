@@ -62,6 +62,7 @@ export default function Router() {
             { path: 'new-course', element: <NewCourse /> },
             { path: ':slug/edit', element: <NewCourse /> },
             { path: 'manage/:slug', element: <CourseManage /> },
+            { path: ':id/students', element: <CourseStudentList /> },
           ],
         },
       ],
@@ -93,6 +94,10 @@ export default function Router() {
           path: '/:slug',
           element: <CourseLearning />,
         },
+        {
+          path: '/trang-ca-nhan',
+          element: <Profile />,
+        },
       ],
     },
     {
@@ -119,13 +124,15 @@ const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
 const Login = Loadable(lazy(() => import('../pages/Login')))
 const Register = Loadable(lazy(() => import('../pages/Register')))
-const CourseList = Loadable(lazy(() => import('../pages/dashboard/CourseList')))
-const NewCourse = Loadable(lazy(() => import('../pages/dashboard/CourseCreate')))
-const CourseManage = Loadable(lazy(() => import('../pages/dashboard/CourseManage')))
+const CourseList = Loadable(lazy(() => import('../pages/dashboard/course/CourseList')))
+const NewCourse = Loadable(lazy(() => import('../pages/dashboard/course/CourseCreate')))
+const CourseManage = Loadable(lazy(() => import('../pages/dashboard/course/CourseManage')))
+const CourseStudentList = Loadable(lazy(() => import('../pages/dashboard/course/CourseStudentList')))
 
 // Page
 const Courses = Loadable(lazy(() => import('../pages/Courses')))
 const CourseDetails = Loadable(lazy(() => import('../pages/CourseDetails')))
 const CourseLearning = Loadable(lazy(() => import('../pages/CourseLearning')))
+const Profile = Loadable(lazy(() => import('../pages/Profile')))
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/HomePage')))

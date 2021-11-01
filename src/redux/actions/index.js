@@ -1,6 +1,6 @@
 export const getType = (reduxAction) => reduxAction.type
 
-export { getUsers, registerUser, authUser } from './userActions'
+export { getUsers, registerUser, authUser, getUserProfile } from './userActions'
 export {
   getAllCourses,
   createCourse,
@@ -15,5 +15,10 @@ export {
   createLesson,
   updateLesson,
   deleteLesson,
+  getMyCourses,
+  getStudentsInCourse,
+  deleteStudentInCourse,
 } from './courseActions'
-export { getStudentCourseByCourseID } from './studentCourseActions'
+export { getStudentCourseByCourseID, registerStudentCourse } from './studentCourseActions'
+export { getCommentsByLessonID, createNewComment } from './commentActions'
+export { getReviewsByCourseID, createNewReview } from './reviewActions'

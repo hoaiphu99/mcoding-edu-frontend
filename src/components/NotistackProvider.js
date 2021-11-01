@@ -1,3 +1,4 @@
+import { createRef } from 'react'
 import PropTypes from 'prop-types'
 import { Icon } from '@iconify/react'
 import { SnackbarProvider } from 'notistack'
@@ -5,9 +6,10 @@ import infoFill from '@iconify/icons-eva/info-fill'
 import alertCircleFill from '@iconify/icons-eva/alert-circle-fill'
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill'
 import checkmarkCircle2Fill from '@iconify/icons-eva/checkmark-circle-2-fill'
+import closeFill from '@iconify/icons-eva/close-fill'
 // material
 import { alpha, useTheme } from '@mui/material/styles'
-import { Box, GlobalStyles } from '@mui/material'
+import { Box, GlobalStyles, IconButton } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
@@ -79,6 +81,11 @@ NotistackProvider.propTypes = {
 }
 
 export default function NotistackProvider({ children }) {
+  // add action to all snackbars
+  const notistackRef = createRef()
+  const onClickDismiss = (key) => () => {
+    notistackRef.current.closeSnackbar(key)
+  }
   return (
     <>
       <SnackbarStyles />
@@ -86,7 +93,7 @@ export default function NotistackProvider({ children }) {
       <SnackbarProvider
         dense
         maxSnack={5}
-        // preventDuplicate
+        preventDuplicate
         autoHideDuration={3000}
         anchorOrigin={{
           vertical: 'top',
@@ -98,6 +105,12 @@ export default function NotistackProvider({ children }) {
           warning: <SnackbarIcon icon={alertTriangleFill} color="warning" />,
           info: <SnackbarIcon icon={alertCircleFill} color="info" />,
         }}
+        ref={notistackRef}
+        action={(key) => (
+          <IconButton onClick={onClickDismiss(key)}>
+            <Icon icon={closeFill} width={24} height={24} />
+          </IconButton>
+        )}
       >
         {children}
       </SnackbarProvider>

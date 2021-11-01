@@ -1,10 +1,10 @@
 import { filter } from 'lodash'
 import { Icon } from '@iconify/react'
-// import { sentenceCase } from 'change-case';
+import personRemoveFill from '@iconify/icons-eva/person-remove-fill'
+import { useSnackbar } from 'notistack'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import plusFill from '@iconify/icons-eva/plus-fill'
-import { Link as RouterLink } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 // material
 import {
   Card,
@@ -22,17 +22,16 @@ import {
   TablePagination,
 } from '@mui/material'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths'
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import Page from '../../components/Page'
-import Label from '../../components/Label'
-import Scrollbar from '../../components/Scrollbar'
-import SearchNotFound from '../../components/SearchNotFound'
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user/user-list'
+import Page from '../../../components/Page'
+import Scrollbar from '../../../components/Scrollbar'
+import SearchNotFound from '../../../components/SearchNotFound'
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import { UserListHead, UserListToolbar } from '../../../components/_dashboard/user/user-list'
 //
-import { getUsers } from '../../redux/actions'
-import { usersState$, userLoginState$ } from '../../redux/selectors'
+import { getStudentsInCourse, deleteStudentInCourse } from '../../../redux/actions'
+import { studentsInCourseState$ } from '../../../redux/selectors'
 
 // ----------------------------------------------------------------------
 
@@ -40,8 +39,6 @@ const TABLE_HEAD = [
   { id: 'username', label: 'Tên tài khoản', alignRight: false },
   { id: 'name', label: 'Họ tên', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
-  { id: 'phone', label: 'Số điện thoại', alignRight: false },
-  { id: 'is_banned', label: 'Trạng thái', alignRight: false },
   { id: '' },
 ]
 
@@ -71,12 +68,15 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1]
   })
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
+    return filter(array, (_user) => _user.user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
   }
   return stabilizedThis.map((el) => el[0])
 }
 
 export default function UserList() {
+  const { id } = useParams()
+  const { enqueueSnackbar } = useSnackbar()
+
   const [page, setPage] = useState(0)
   const [order, setOrder] = useState('asc')
   const [selected, setSelected] = useState([])
@@ -85,12 +85,11 @@ export default function UserList() {
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
   const dispatch = useDispatch()
-  const { data: userList } = useSelector(usersState$)
-  const { data: userLogin } = useSelector(userLoginState$)
+  const { data: studentsInCourse, error, success } = useSelector(studentsInCourseState$)
 
   useEffect(() => {
-    dispatch(getUsers.getUsersRequest(userLogin))
-  }, [dispatch, userLogin])
+    dispatch(getStudentsInCourse.getStudentsInCourseRequest({ id }))
+  }, [dispatch, id])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -100,7 +99,7 @@ export default function UserList() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = userList.map((n) => n.username)
+      const newSelecteds = studentsInCourse.map((n) => n.username)
       setSelected(newSelecteds)
       return
     }
@@ -135,35 +134,42 @@ export default function UserList() {
     setFilterName(event.target.value)
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0
+  const handleDeleteStudent = (studentId, courseId) => {
+    const data = {
+      studentId,
+      courseId,
+    }
+    dispatch(deleteStudentInCourse.deleteStudentInCourseRequest({ data }))
+  }
 
-  const filteredUsers = applySortFilter(userList, getComparator(order, orderBy), filterName)
+  useEffect(() => {
+    if (success === 'delete') {
+      enqueueSnackbar('Đã xóa học viên này khỏi khóa học', { variant: 'success' })
+    }
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' })
+    }
+  }, [enqueueSnackbar, success, error])
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - studentsInCourse.length) : 0
+
+  const filteredUsers = applySortFilter(studentsInCourse, getComparator(order, orderBy), filterName)
 
   const isUserNotFound = filteredUsers.length === 0
 
   return (
-    <Page title="Danh sách người dùng">
+    <Page title="Danh sách học viên">
       <Container>
         <HeaderBreadcrumbs
-          heading="Danh sách người dùng"
+          heading="Danh sách học viên"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: 'Người dùng',
-              href: PATH_DASHBOARD.users.root,
+              name: 'Khóa học',
+              href: PATH_DASHBOARD.courses.root,
             },
-            { name: 'Danh sách người dùng' },
+            { name: 'Danh sách học viên' },
           ]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_DASHBOARD.users.newUser}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              Thêm mới
-            </Button>
-          }
         />
 
         <Card>
@@ -176,14 +182,18 @@ export default function UserList() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={userList.length}
+                  rowCount={studentsInCourse.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { username, name, is_banned, email, phone, avatar_url } = row
+                    const {
+                      username,
+                      student_id,
+                      user: { name, avatar_url, email },
+                    } = row
                     const isItemSelected = selected.indexOf(username) !== -1
 
                     return (
@@ -208,15 +218,15 @@ export default function UserList() {
                         </TableCell>
                         <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{email}</TableCell>
-                        <TableCell align="left">{phone}</TableCell>
-                        <TableCell align="left">
-                          <Label variant="ghost" color={(is_banned && 'error') || 'success'}>
-                            {is_banned ? 'Banned' : 'Active'}
-                          </Label>
-                        </TableCell>
-
                         <TableCell align="right">
-                          <UserMoreMenu />
+                          <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => handleDeleteStudent(student_id, id)}
+                            endIcon={<Icon icon={personRemoveFill} />}
+                          >
+                            Xóa khỏi khóa học
+                          </Button>
                         </TableCell>
                       </TableRow>
                     )
@@ -243,7 +253,7 @@ export default function UserList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={userList.length}
+            count={studentsInCourse.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

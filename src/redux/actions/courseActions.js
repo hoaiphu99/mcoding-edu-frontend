@@ -77,3 +77,21 @@ export const deleteLesson = createActions({
   deleteLessonSuccess: (payload) => payload,
   deleteLessonFailure: (err) => err,
 })
+
+export const getMyCourses = createActions({
+  getMyCoursesRequest: () => undefined,
+  getMyCoursesSuccess: (payload) => payload,
+  getMyCoursesFailure: (err) => err,
+})
+
+export const getStudentsInCourse = createActions({
+  getStudentsInCourseRequest: (payload) => payload,
+  getStudentsInCourseSuccess: (payload) => payload,
+  getStudentsInCourseFailure: (err) => err,
+})
+
+export const deleteStudentInCourse = createActions({
+  deleteStudentInCourseRequest: (payload) => payload,
+  deleteStudentInCourseSuccess: (payload) => payload,
+  deleteStudentInCourseFailure: (err) => err,
+})

@@ -14,6 +14,7 @@ import MenuDesktop from './MenuDesktop'
 import MenuMobile from './MenuMobile'
 import navConfig from './MenuConfig'
 import MenuAccount from './MenuAccount'
+import Searchbar from './Searchbar'
 
 // ----------------------------------------------------------------------
 import { userLoginState$ } from '../../redux/selectors'
@@ -83,6 +84,7 @@ export default function MainNavbar() {
           <MHidden width="mdDown">
             <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
           </MHidden>
+          <Searchbar />
           {!data ? (
             <RouterLink to="/login">
               <Button variant="contained">Đăng nhập</Button>

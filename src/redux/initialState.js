@@ -13,6 +13,12 @@ export const INIT_STATE = {
     data: userInfoFromStorage,
     error: null,
   },
+  userProfile: {
+    success: false,
+    loading: false,
+    data: null,
+    error: null,
+  },
   courses: {
     success: false,
     loading: false,
@@ -37,4 +43,35 @@ export const INIT_STATE = {
     data: null,
     error: null,
   },
+  comments: {
+    success: null,
+    loading: false,
+    data: [],
+    error: null,
+  },
+  reviews: {
+    success: null,
+    loading: false,
+    data: null,
+    error: null,
+  },
+  coursesMy: {
+    success: null,
+    loading: false,
+    data: [],
+    error: null,
+  },
+  studentsInCourse: {
+    success: null,
+    loading: false,
+    data: [],
+    error: null,
+  },
+}
+
+export const SUCCESS_ACTION_TYPE = {
+  LOAD: 'load',
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
 }

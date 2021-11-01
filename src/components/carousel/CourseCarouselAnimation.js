@@ -86,8 +86,8 @@ function CarouselItem({ item, isActive }) {
             </Typography>
           </motion.div>
           <motion.div variants={varFadeInRight}>
-            <Link to={`/${slug}`} component={RouterLink}>
-              <Button variant="contained"> Đăng ký học miễn phí </Button>
+            <Link to={`/khoa-hoc/${slug}`} component={RouterLink}>
+              <Button variant="contained"> Xem thêm </Button>
             </Link>
           </motion.div>
         </MotionContainer>

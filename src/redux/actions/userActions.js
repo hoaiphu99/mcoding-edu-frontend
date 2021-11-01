@@ -18,3 +18,9 @@ export const getUsers = createActions({
   getUsersSuccess: (payload) => payload,
   getUsersFailure: (err) => err,
 })
+
+export const getUserProfile = createActions({
+  getUserProfileRequest: (payload) => payload,
+  getUserProfileSuccess: (payload) => payload,
+  getUserProfileFailure: (err) => err,
+})

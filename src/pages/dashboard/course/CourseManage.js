@@ -6,15 +6,15 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Button } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseLesson } from '../../redux/actions'
-import { courseLessonState$, userLoginState$ } from '../../redux/selectors'
+import { getCourseLesson } from '../../../redux/actions'
+import { courseLessonState$, userLoginState$ } from '../../../redux/selectors'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths'
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import Page from '../../components/Page'
+import Page from '../../../components/Page'
 // import Markdown from '../components/Markdown'
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
-import { ManageCourseLesson, CourseNewSectionForm } from '../../components/_dashboard/course/course-manage'
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import { ManageCourseLesson, CourseNewSectionForm } from '../../../components/_dashboard/course/course-manage'
 
 // ----------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ export default function CourseLearning() {
       navigate('/login')
     }
     if (!course || course.slug !== slug) {
-      dispatch(getCourseLesson.getCourseLessonRequest({ data: slug, userLogin }))
+      dispatch(getCourseLesson.getCourseLessonRequest({ slug }))
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })

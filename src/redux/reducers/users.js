@@ -1,5 +1,5 @@
 import { INIT_STATE } from '../initialState'
-import { getType, getUsers, authUser, registerUser } from '../actions'
+import { getType, getUsers, authUser, registerUser, getUserProfile } from '../actions'
 
 export function userReducers(state = INIT_STATE.users, action) {
   switch (action.type) {
@@ -73,6 +73,31 @@ export function userLoginReducers(state = INIT_STATE.userLogin, action) {
       return {
         ...state,
         success: action.payload.success,
+        loading: false,
+        error: action.payload.error.message,
+      }
+    default:
+      return state
+  }
+}
+
+export const userProfileReducers = (state = INIT_STATE.userProfile, action) => {
+  switch (action.type) {
+    case getType(getUserProfile.getUserProfileRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(getUserProfile.getUserProfileSuccess()):
+      return {
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(getUserProfile.getUserProfileFailure()):
+      return {
+        ...state,
         loading: false,
         error: action.payload.error.message,
       }

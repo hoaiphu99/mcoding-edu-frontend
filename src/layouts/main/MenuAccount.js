@@ -9,7 +9,8 @@ import settings2Fill from '@iconify/icons-eva/settings-2-fill'
 // Material UI
 import { alpha } from '@mui/material/styles'
 import { Box, MenuItem, Divider, Avatar, Typography, Button } from '@mui/material'
-
+// hooks
+import useAuth from '../../hooks/useAuth'
 // Components
 import MenuPopover from '../../components/MenuPopover'
 import { MIconButton } from '../../components/@material-extend'
@@ -30,6 +31,7 @@ MenuAccount.propTypes = {
 export default function MenuAccount({ userLogin }) {
   const anchorRef = useRef(null)
   const [open, setOpen] = useState(false)
+  const { logout } = useAuth()
 
   const { enqueueSnackbar } = useSnackbar()
   const dispatch = useDispatch()
@@ -43,6 +45,7 @@ export default function MenuAccount({ userLogin }) {
   }
 
   const handleLogout = () => {
+    logout()
     dispatch(authUser.authUserLogout())
     enqueueSnackbar('Đăng xuất thành công', {
       variant: 'success',

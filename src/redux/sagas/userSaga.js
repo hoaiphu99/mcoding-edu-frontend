@@ -1,10 +1,11 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { getUsers, registerUser, authUser } from '../actions'
-import { fetchUsers, login, register } from '../../api'
+import { getUsers, registerUser, authUser, getUserProfile } from '../actions'
+import { fetchUsers, login, register, fetchUserProfile } from '../../api'
 
 function* authUserSaga(action) {
   try {
     const user = yield call(login, action.payload)
+    console.log('🚀 ~ file: userSaga.js ~ line 8 ~ function*authUserSaga ~ user', user)
     yield put(authUser.authUserSuccess(user.data))
   } catch (error) {
     yield put(authUser.authUserFailure(error.response.data))
@@ -20,18 +21,21 @@ function* registerUserSaga(action) {
   }
 }
 
-function* getUsersSaga(action) {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${action.payload.token}`,
-    },
-  }
+function* getUsersSaga() {
   try {
-    const users = yield call(fetchUsers, config)
+    const users = yield call(fetchUsers)
     yield put(getUsers.getUsersSuccess(users.data))
   } catch (error) {
     yield put(getUsers.getUsersFailure(error.response.data))
+  }
+}
+
+function* getUserProfileSaga() {
+  try {
+    const user = yield call(fetchUserProfile)
+    yield put(getUserProfile.getUserProfileSuccess(user.data))
+  } catch (error) {
+    yield put(getUserProfile.getUserProfileFailure(error.response.data))
   }
 }
 
@@ -39,6 +43,7 @@ function* userSaga() {
   yield takeLatest(getUsers.getUsersRequest, getUsersSaga)
   yield takeLatest(authUser.authUserRequest, authUserSaga)
   yield takeLatest(registerUser.registerUserRequest, registerUserSaga)
+  yield takeLatest(getUserProfile.getUserProfileRequest, getUserProfileSaga)
 }
 
 export default userSaga

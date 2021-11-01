@@ -10,11 +10,14 @@ import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
+// hooks
+import useAuth from '../../../hooks/useAuth'
 // ----------------------------------------------------------------------
 import { authUser } from '../../../redux/actions/userActions'
 import { userLoginState$ } from '../../../redux/selectors/index'
 
 export default function LoginForm() {
+  const { login } = useAuth()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
@@ -48,7 +51,8 @@ export default function LoginForm() {
       remember: true,
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
+    onSubmit: async () => {
+      await login(values.username, values.password)
       dispatch(authUser.authUserRequest(values))
     },
   })

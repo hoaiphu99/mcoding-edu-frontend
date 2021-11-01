@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import trash2Outline from '@iconify/icons-eva/trash-2-outline'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
 import bookOpenFill from '@iconify/icons-eva/book-open-fill'
+import usersIcon from '@iconify/icons-fa-solid/users'
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material'
 // routes
@@ -16,9 +17,10 @@ import { PATH_DASHBOARD } from '../../../../routes/paths'
 CourseMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   courseSlug: PropTypes.string,
+  courseId: PropTypes.number,
 }
 
-export default function CourseMoreMenu({ onDelete, courseSlug }) {
+export default function CourseMoreMenu({ onDelete, courseSlug, courseId }) {
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -47,6 +49,17 @@ export default function CourseMoreMenu({ onDelete, courseSlug }) {
             <Icon icon={bookOpenFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary="Quản lý khóa học" primaryTypographyProps={{ variant: 'body2' }} />
+        </MenuItem>
+
+        <MenuItem
+          component={RouterLink}
+          to={`${PATH_DASHBOARD.courses.root}/${courseId}/students`}
+          sx={{ color: 'text.secondary' }}
+        >
+          <ListItemIcon>
+            <Icon icon={usersIcon} width={24} height={24} />
+          </ListItemIcon>
+          <ListItemText primary="Danh sách học viên" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
         <MenuItem

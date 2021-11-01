@@ -1,8 +1,20 @@
+import { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Link as RouterLink } from 'react-router-dom'
+import { useNavigate, Link as RouterLink } from 'react-router-dom'
 // material
 import { alpha, styled } from '@mui/material/styles'
-import { Box, Avatar, Typography, Button, Link } from '@mui/material'
+import {
+  Box,
+  Avatar,
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Link,
+} from '@mui/material'
 // utils
 import { fDate } from '../../../utils/formatTime'
 
@@ -75,10 +87,21 @@ const CoverImgStyle = styled('img')({
 CourseHero.propTypes = {
   course: PropTypes.object.isRequired,
   studentCourse: PropTypes.object,
+  onHandleClick: PropTypes.func,
 }
 
-export default function CourseHero({ course, studentCourse, ...other }) {
+export default function CourseHero({ course, studentCourse, onHandleClick, ...other }) {
   const { course_id, image_url, name, professor, created_at, slug } = course
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleClick = () => {
+    setOpen(true)
+  }
 
   return (
     <RootStyle {...other}>
@@ -104,11 +127,36 @@ export default function CourseHero({ course, studentCourse, ...other }) {
             </Typography>
           </Box>
         </Box>
-        <Link to={`/${slug}`} component={RouterLink}>
-          <Button variant="contained">
-            {`${studentCourse && course_id === studentCourse.course_id ? 'Học ngay' : 'Đăng ký học miễn phí'}`}
+
+        {studentCourse && course_id === studentCourse.course_id ? (
+          <Link to={`/${slug}`} component={RouterLink}>
+            <Button variant="contained">Học ngay</Button>
+          </Link>
+        ) : (
+          <Button variant="contained" onClick={handleClick}>
+            Đăng ký học miễn phí
           </Button>
-        </Link>
+        )}
+
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Xác nhận</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Bạn có chắc chắn đăng ký học khóa học này?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Hủy</Button>
+            <Button
+              onClick={() => {
+                onHandleClick()
+                handleClose()
+                navigate(`/${slug}`, { replace: true })
+              }}
+              autoFocus
+            >
+              Đăng ký
+            </Button>
+          </DialogActions>
+        </Dialog>
       </FooterStyle>
     </RootStyle>
   )

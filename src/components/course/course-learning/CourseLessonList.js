@@ -20,6 +20,7 @@ import {
   AccordionDetails,
 } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
+
 // components
 import Page from '../../Page'
 import CourseVideoEmbed from './CourseVideoEmbed'
@@ -34,12 +35,14 @@ const RootStyle = styled(Page)(({ theme }) => ({
 // ----------------------------------------------------------------------
 CourseLessonList.propTypes = {
   course: PropTypes.object.isRequired,
+  onChangeLesson: PropTypes.func.isRequired,
 }
 
-export default function CourseLessonList({ course }) {
+export default function CourseLessonList({ course, onChangeLesson }) {
   const { sections } = course
   const [value, setValue] = useState('1')
   const [videoUrl, setVideoUrl] = useState('')
+
   const [lessonTitle, setLessonTitle] = useState('')
   const [lessonNumber, setLessonNumber] = useState(1)
 
@@ -93,7 +96,13 @@ export default function CourseLessonList({ course }) {
                           <List>
                             {section.lessons.map((lesson) => (
                               <ListItem key={lesson.lesson_id} disablePadding>
-                                <ListItemButton sx={{ pl: 4 }} onClick={() => handleChangeLesson(lesson)}>
+                                <ListItemButton
+                                  sx={{ pl: 4 }}
+                                  onClick={() => {
+                                    handleChangeLesson(lesson)
+                                    onChangeLesson(lesson.lesson_id)
+                                  }}
+                                >
                                   <ListItemText primary={`Bài ${lesson.lesson_number}: ${lesson.name}`} />
                                 </ListItemButton>
                               </ListItem>

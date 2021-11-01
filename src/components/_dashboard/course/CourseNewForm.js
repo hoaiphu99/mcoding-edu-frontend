@@ -24,7 +24,7 @@ import {
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { createCourse, updateCourse } from '../../../redux/actions'
-import { coursesState$, userLoginState$ } from '../../../redux/selectors'
+import { coursesState$ } from '../../../redux/selectors'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 //
@@ -65,8 +65,6 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
   const { error } = useSelector(coursesState$)
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data: userLogin } = useSelector(userLoginState$)
-
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required('Tên khóa học không được trống'),
     description: Yup.string().required('Hãy viết mô tả'),
@@ -103,11 +101,11 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
           const urlImg = await handleUpload(values.image_url)
           data.image_url = urlImg
 
-          dispatch(createCourse.createCourseRequest({ data, userLogin }))
+          dispatch(createCourse.createCourseRequest({ data }))
         } else {
           data.id = currentCourse.course_id
 
-          dispatch(updateCourse.updateCourseRequest({ data, userLogin }))
+          dispatch(updateCourse.updateCourseRequest({ data }))
         }
 
         resetForm()

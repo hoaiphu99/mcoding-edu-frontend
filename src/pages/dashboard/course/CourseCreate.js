@@ -4,15 +4,15 @@ import { useParams, useLocation } from 'react-router-dom'
 import { Container } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCourses } from '../../redux/actions'
-import { coursesState$ } from '../../redux/selectors'
+import { getAllCourses } from '../../../redux/actions'
+import { coursesState$ } from '../../../redux/selectors'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths'
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // hooks
 // components
-import Page from '../../components/Page'
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
-import ProductNewForm from '../../components/_dashboard/course/CourseNewForm'
+import Page from '../../../components/Page'
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import ProductNewForm from '../../../components/_dashboard/course/CourseNewForm'
 
 // ----------------------------------------------------------------------
 

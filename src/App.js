@@ -3,18 +3,22 @@ import Router from './routes'
 // theme
 import ThemeConfig from './theme'
 import GlobalStyles from './theme/globalStyles'
+// hooks
+import useAuth from './hooks/useAuth'
 // components
 import NotistackProvider from './components/NotistackProvider'
 // import Settings from './components/settings';
 import RtlLayout from './components/RtlLayout'
 import ScrollToTop from './components/ScrollToTop'
-import { ProgressBarStyle } from './components/LoadingScreen'
+import LoadingScreen, { ProgressBarStyle } from './components/LoadingScreen'
 import ThemePrimaryColor from './components/ThemePrimaryColor'
 // verify
 import AuthVerify from './common/authVerify'
 // ----------------------------------------------------------------------
 
 export default function App() {
+  const { isInitialized } = useAuth()
+  console.log('🚀 ~ file: App.js ~ line 21 ~ App ~ isInitialized', isInitialized)
   return (
     <ThemeConfig>
       <ThemePrimaryColor>
@@ -24,7 +28,7 @@ export default function App() {
             <ProgressBarStyle />
             {/* <Settings /> */}
             <ScrollToTop />
-            <Router />
+            {isInitialized ? <Router /> : <LoadingScreen />}
             <AuthVerify />
           </NotistackProvider>
         </RtlLayout>

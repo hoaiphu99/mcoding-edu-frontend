@@ -12,15 +12,20 @@ import { Box, Tab, Card, Grid, Divider, Skeleton, Container, Typography } from '
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetails, getStudentCourseByCourseID } from '../redux/actions'
-import { courseDetailsState$, studentCourseState$, userLoginState$ } from '../redux/selectors'
+import {
+  getCourseDetails,
+  getStudentCourseByCourseID,
+  registerStudentCourse,
+  getReviewsByCourseID,
+} from '../redux/actions'
+import { courseDetailsState$, studentCourseState$, userLoginState$, reviewsState$ } from '../redux/selectors'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
 import Page from '../components/Page'
 import Markdown from '../components/Markdown'
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs'
-import { CourseHero, CourseProfessorDetails, CourseLessonList } from '../components/course/course-details'
+import { CourseHero, CourseProfessorDetails, CourseLessonList, CourseReview } from '../components/course/course-details'
 
 // ----------------------------------------------------------------------
 
@@ -28,9 +33,6 @@ const SkeletonLoad = (
   <Grid container spacing={3}>
     <Grid item xs={12} md={12} lg={12}>
       <Skeleton variant="rectangular" width="100%" sx={{ paddingTop: '100%', borderRadius: 2 }} />
-      <Skeleton variant="text" height={240} width="100%" sx={{ paddingTop: '100%', borderRadius: 2 }} />
-      <Skeleton variant="text" height={240} width="100%" sx={{ paddingTop: '100%', borderRadius: 2 }} />
-      <Skeleton variant="text" height={240} width="100%" sx={{ paddingTop: '100%', borderRadius: 2 }} />
       <Skeleton variant="text" height={240} width="100%" sx={{ paddingTop: '100%', borderRadius: 2 }} />
     </Grid>
   </Grid>
@@ -44,8 +46,9 @@ export default function CourseDetails() {
 
   const { data: userLogin } = useSelector(userLoginState$)
 
-  const { data: course, error } = useSelector(courseDetailsState$)
+  const { data: course, error, loading } = useSelector(courseDetailsState$)
   const { data: studentCourse } = useSelector(studentCourseState$)
+  const { data: review } = useSelector(reviewsState$)
 
   useEffect(() => {
     if (!course || course.slug !== slug) {
@@ -53,6 +56,9 @@ export default function CourseDetails() {
     }
     if (userLogin && course) {
       dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: course.course_id, userLogin }))
+    }
+    if (course) {
+      dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: course.course_id }))
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
@@ -62,60 +68,84 @@ export default function CourseDetails() {
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)
   }
+
+  const onHandleClick = () => {
+    const data = {
+      studentId: userLogin.student.student_id,
+      courseId: course.course_id,
+    }
+    dispatch(registerStudentCourse.registerStudentCourseRequest({ data, userLogin }))
+  }
+
   return (
     <Page title={`${course && course.name}`}>
       <Container>
-        <HeaderBreadcrumbs
-          sx={{ mb: 5, mt: 15 }}
-          heading={`${course && course.name}`}
-          links={[
-            { name: 'Trang chủ', href: '/' },
-            { name: 'Khóa học', href: PATH_PAGE.courses },
-            { name: `${course && course.name}` },
-          ]}
-        />
-
-        {course && (
+        {loading ? (
+          SkeletonLoad
+        ) : (
           <>
-            <Card sx={{ mb: 2 }}>
-              <CourseHero course={course} studentCourse={studentCourse} />
-            </Card>
+            <HeaderBreadcrumbs
+              sx={{ mb: 5, mt: 15 }}
+              heading={`${course && course.name}`}
+              links={[
+                { name: 'Trang chủ', href: '/' },
+                { name: 'Khóa học', href: PATH_PAGE.courses },
+                { name: `${course && course.name}` },
+              ]}
+            />
 
-            <Card sx={{ mb: 2, mt: 2 }}>
-              <TabContext value={value}>
-                <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
-                  <TabList onChange={handleChangeTab}>
-                    <Tab disableRipple value="1" label="Thông tin khóa học" />
-                    <Tab
-                      disableRipple
-                      value="2"
-                      label="Danh sách bài học"
-                      sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
-                    />
-                  </TabList>
-                </Box>
+            {course && (
+              <>
+                <Card sx={{ mb: 2 }}>
+                  <CourseHero course={course} studentCourse={studentCourse} onHandleClick={onHandleClick} />
+                </Card>
 
-                <Divider />
+                <Card sx={{ mb: 2, mt: 2 }}>
+                  <TabContext value={value}>
+                    <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
+                      <TabList onChange={handleChangeTab}>
+                        <Tab disableRipple value="1" label="Thông tin khóa học" />
+                        <Tab
+                          disableRipple
+                          value="2"
+                          label="Danh sách bài học"
+                          sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
+                        />
+                        <Tab
+                          disableFocusRipple
+                          value="3"
+                          label={`Đánh giá (${review?.count})`}
+                          sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
+                        />
+                      </TabList>
+                    </Box>
 
-                <TabPanel value="1">
-                  <Box sx={{ p: 3 }}>
-                    <Markdown children={course.description} />
-                  </Box>
-                </TabPanel>
-                <TabPanel value="2">
-                  <Box>
-                    <CourseLessonList course={course} />
-                  </Box>
-                </TabPanel>
-              </TabContext>
-            </Card>
-            <CourseProfessorDetails course={course} />
+                    <Divider />
+
+                    <TabPanel value="1">
+                      <Box sx={{ p: 3 }}>
+                        <Markdown children={course.description} />
+                      </Box>
+                    </TabPanel>
+                    <TabPanel value="2">
+                      <Box>
+                        <CourseLessonList course={course} />
+                      </Box>
+                    </TabPanel>
+                    <TabPanel value="3">
+                      <Box>{review && <CourseReview review={review} courseId={course.course_id} />}</Box>
+                    </TabPanel>
+                  </TabContext>
+                </Card>
+                <CourseProfessorDetails course={course} />
+              </>
+            )}
+
+            {!course && SkeletonLoad}
+
+            {error && <Typography variant="h6">404 Không tìm thấy khóa học</Typography>}
           </>
         )}
-
-        {!course && SkeletonLoad}
-
-        {error && <Typography variant="h6">404 Không tìm thấy khóa học</Typography>}
       </Container>
     </Page>
   )
