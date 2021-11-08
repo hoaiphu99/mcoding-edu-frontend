@@ -23,7 +23,7 @@ export const reviewsReducers = (state = INIT_STATE.reviews, action) => {
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(createNewReview.createNewReviewRequest()):
       return {
@@ -49,7 +49,7 @@ export const reviewsReducers = (state = INIT_STATE.reviews, action) => {
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case 'RESET_STATE':
       return {

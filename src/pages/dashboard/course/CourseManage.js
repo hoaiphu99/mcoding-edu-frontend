@@ -30,7 +30,7 @@ export default function CourseLearning() {
   const { data: course, error } = useSelector(courseLessonState$)
 
   const handleClickOpen = () => {
-    setOpen(true)
+    setOpen((prev) => !prev)
   }
 
   const handleClose = () => {
@@ -68,8 +68,9 @@ export default function CourseLearning() {
 
         {course && (
           <>
-            <ManageCourseLesson />
             <CourseNewSectionForm open={open} onClose={handleClose} />
+
+            <ManageCourseLesson />
           </>
         )}
       </Container>

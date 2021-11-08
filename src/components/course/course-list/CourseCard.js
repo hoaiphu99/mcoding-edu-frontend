@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import slugify from 'slugify'
 import { Link as RouterLink } from 'react-router-dom'
 // material
 import { Box, Card, Link, Typography, Stack } from '@mui/material'
@@ -46,7 +47,7 @@ export default function ShopCourseCard({ course }) {
             {status_code}
           </Label>
         )}
-        <Link to={`/khoa-hoc/${slug}`} color="inherit" component={RouterLink}>
+        <Link to={`/khoa-hoc/${slugify(name, { lower: true, locale: 'vi' })}`} color="inherit" component={RouterLink}>
           <CourseImgStyle alt={name} src={image_url} />
         </Link>
       </Box>

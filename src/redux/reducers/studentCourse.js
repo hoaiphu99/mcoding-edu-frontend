@@ -23,7 +23,7 @@ export const studentCourseReducer = (state = INIT_STATE.studentCourse, action) =
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(registerStudentCourse.registerStudentCourseRequest()):
       return {
@@ -45,7 +45,7 @@ export const studentCourseReducer = (state = INIT_STATE.studentCourse, action) =
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state

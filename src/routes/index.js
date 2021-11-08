@@ -105,6 +105,10 @@ export default function Router() {
       element: <Login />,
     },
     {
+      path: 'login/professor',
+      element: <LoginProfessor />,
+    },
+    {
       path: 'register',
       element: <Register />,
     },
@@ -122,8 +126,9 @@ const UserList = Loadable(lazy(() => import('../pages/dashboard/UserList')))
 const PageFive = Loadable(lazy(() => import('../pages/PageFive')))
 const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
-const Login = Loadable(lazy(() => import('../pages/Login')))
-const Register = Loadable(lazy(() => import('../pages/Register')))
+const Login = Loadable(lazy(() => import('../pages/authentication/Login')))
+const LoginProfessor = Loadable(lazy(() => import('../pages/authentication/LoginProfessor')))
+const Register = Loadable(lazy(() => import('../pages/authentication/Register')))
 const CourseList = Loadable(lazy(() => import('../pages/dashboard/course/CourseList')))
 const NewCourse = Loadable(lazy(() => import('../pages/dashboard/course/CourseCreate')))
 const CourseManage = Loadable(lazy(() => import('../pages/dashboard/course/CourseManage')))

@@ -12,7 +12,14 @@ import { createSection, updateSection } from '../../../../redux/actions'
 import { userLoginState$, courseLessonState$ } from '../../../../redux/selectors'
 // ----------------------------------------------------------------------
 
-const DialogConfirm = ({ isEdit, onClose, open, section_id }) => {
+CourseNewSectionForm.propTypes = {
+  isEdit: PropTypes.bool,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  section_id: PropTypes.number,
+}
+
+export default function CourseNewSectionForm({ isEdit, open, onClose, section_id }) {
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
 
@@ -63,16 +70,17 @@ const DialogConfirm = ({ isEdit, onClose, open, section_id }) => {
   })
 
   const handleCancel = () => {
+    resetForm()
     onClose()
   }
 
-  const { errors, touched, isSubmitting, handleSubmit, getFieldProps } = formik
+  const { errors, touched, isSubmitting, handleSubmit, getFieldProps, resetForm } = formik
 
   return (
     <Dialog open={open} sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 435 } }}>
       <DialogTitle sx={{ mb: 2 }}>{!isEdit ? 'Thêm chương mới' : 'Chỉnh sửa'}</DialogTitle>
       <DialogContent>
-        <DialogContentText>Tạo chương mới cho khóa học</DialogContentText>
+        <DialogContentText sx={{ mb: 1.5 }}>Tạo chương mới cho khóa học</DialogContentText>
         <FormikProvider value={formik}>
           <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
             <Stack spacing={3}>
@@ -91,38 +99,18 @@ const DialogConfirm = ({ isEdit, onClose, open, section_id }) => {
                 error={Boolean(touched.name && errors.name)}
                 helperText={touched.name && errors.name}
               />
-              <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={isSubmitting}>
-                {!isEdit ? 'Thêm chương mới' : 'Cập nhật'}
-              </LoadingButton>
-              <Button onClick={handleCancel} color="inherit">
-                Hủy
-              </Button>
+              <Stack direction="row" justifyContent="flex-end">
+                <Button onClick={handleCancel} color="inherit" variant="outlined" sx={{ mr: 1.5 }}>
+                  Hủy
+                </Button>
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!isEdit ? 'Thêm chương mới' : 'Cập nhật'}
+                </LoadingButton>
+              </Stack>
             </Stack>
           </Form>
         </FormikProvider>
       </DialogContent>
     </Dialog>
-  )
-}
-
-DialogConfirm.propTypes = {
-  isEdit: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  section_id: PropTypes.number,
-}
-
-CourseNewSectionForm.propTypes = {
-  isEdit: PropTypes.bool,
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  section_id: PropTypes.number,
-}
-
-export default function CourseNewSectionForm({ isEdit, open, onClose, section_id }) {
-  return (
-    <div>
-      <DialogConfirm isEdit={isEdit} open={open} onClose={onClose} section_id={section_id} />
-    </div>
   )
 }

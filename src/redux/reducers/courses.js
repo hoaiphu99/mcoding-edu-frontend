@@ -39,7 +39,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(createCourse.createCourseRequest()):
       return {
@@ -58,7 +58,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(updateCourse.updateCourseRequest()):
       return {
@@ -84,7 +84,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(deleteCourse.deleteCourseRequest()):
       return {
@@ -106,7 +106,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(updateCourseStatus.updateCourseStatusRequest()):
       return {
@@ -135,7 +135,7 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state
@@ -162,7 +162,7 @@ export const courseDetailsReducers = (state = INIT_STATE.courseDetails, action) 
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state
@@ -190,7 +190,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Create Section
     case getType(createSection.createSectionRequest()):
@@ -214,7 +214,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Update Section
     case getType(updateSection.updateSectionRequest()):
@@ -242,7 +242,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Delete Section
     case getType(deleteSection.deleteSectionRequest()):
@@ -266,7 +266,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Create Lesson
     case getType(createLesson.createLessonRequest()):
@@ -296,7 +296,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Update Lesson
     case getType(updateLesson.updateLessonRequest()):
@@ -327,7 +327,7 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Delete Lesson
     case getType(deleteLesson.deleteLessonRequest()):
@@ -378,7 +378,7 @@ export const myCoursesReducers = (state = INIT_STATE.coursesMy, action) => {
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case 'RESET_STATE':
       return {
@@ -413,7 +413,7 @@ export const studentsInCourseReducers = (state = INIT_STATE.studentsInCourse, ac
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // Delete Student In Course
     case getType(deleteStudentInCourse.deleteStudentInCourseRequest()):
@@ -436,7 +436,7 @@ export const studentsInCourseReducers = (state = INIT_STATE.studentsInCourse, ac
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case 'RESET_STATE':
       return {

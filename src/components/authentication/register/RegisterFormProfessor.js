@@ -7,7 +7,7 @@ import eyeFill from '@iconify/icons-eva/eye-fill'
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
 import { useNavigate } from 'react-router-dom'
 // material
-import { Stack, TextField, IconButton, InputAdornment, Select, InputLabel, FormControl } from '@mui/material'
+import { Stack, TextField, IconButton, InputAdornment } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,13 +16,7 @@ import { userLoginState$ } from '../../../redux/selectors'
 
 // ----------------------------------------------------------------------
 
-const EDUCATION_OPTION = [
-  { id: 1, name: 'Học sinh' },
-  { id: 2, name: 'Sinh viên' },
-  { id: 3, name: 'Đi làm' },
-]
-
-export default function RegisterForm() {
+export default function RegisterFormProfessor() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
@@ -36,7 +30,8 @@ export default function RegisterForm() {
     name: Yup.string().min(2, 'Quá ngắn!').max(50, 'Quá dài!').required('Họ tên bắt buộc'),
     username: Yup.string().min(2, 'Quá ngắn!').max(50, 'Quá dài!').required('Tên tài khoản'),
     email: Yup.string().email('Email không hợp lệ'),
-    education: Yup.string().required('Trình độ học vấn bắt buộc'),
+    job: Yup.string().min(2, 'Quá ngắn!').max(50, 'Quá dài!'),
+    skill: Yup.string().min(2, 'Quá ngắn!').max(50, 'Quá dài!'),
     password: Yup.string().min(6, 'Mật khẩu từ 6 ký tự trở lên').required('Mật khẩu bắt buộc'),
     passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
   })
@@ -56,8 +51,11 @@ export default function RegisterForm() {
       name: '',
       username: '',
       email: '',
+      job: '',
+      skill: '',
       password: '',
       passwordConfirmation: '',
+      role: 'professor',
     },
     validationSchema: RegisterSchema,
     onSubmit: (values) => {
@@ -65,7 +63,7 @@ export default function RegisterForm() {
     },
   })
 
-  const { values, errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik
+  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik
 
   return (
     <FormikProvider value={formik}>
@@ -101,16 +99,31 @@ export default function RegisterForm() {
             helperText={touched.email && errors.email}
           />
 
-          <FormControl fullWidth>
-            <InputLabel>Học vấn</InputLabel>
-            <Select label="Học vấn" native {...getFieldProps('education')} value={values.education}>
-              {EDUCATION_OPTION.map((education) => (
-                <option key={education.id} value={education.id}>
-                  {education.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+          <TextField
+            fullWidth
+            type="text"
+            label="Nghề nghiệp"
+            multiline
+            minRows={3}
+            maxRows={5}
+            placeholder="Cách nhau bởi dấu phẩy ,"
+            {...getFieldProps('job')}
+            error={Boolean(touched.job && errors.job)}
+            helperText={touched.job && errors.job}
+          />
+
+          <TextField
+            fullWidth
+            type="text"
+            label="Kỹ năng"
+            multiline
+            minRows={3}
+            maxRows={5}
+            placeholder="Cách nhau bởi dấu phẩy ,"
+            {...getFieldProps('skill')}
+            error={Boolean(touched.skill && errors.skill)}
+            helperText={touched.skill && errors.skill}
+          />
 
           <TextField
             fullWidth

@@ -13,7 +13,11 @@ function* getReviewsByCourseIDSaga(action) {
 
     yield put(getReviewsByCourseID.getReviewsByCourseIDSuccess(review.data))
   } catch (error) {
-    yield put(getReviewsByCourseID.getReviewsByCourseIDFailure(error.response.data))
+    yield put(
+      getReviewsByCourseID.getReviewsByCourseIDFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -23,7 +27,9 @@ function* createNewReviewSaga(action) {
     const review = yield call(addNewReview, action.payload.data)
     yield put(createNewReview.createNewReviewSuccess(review.data))
   } catch (error) {
-    yield put(createNewReview.createNewReviewFailure(error.response.data))
+    yield put(
+      createNewReview.createNewReviewFailure(error.response && error.response.data ? error.response.data : error),
+    )
   }
 }
 

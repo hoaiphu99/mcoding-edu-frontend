@@ -1,4 +1,5 @@
 export { default as CourseEmbedYoutube } from './CourseEmbedYoutube'
+export { default as CourseEmbedGoogleDrive } from './CourseEmbedGoogleDrive'
 export { default as CourseVideoEmbed } from './CourseVideoEmbed'
 export { default as CourseLessonList } from './CourseLessonList'
 export { default as CourseCommentForm } from './CourseCommentForm'

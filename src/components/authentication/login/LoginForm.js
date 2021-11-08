@@ -2,7 +2,7 @@ import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
 import { useFormik, Form, FormikProvider } from 'formik'
 import { Icon } from '@iconify/react'
 import eyeFill from '@iconify/icons-eva/eye-fill'
@@ -18,6 +18,9 @@ import { userLoginState$ } from '../../../redux/selectors/index'
 
 export default function LoginForm() {
   const { login } = useAuth()
+  const location = useLocation()
+  const isProfessor = location.pathname.includes('professor')
+  console.log('🚀 ~ file: LoginForm.js ~ line 23 ~ LoginForm ~ isProfessor', isProfessor)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()

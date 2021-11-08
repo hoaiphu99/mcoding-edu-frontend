@@ -4,8 +4,9 @@ import { styled } from '@mui/material/styles'
 // import { Typography } from '@mui/material'
 // components
 import CourseEmbedYoutube from './CourseEmbedYoutube'
+import CourseEmbedGoogleDrive from './CourseEmbedGoogleDrive'
 // utils
-// import { fDate } from '../../../utils/formatTime'
+import { getGoogleDriveFileId } from '../../../utils/getFileType'
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +15,14 @@ const RootStyle = styled('div')(() => ({
   position: 'relative',
 }))
 
-const VideoEmbedStyle = styled(CourseEmbedYoutube)({
+const YoutubeVideoEmbedStyle = styled(CourseEmbedYoutube)({
+  top: 0,
+  zIndex: 8,
+  width: '100%',
+  height: '100%',
+})
+
+const GGDVideoEmbedStyle = styled(CourseEmbedGoogleDrive)({
   top: 0,
   zIndex: 8,
   width: '100%',
@@ -28,9 +36,10 @@ CourseVideoEmbed.propTypes = {
 }
 
 export default function CourseVideoEmbed({ videoUrl, ...other }) {
+  const checkTypeUrl = getGoogleDriveFileId(videoUrl)
   return (
     <RootStyle {...other}>
-      <VideoEmbedStyle videoUrl={videoUrl} />
+      {checkTypeUrl ? <GGDVideoEmbedStyle url={videoUrl} /> : <YoutubeVideoEmbedStyle videoUrl={videoUrl} />}
     </RootStyle>
   )
 }

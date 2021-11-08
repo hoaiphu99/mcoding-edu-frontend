@@ -9,7 +9,11 @@ function* getStudentCourseByCourseIDSaga(action) {
     const data = yield call(fetchStudentCourseByCourseID, action.payload.id)
     yield put(getStudentCourseByCourseID.getStudentCourseByCourseIDSuccess(data.data))
   } catch (error) {
-    yield put(getStudentCourseByCourseID.getStudentCourseByCourseIDFailure(error.response.data))
+    yield put(
+      getStudentCourseByCourseID.getStudentCourseByCourseIDFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -18,7 +22,11 @@ function* registerStudentCourseSaga(action) {
     const data = yield call(addNewStudentCourse, action.payload.data)
     yield put(registerStudentCourse.registerStudentCourseSuccess(data.data))
   } catch (error) {
-    yield put(registerStudentCourse.registerStudentCourseFailure(error.response.data))
+    yield put(
+      registerStudentCourse.registerStudentCourseFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 

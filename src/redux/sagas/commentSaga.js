@@ -13,7 +13,11 @@ function* getCommentByLessonIDSaga(action) {
     console.log('🚀 ~ file: commentSaga.js ~ line 13 ~ function*getCommentByLessonIDSaga ~ comments', comments.data)
     yield put(getCommentsByLessonID.getCommentsByLessonIDSuccess(comments.data))
   } catch (error) {
-    yield put(getCommentsByLessonID.getCommentsByLessonIDFailure(error.response.data))
+    yield put(
+      getCommentsByLessonID.getCommentsByLessonIDFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -23,7 +27,9 @@ function* createNewCommentSaga(action) {
     const comment = yield call(addNewComment, action.payload.data)
     yield put(createNewComment.createNewCommentSuccess(comment.data))
   } catch (error) {
-    yield put(createNewComment.createNewCommentFailure(error))
+    yield put(
+      createNewComment.createNewCommentFailure(error.response && error.response.data ? error.response.data : error),
+    )
   }
 }
 

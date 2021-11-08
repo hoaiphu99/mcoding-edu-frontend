@@ -41,7 +41,7 @@ function* getAllCoursesSaga() {
     const courses = yield call(fetchAllCourses)
     yield put(getAllCourses.getAllCoursesSuccess(courses.data))
   } catch (error) {
-    yield put(getAllCourses.getAllCoursesFailure(error.response.data))
+    yield put(getAllCourses.getAllCoursesFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -50,7 +50,7 @@ function* createCourseSaga(action) {
     const course = yield call(addNewCourse, action.payload.data)
     yield put(createCourse.createCourseSuccess(course.data))
   } catch (error) {
-    yield put(createCourse.createCourseFailure(error.response.data))
+    yield put(createCourse.createCourseFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -59,7 +59,7 @@ function* updateCourseSaga(action) {
     const course = yield call(editCourse, action.payload.data)
     yield put(updateCourse.updateCourseSuccess(course.data))
   } catch (error) {
-    yield put(updateCourse.updateCourseFailure(error.response.data))
+    yield put(updateCourse.updateCourseFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -68,16 +68,18 @@ function* deleteCourseSaga(action) {
     yield call(removeCourse, action.payload.id)
     yield put(deleteCourse.deleteCourseSuccess(action.payload.id))
   } catch (error) {
-    yield put(deleteCourse.deleteCourseFailure(error.response.data))
+    yield put(deleteCourse.deleteCourseFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
 function* getCourseDetailsSaga(action) {
   try {
-    const course = yield call(fetchCourse, action.payload)
+    const course = yield call(fetchCourse, action.payload.id)
     yield put(getCourseDetails.getCourseDetailsSuccess(course.data))
   } catch (error) {
-    yield put(getCourseDetails.getCourseDetailsFailure(error.response.data))
+    yield put(
+      getCourseDetails.getCourseDetailsFailure(error.response && error.response.data ? error.response.data : error),
+    )
   }
 }
 
@@ -86,7 +88,9 @@ function* getCourseLessonSaga(action) {
     const course = yield call(fetchCourseLearning, action.payload.slug)
     yield put(getCourseLesson.getCourseLessonSuccess(course.data))
   } catch (error) {
-    yield put(getCourseLesson.getCourseLessonFailure(error.response.data))
+    yield put(
+      getCourseLesson.getCourseLessonFailure(error.response && error.response.data ? error.response.data : error),
+    )
   }
 }
 
@@ -95,7 +99,9 @@ function* updateCourseStatusSaga(action) {
     const course = yield call(editCourseStatus, action.payload.data)
     yield put(updateCourseStatus.updateCourseStatusSuccess(course.data))
   } catch (error) {
-    yield put(updateCourseStatus.updateCourseStatusFailure(error.response.data))
+    yield put(
+      updateCourseStatus.updateCourseStatusFailure(error.response && error.response.data ? error.response.data : error),
+    )
   }
 }
 
@@ -104,7 +110,7 @@ function* getMyCoursesSaga() {
     const course = yield call(fetchMyCourses)
     yield put(getMyCourses.getMyCoursesSuccess(course.data))
   } catch (error) {
-    yield put(getMyCourses.getMyCoursesFailure(error.response.data))
+    yield put(getMyCourses.getMyCoursesFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -113,7 +119,11 @@ function* getStudentsInCourseSaga(action) {
     const students = yield call(fetchStudentsInCourse, action.payload.id)
     yield put(getStudentsInCourse.getStudentsInCourseSuccess(students.data))
   } catch (error) {
-    yield put(getStudentsInCourse.getStudentsInCourseFailure(error.response.data))
+    yield put(
+      getStudentsInCourse.getStudentsInCourseFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -122,7 +132,11 @@ function* deleteStudentInCourseSaga(action) {
     yield call(removeStudentInCourse, action.payload.data)
     yield put(deleteStudentInCourse.deleteStudentInCourseSuccess(action.payload.data))
   } catch (error) {
-    yield put(deleteStudentInCourse.deleteStudentInCourseFailure(error.response.data))
+    yield put(
+      deleteStudentInCourse.deleteStudentInCourseFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -133,7 +147,7 @@ function* createSectionSaga(action) {
     const section = yield call(addNewSection, action.payload.data)
     yield put(createSection.createSectionSuccess(section.data))
   } catch (error) {
-    yield put(createSection.createSectionFailure(error.response.data))
+    yield put(createSection.createSectionFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -142,7 +156,7 @@ function* updateSectionSaga(action) {
     const section = yield call(editSection, action.payload.data)
     yield put(updateSection.updateSectionSuccess(section.data))
   } catch (error) {
-    yield put(updateSection.updateSectionFailure(error.response.data))
+    yield put(updateSection.updateSectionFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -151,7 +165,7 @@ function* deleteSectionSaga(action) {
     yield call(removeSection, action.payload.id)
     yield put(deleteSection.deleteSectionSuccess(action.payload.id))
   } catch (error) {
-    yield put(deleteSection.deleteSectionFailure(error.response.data))
+    yield put(deleteSection.deleteSectionFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -163,7 +177,7 @@ function* createLessonSaga(action) {
     yield put(createLesson.createLessonSuccess(lesson.data))
   } catch (error) {
     console.log({ error })
-    yield put(createLesson.createLessonFailure(error.response.data))
+    yield put(createLesson.createLessonFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -172,7 +186,7 @@ function* updateLessonSaga(action) {
     const lesson = yield call(editLesson, action.payload.data)
     yield put(updateLesson.updateLessonSuccess(lesson.data))
   } catch (error) {
-    yield put(updateLesson.updateLessonFailure(error.response.data))
+    yield put(updateLesson.updateLessonFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -181,7 +195,7 @@ function* deleteLessonSaga(action) {
     yield call(removeLesson, action.payload.id)
     yield put(deleteLesson.deleteLessonSuccess(action.payload.id))
   } catch (error) {
-    yield put(deleteLesson.deleteLessonFailure(error.response.data))
+    yield put(deleteLesson.deleteLessonFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 

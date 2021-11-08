@@ -19,7 +19,7 @@ export function userReducers(state = INIT_STATE.users, action) {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state
@@ -45,7 +45,7 @@ export function userLoginReducers(state = INIT_STATE.userLogin, action) {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(authUser.authUserLogout()):
       localStorage.removeItem('userInfo')
@@ -74,7 +74,7 @@ export function userLoginReducers(state = INIT_STATE.userLogin, action) {
         ...state,
         success: action.payload.success,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state
@@ -99,7 +99,7 @@ export const userProfileReducers = (state = INIT_STATE.userProfile, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     default:
       return state

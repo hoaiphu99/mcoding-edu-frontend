@@ -1,18 +1,13 @@
 import PropTypes from 'prop-types'
-
-const getVideoID = (videoUrl) => {
-  // eslint-disable-next-line
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
-  const match = videoUrl.match(regExp)
-  return match && match[2].length === 11 ? match[2] : false
-}
+// utils
+import { getYoutubeVideoId } from '../../../utils/getFileType'
 
 CourseEmbedYoutube.propTypes = {
   videoUrl: PropTypes.string.isRequired,
 }
 
 export default function CourseEmbedYoutube({ videoUrl }) {
-  const videoID = getVideoID(videoUrl)
+  const videoID = getYoutubeVideoId(videoUrl)
 
   return (
     <iframe

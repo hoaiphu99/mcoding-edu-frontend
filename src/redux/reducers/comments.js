@@ -23,7 +23,7 @@ export const commentsReducers = (state = INIT_STATE.comments, action) => {
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(createNewComment.createNewCommentRequest()):
       return {
@@ -45,7 +45,7 @@ export const commentsReducers = (state = INIT_STATE.comments, action) => {
         ...state,
         success: null,
         loading: false,
-        error: action.payload.error.message,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case 'RESET_STATE':
       return {

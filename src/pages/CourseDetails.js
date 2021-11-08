@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 // import { Icon } from '@iconify/react'
 import { useSnackbar } from 'notistack'
 // import { sentenceCase } from 'change-case'
+import slugify from 'slugify'
 import { useParams } from 'react-router-dom'
 // import clockFill from '@iconify/icons-eva/clock-fill'
 // import roundVerified from '@iconify/icons-ic/round-verified'
@@ -13,12 +14,19 @@ import { TabContext, TabList, TabPanel } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  getAllCourses,
   getCourseDetails,
   getStudentCourseByCourseID,
   registerStudentCourse,
   getReviewsByCourseID,
 } from '../redux/actions'
-import { courseDetailsState$, studentCourseState$, userLoginState$, reviewsState$ } from '../redux/selectors'
+import {
+  coursesState$,
+  courseDetailsState$,
+  studentCourseState$,
+  userLoginState$,
+  reviewsState$,
+} from '../redux/selectors'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
@@ -45,25 +53,32 @@ export default function CourseDetails() {
   const [value, setValue] = useState('1')
 
   const { data: userLogin } = useSelector(userLoginState$)
+  const { data: courses } = useSelector(coursesState$)
 
   const { data: course, error, loading } = useSelector(courseDetailsState$)
   const { data: studentCourse } = useSelector(studentCourseState$)
   const { data: review } = useSelector(reviewsState$)
+  const courseID = courses.find((item) => slugify(item.name, { lower: true, locale: 'vi' }) === slug)?.course_id
 
   useEffect(() => {
-    if (!course || course.slug !== slug) {
-      dispatch(getCourseDetails.getCourseDetailsRequest(slug))
+    if (!courses || courses.length <= 0) {
+      dispatch(getAllCourses.getAllCoursesRequest())
+    } else {
+      if (!course || course.slug !== slug) {
+        dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
+      }
+      if (userLogin && course) {
+        dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: course.course_id, userLogin }))
+      }
+      if (course) {
+        dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: course.course_id }))
+      }
     }
-    if (userLogin && course) {
-      dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: course.course_id, userLogin }))
-    }
-    if (course) {
-      dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: course.course_id }))
-    }
+
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, course, slug, error, enqueueSnackbar, userLogin])
+  }, [dispatch, courses, course, courseID, error, enqueueSnackbar, userLogin, slug])
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)

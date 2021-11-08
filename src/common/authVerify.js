@@ -31,7 +31,7 @@ const AuthVerify = () => {
     const user = JSON.parse(localStorage.getItem('userInfo'))
     if (user) {
       const decodedJwt = parseJwt(user.token)
-      if (decodedJwt.exp * 1000 < Date.now()) {
+      if (decodedJwt?.exp * 1000 < Date.now()) {
         setOpen(true)
         dispatch(authUser.authUserLogout())
       }

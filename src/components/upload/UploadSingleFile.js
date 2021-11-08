@@ -38,9 +38,10 @@ UploadSingleFile.propTypes = {
   error: PropTypes.bool,
   file: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   sx: PropTypes.object,
+  isVideo: PropTypes.bool,
 }
 
-export default function UploadSingleFile({ error, file, sx, ...other }) {
+export default function UploadSingleFile({ error, file, sx, isVideo, ...other }) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     multiple: false,
     ...other,
@@ -106,7 +107,7 @@ export default function UploadSingleFile({ error, file, sx, ...other }) {
           </Typography>
         </Box>
 
-        {file && (
+        {file && !isVideo && (
           <Box
             component="img"
             alt="file preview"

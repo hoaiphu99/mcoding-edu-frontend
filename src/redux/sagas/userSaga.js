@@ -8,7 +8,7 @@ function* authUserSaga(action) {
     console.log('🚀 ~ file: userSaga.js ~ line 8 ~ function*authUserSaga ~ user', user)
     yield put(authUser.authUserSuccess(user.data))
   } catch (error) {
-    yield put(authUser.authUserFailure(error.response.data))
+    yield put(authUser.authUserFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -17,7 +17,7 @@ function* registerUserSaga(action) {
     const user = yield call(register, action.payload)
     yield put(registerUser.registerUserSuccess(user.data))
   } catch (error) {
-    yield put(registerUser.registerUserFailure(error.response.data))
+    yield put(registerUser.registerUserFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -26,7 +26,7 @@ function* getUsersSaga() {
     const users = yield call(fetchUsers)
     yield put(getUsers.getUsersSuccess(users.data))
   } catch (error) {
-    yield put(getUsers.getUsersFailure(error.response.data))
+    yield put(getUsers.getUsersFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 
@@ -35,7 +35,7 @@ function* getUserProfileSaga() {
     const user = yield call(fetchUserProfile)
     yield put(getUserProfile.getUserProfileSuccess(user.data))
   } catch (error) {
-    yield put(getUserProfile.getUserProfileFailure(error.response.data))
+    yield put(getUserProfile.getUserProfileFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
 

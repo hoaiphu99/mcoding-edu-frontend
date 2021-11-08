@@ -17,6 +17,8 @@ import {
 } from '@mui/material'
 // utils
 import { fDate } from '../../../utils/formatTime'
+// hooks
+import useAuth from '../../../hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -95,6 +97,8 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
+  const { user } = useAuth()
+
   const handleClose = () => {
     setOpen(false)
   }
@@ -128,7 +132,7 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
           </Box>
         </Box>
 
-        {studentCourse && course_id === studentCourse.course_id ? (
+        {(studentCourse && course_id === studentCourse.course_id) || user?.professor ? (
           <Link to={`/${slug}`} component={RouterLink}>
             <Button variant="contained">Học ngay</Button>
           </Link>
