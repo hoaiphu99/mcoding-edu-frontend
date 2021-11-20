@@ -64,7 +64,7 @@ export default function CourseMoreMenu({ onDelete, courseSlug, courseId }) {
 
         <MenuItem
           component={RouterLink}
-          to={`${PATH_DASHBOARD.courses.root}/${courseSlug}/edit`}
+          to={`${PATH_DASHBOARD.courses.root}/${courseId}/edit`}
           sx={{ color: 'text.secondary' }}
         >
           <ListItemIcon>

@@ -20,20 +20,16 @@ import {
   registerStudentCourse,
   getReviewsByCourseID,
 } from '../redux/actions'
-import {
-  coursesState$,
-  courseDetailsState$,
-  studentCourseState$,
-  userLoginState$,
-  reviewsState$,
-} from '../redux/selectors'
+import { coursesState$, courseDetailsState$, studentCourseState$, reviewsState$ } from '../redux/selectors'
+// hook
+import useAuth from '../hooks/useAuth'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
 import Page from '../components/Page'
 import Markdown from '../components/Markdown'
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs'
-import { CourseHero, CourseProfessorDetails, CourseLessonList, CourseReview } from '../components/course/course-details'
+import { CourseHero, CourseTeachableDetails, CourseLessonList, CourseReview } from '../components/course/course-details'
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +48,8 @@ export default function CourseDetails() {
   const { enqueueSnackbar } = useSnackbar()
   const [value, setValue] = useState('1')
 
-  const { data: userLogin } = useSelector(userLoginState$)
+  const { user } = useAuth()
+
   const { data: courses } = useSelector(coursesState$)
 
   const { data: course, error, loading } = useSelector(courseDetailsState$)
@@ -63,22 +60,27 @@ export default function CourseDetails() {
   useEffect(() => {
     if (!courses || courses.length <= 0) {
       dispatch(getAllCourses.getAllCoursesRequest())
-    } else {
-      if (!course || course.slug !== slug) {
-        dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
-      }
-      if (userLogin && course) {
-        dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: course.course_id, userLogin }))
-      }
-      if (course) {
-        dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: course.course_id }))
-      }
     }
 
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, courses, course, courseID, error, enqueueSnackbar, userLogin, slug])
+  }, [dispatch, courses, error, enqueueSnackbar])
+
+  useEffect(() => {
+    if (!course) {
+      dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
+    }
+  }, [dispatch, course, slug, courseID])
+
+  useEffect(() => {
+    if (user && courseID) {
+      dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: courseID }))
+    }
+    if (courseID) {
+      dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: courseID }))
+    }
+  }, [dispatch, user, courseID])
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)
@@ -86,10 +88,10 @@ export default function CourseDetails() {
 
   const onHandleClick = () => {
     const data = {
-      studentId: userLogin.student.student_id,
+      studentId: user.student_id,
       courseId: course.course_id,
     }
-    dispatch(registerStudentCourse.registerStudentCourseRequest({ data, userLogin }))
+    dispatch(registerStudentCourse.registerStudentCourseRequest({ data }))
   }
 
   return (
@@ -152,7 +154,7 @@ export default function CourseDetails() {
                     </TabPanel>
                   </TabContext>
                 </Card>
-                <CourseProfessorDetails course={course} />
+                <CourseTeachableDetails course={course} />
               </>
             )}
 

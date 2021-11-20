@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import slugify from 'slugify'
 import { Icon } from '@iconify/react'
 import plusFill from '@iconify/icons-eva/plus-fill'
 import { useSnackbar } from 'notistack'
@@ -6,8 +7,10 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Button } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseLesson } from '../../../redux/actions'
-import { courseLessonState$, userLoginState$ } from '../../../redux/selectors'
+import { getAllCourses, getCourseLesson } from '../../../redux/actions'
+import { coursesState$, courseLessonState$ } from '../../../redux/selectors'
+// hook
+import useAuth from '../../../hooks/useAuth'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
@@ -24,10 +27,14 @@ export default function CourseLearning() {
   const { slug } = useParams()
   const { enqueueSnackbar } = useSnackbar()
 
+  const { user } = useAuth()
+
   const [open, setOpen] = useState(false)
 
-  const { data: userLogin } = useSelector(userLoginState$)
+  const { data: courses } = useSelector(coursesState$)
   const { data: course, error } = useSelector(courseLessonState$)
+
+  const courseID = courses.find((item) => slugify(item.name, { lower: true, locale: 'vi' }) === slug)?.course_id
 
   const handleClickOpen = () => {
     setOpen((prev) => !prev)
@@ -38,16 +45,22 @@ export default function CourseLearning() {
   }
 
   useEffect(() => {
-    if (!userLogin) {
+    if (!courses || courses.length <= 0) {
+      dispatch(getAllCourses.getAllCoursesRequest())
+    }
+  }, [dispatch, courses, enqueueSnackbar])
+
+  useEffect(() => {
+    if (!user) {
       navigate('/login')
     }
-    if (!course || course.slug !== slug) {
-      dispatch(getCourseLesson.getCourseLessonRequest({ slug }))
+    if (!course) {
+      dispatch(getCourseLesson.getCourseLessonRequest({ id: courseID }))
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, course, slug, error, enqueueSnackbar, userLogin, navigate])
+  }, [dispatch, course, courseID, error, enqueueSnackbar, user, navigate])
 
   return (
     <Page title="Quản lý khóa học">

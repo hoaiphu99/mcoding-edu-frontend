@@ -11,6 +11,7 @@ const getIcon = (name) => (
 
 const ICONS = {
   user: getIcon('ic_user'),
+  student: getIcon('ic_user_groups'),
   ecommerce: getIcon('ic_ecommerce'),
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
@@ -22,9 +23,8 @@ const sidebarConfig = [
   {
     subheader: 'chung',
     items: [
-      { title: 'dashboard', path: PATH_DASHBOARD.general.pageOne, icon: ICONS.dashboard },
-      { title: 'Khóa học', path: PATH_DASHBOARD.general.pageTwo, icon: ICONS.ecommerce },
-      { title: 'thống kê', path: PATH_DASHBOARD.general.pageThree, icon: ICONS.analytics },
+      { title: 'bảng điều khiển', path: PATH_DASHBOARD.general.generalAnalytics, icon: ICONS.dashboard },
+      { title: 'thống kê', path: PATH_DASHBOARD.general.chartAnalytics, icon: ICONS.analytics },
     ],
   },
 
@@ -41,6 +41,12 @@ const sidebarConfig = [
           { title: 'tất cả', path: PATH_DASHBOARD.users.userList },
           { title: 'thêm mới', path: PATH_DASHBOARD.users.newUser },
         ],
+      },
+      {
+        title: 'học viên',
+        path: PATH_DASHBOARD.students.root,
+        icon: ICONS.student,
+        children: [{ title: 'tất cả', path: PATH_DASHBOARD.students.studentList }],
       },
       {
         title: 'khóa học',

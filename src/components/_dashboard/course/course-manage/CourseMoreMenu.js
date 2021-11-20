@@ -5,6 +5,7 @@ import editFill from '@iconify/icons-eva/edit-fill'
 import trash2Outline from '@iconify/icons-eva/trash-2-outline'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
 import bookOpenFill from '@iconify/icons-eva/book-open-fill'
+import attachFill from '@iconify/icons-eva/attach-fill'
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material'
 
@@ -14,11 +15,12 @@ CourseMoreMenu.propTypes = {
   onDelete: PropTypes.func,
   onOpen: PropTypes.func,
   onOpenSection: PropTypes.func,
+  onOpenAttach: PropTypes.func,
   onEdit: PropTypes.func,
   isLesson: PropTypes.bool,
 }
 
-export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onEdit, isLesson }) {
+export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onOpenAttach, onEdit, isLesson }) {
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -33,7 +35,7 @@ export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onEdit
         anchorEl={ref.current}
         onClose={() => setIsOpen(false)}
         PaperProps={{
-          sx: { width: 200, maxWidth: '100%' },
+          sx: { width: 220, maxWidth: '100%' },
         }}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -44,6 +46,15 @@ export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onEdit
               <Icon icon={bookOpenFill} width={24} height={24} />
             </ListItemIcon>
             <ListItemText primary="Bài học mới" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
+
+        {isLesson && (
+          <MenuItem onClick={onOpenAttach}>
+            <ListItemIcon>
+              <Icon icon={attachFill} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý tệp đính kèm" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
         )}
 

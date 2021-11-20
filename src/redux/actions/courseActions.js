@@ -60,6 +60,12 @@ export const deleteSection = createActions({
   deleteSectionFailure: (err) => err,
 })
 
+export const getLessonById = createActions({
+  getLessonByIdRequest: (payload) => payload,
+  getLessonByIdSuccess: (payload) => payload,
+  getLessonByIdFailure: (err) => err,
+})
+
 export const createLesson = createActions({
   createLessonRequest: (payload) => payload,
   createLessonSuccess: (payload) => payload,

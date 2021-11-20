@@ -1,3 +1,7 @@
+// material
+import AdapterDateFns from '@mui/lab/AdapterDateFns'
+import LocalizationProvider from '@mui/lab/LocalizationProvider'
+
 // highlight
 import './utils/highlight'
 
@@ -50,15 +54,17 @@ sagaMiddleware.run(rootSaga)
 ReactDOM.render(
   <ReduxProvider store={store}>
     <HelmetProvider>
-      <SettingsProvider>
-        <CollapseDrawerProvider>
-          <BrowserRouter>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
-          </BrowserRouter>
-        </CollapseDrawerProvider>
-      </SettingsProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <SettingsProvider>
+          <CollapseDrawerProvider>
+            <BrowserRouter>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </BrowserRouter>
+          </CollapseDrawerProvider>
+        </SettingsProvider>
+      </LocalizationProvider>
     </HelmetProvider>
   </ReduxProvider>,
   document.getElementById('root'),

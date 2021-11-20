@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import slugify from 'slugify'
 import PropTypes from 'prop-types'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
 // material
@@ -93,7 +94,7 @@ CourseHero.propTypes = {
 }
 
 export default function CourseHero({ course, studentCourse, onHandleClick, ...other }) {
-  const { course_id, image_url, name, professor, created_at, slug } = course
+  const { course_id, image_url, name, user: teachable, created_at } = course
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
@@ -118,13 +119,13 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
       <FooterStyle>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar
-            alt={professor && professor.user.name}
-            src={professor && professor.user.avatar_url}
+            alt={teachable && teachable.name}
+            src={teachable && teachable.avatar_url}
             sx={{ width: 48, height: 48 }}
           />
           <Box sx={{ ml: 2 }}>
             <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
-              {professor && professor.user.name}
+              {teachable && teachable.name}
             </Typography>
             <Typography variant="body2" sx={{ color: 'grey.500' }}>
               Ngày đăng {fDate(created_at)}
@@ -132,8 +133,8 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
           </Box>
         </Box>
 
-        {(studentCourse && course_id === studentCourse.course_id) || user?.professor ? (
-          <Link to={`/${slug}`} component={RouterLink}>
+        {(studentCourse && course_id === studentCourse.course_id) || user?.username ? (
+          <Link to={`/${slugify(name, { lower: true, locale: 'vi' })}`} component={RouterLink}>
             <Button variant="contained">Học ngay</Button>
           </Link>
         ) : (
@@ -153,7 +154,7 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
               onClick={() => {
                 onHandleClick()
                 handleClose()
-                navigate(`/${slug}`, { replace: true })
+                navigate(`/${slugify(name, { lower: true, locale: 'vi' })}`, { replace: true })
               }}
               autoFocus
             >

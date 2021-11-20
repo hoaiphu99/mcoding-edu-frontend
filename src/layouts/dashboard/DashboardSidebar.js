@@ -6,6 +6,7 @@ import { alpha, styled } from '@mui/material/styles'
 import { Box, Link, Stack, Avatar, Drawer, Tooltip, Typography, CardActionArea } from '@mui/material'
 // hooks
 import useCollapseDrawer from '../../hooks/useCollapseDrawer'
+import useAuth from '../../hooks/useAuth'
 // components
 import Logo from '../../components/Logo'
 import Scrollbar from '../../components/Scrollbar'
@@ -89,6 +90,8 @@ DashboardSidebar.propTypes = {
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation()
 
+  const { user } = useAuth()
+
   const { isCollapse, collapseClick, collapseHover, onToggleCollapse, onHoverEnter, onHoverLeave } = useCollapseDrawer()
 
   useEffect(() => {
@@ -131,17 +134,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Stack>
 
         {isCollapse ? (
-          <Avatar alt="My Avatar" src="/static/mock-images/avatars/avatar_default.jpg" sx={{ mx: 'auto', mb: 2 }} />
+          <Avatar alt="My Avatar" src={user.avatar_url} sx={{ mx: 'auto', mb: 2 }} />
         ) : (
           <Link underline="none" component={RouterLink} to="#">
             <AccountStyle>
-              <Avatar alt="My Avatar" src="/static/mock-images/avatars/avatar_default.jpg" />
+              <Avatar alt="My Avatar" src={user.avatar_url} />
               <Box sx={{ ml: 2 }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                  Admin
+                  {user.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  admin
+                  {user.username}
                 </Typography>
               </Box>
             </AccountStyle>

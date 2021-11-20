@@ -9,7 +9,7 @@ import { CourseList } from '../components/course/course-list'
 import { CourseCarouselAnimation } from '../components/carousel'
 // redux
 import { coursesState$ } from '../redux/selectors'
-import { getAllCourses } from '../redux/actions/courseActions'
+import { getAllCourses, getCategories, getProgramLanguages } from '../redux/actions'
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +25,8 @@ export default function LandingPage() {
 
   useEffect(() => {
     dispatch(getAllCourses.getAllCoursesRequest())
+    dispatch(getCategories.getCategoriesRequest())
+    dispatch(getProgramLanguages.getProgramLanguagesRequest())
   }, [dispatch])
   return (
     <RootStyle title="Trang chủ" id="move_top">

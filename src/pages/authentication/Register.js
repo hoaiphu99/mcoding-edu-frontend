@@ -8,7 +8,7 @@ import AuthLayout from '../../layouts/AuthLayout'
 // components
 import Page from '../../components/Page'
 import { MHidden } from '../../components/@material-extend'
-import { RegisterForm, RegisterFormProfessor } from '../../components/authentication/register'
+import { RegisterForm, RegisterFormTeachable } from '../../components/authentication/register'
 // import AuthSocial from '../../components/authentication/AuthSocial'
 
 // ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ export default function Register() {
           <Divider sx={{ my: 3 }} />
           {/* <AuthSocial /> */}
 
-          {!isProfessor ? <RegisterForm /> : <RegisterFormProfessor />}
+          {!isProfessor ? <RegisterForm /> : <RegisterFormTeachable />}
 
           <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
             Bằng cách đăng ký, tôi đồng ý với&nbsp;

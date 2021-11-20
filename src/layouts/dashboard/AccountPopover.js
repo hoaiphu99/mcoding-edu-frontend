@@ -1,10 +1,9 @@
 import { Icon } from '@iconify/react'
 import { useRef, useState } from 'react'
 import { useSnackbar } from 'notistack'
-import { useDispatch } from 'react-redux'
 import homeFill from '@iconify/icons-eva/home-fill'
 import personFill from '@iconify/icons-eva/person-fill'
-import settings2Fill from '@iconify/icons-eva/settings-2-fill'
+// import settings2Fill from '@iconify/icons-eva/settings-2-fill'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
 // material
 import { alpha } from '@mui/material/styles'
@@ -12,14 +11,14 @@ import { Avatar, Button, Box, Divider, MenuItem, Typography } from '@mui/materia
 // components
 import { MIconButton } from '../../components/@material-extend'
 import MenuPopover from '../../components/MenuPopover'
-// redux
-import { authUser } from '../../redux/actions'
+// hook
+import useAuth from '../../hooks/useAuth'
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-  { label: 'Home', icon: homeFill, linkTo: '/' },
-  { label: 'Profile', icon: personFill, linkTo: '#' },
-  { label: 'Settings', icon: settings2Fill, linkTo: '#' },
+  { label: 'Trang chủ', icon: homeFill, linkTo: '/' },
+  { label: 'Trang cá nhân', icon: personFill, linkTo: '/trang-ca-nhan' },
+  // { label: 'Settings', icon: settings2Fill, linkTo: '#' },
 ]
 
 // ----------------------------------------------------------------------
@@ -28,8 +27,9 @@ export default function AccountPopover() {
   const anchorRef = useRef(null)
   const [open, setOpen] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  const { logout, user } = useAuth()
 
   const handleOpen = () => {
     setOpen(true)
@@ -39,7 +39,7 @@ export default function AccountPopover() {
   }
 
   const handleLogout = () => {
-    dispatch(authUser.authUserLogout())
+    logout()
     enqueueSnackbar('Đăng xuất thành công', {
       variant: 'success',
     })
@@ -68,16 +68,16 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar alt="My Avatar" src="/static/mock-images/avatars/avatar_default.jpg" />
+        <Avatar alt="My Avatar" src={user.avatar_url} />
       </MIconButton>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            displayName
+            {user.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            email
+            {user.username}
           </Typography>
         </Box>
 

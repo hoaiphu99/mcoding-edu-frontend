@@ -24,7 +24,7 @@ import { LoadingButton } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { createLesson, updateLesson } from '../../../../redux/actions'
-import { userLoginState$, courseLessonState$ } from '../../../../redux/selectors'
+import { courseLessonState$ } from '../../../../redux/selectors'
 // Components
 import { UploadSingleFile } from '../../../upload'
 // ----------------------------------------------------------------------
@@ -53,10 +53,10 @@ const style = {
 const ModalUpload = ({ open }) => (
   <Modal open={open}>
     <Box sx={style} aria-labelledby="modal-modal-title">
+      <CircularProgress />
       <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mr: 1.5 }}>
         Đang upload video
       </Typography>
-      <CircularProgress />
     </Box>
   </Modal>
 )
@@ -82,7 +82,6 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
   const [disableForm, setDisableForm] = useState(true)
 
   const { data: course, error } = useSelector(courseLessonState$)
-  const { data: userLogin } = useSelector(userLoginState$)
 
   const currentLesson = course.sections
     .find((section) => section.section_id === section_id)
@@ -115,12 +114,13 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
         lesson_number: values.lesson_number,
         name: values.name,
       }
+      console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 117 ~ onSubmit: ~ data', data)
       try {
         if (!isEdit) {
-          dispatch(createLesson.createLessonRequest({ data, userLogin }))
+          dispatch(createLesson.createLessonRequest({ data }))
         } else {
           data.id = lesson_id
-          dispatch(updateLesson.updateLessonRequest({ data, userLogin }))
+          dispatch(updateLesson.updateLessonRequest({ data }))
         }
         resetForm()
         setSubmitting(false)

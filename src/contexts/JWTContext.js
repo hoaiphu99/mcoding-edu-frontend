@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer } from 'react'
 import PropTypes from 'prop-types'
 // utils
 import axios from '../utils/axios'
-import { isValidToken, setSession } from '../utils/jwt'
+import { isValidToken, setSession, getDecodedToken } from '../utils/jwt'
 
 // ----------------------------------------------------------------------
 
@@ -10,6 +10,8 @@ const initialState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  error: null,
+  success: false,
 }
 
 const handlers = {
@@ -20,6 +22,8 @@ const handlers = {
       isAuthenticated,
       isInitialized: true,
       user,
+      error: null,
+      success: false,
     }
   },
   LOGIN: (state, action) => {
@@ -29,12 +33,14 @@ const handlers = {
       ...state,
       isAuthenticated: true,
       user,
+      success: true,
     }
   },
   LOGOUT: (state) => ({
     ...state,
     isAuthenticated: false,
     user: null,
+    success: true,
   }),
   REGISTER: (state, action) => {
     const { user } = action.payload
@@ -43,6 +49,7 @@ const handlers = {
       ...state,
       isAuthenticated: true,
       user,
+      success: true,
     }
   },
   UPDATE_PROFILE: (state, action) => {
@@ -51,8 +58,23 @@ const handlers = {
     return {
       ...state,
       user,
+      success: true,
     }
   },
+  ERROR: (state, action) => {
+    const { error } = action.payload
+
+    return {
+      ...state,
+      error,
+      success: false,
+    }
+  },
+  RESET_ERROR: (state) => ({
+    ...state,
+    error: null,
+    success: false,
+  }),
 }
 
 const reducer = (state, action) => (handlers[action.type] ? handlers[action.type](state, action) : state)
@@ -61,8 +83,12 @@ const AuthContext = createContext({
   ...initialState,
   method: 'jwt',
   login: () => Promise.resolve(),
+  studentLogin: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
+  studentRegister: () => Promise.resolve(),
+  updateProfile: () => Promise.resolve(),
+  updateProfileStudent: () => Promise.resolve(),
 })
 
 AuthProvider.propTypes = {
@@ -73,25 +99,41 @@ function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
+    dispatch({
+      type: 'RESET_ERROR',
+    })
     const initialize = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken')
+        setSession(accessToken)
 
         if (accessToken && isValidToken(accessToken)) {
-          setSession(accessToken)
+          const { id } = getDecodedToken(accessToken)
 
-          const response = await axios.get('/api/users/profile')
-          const { data } = response.data
+          if (Number.isInteger(id)) {
+            const response = await axios.get('/api/students/profile')
+            const { data } = response.data
 
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: true,
-              user: data,
-            },
-          })
+            dispatch({
+              type: 'INITIALIZE',
+              payload: {
+                isAuthenticated: true,
+                user: data,
+              },
+            })
+          } else {
+            const response = await axios.get('/api/users/profile')
+            const { data } = response.data
+
+            dispatch({
+              type: 'INITIALIZE',
+              payload: {
+                isAuthenticated: true,
+                user: data,
+              },
+            })
+          }
         } else {
-          console.log('🚀 ~ file: jwtContext.js ~ line 83 ~ initialize ~ accessToken')
           dispatch({
             type: 'INITIALIZE',
             payload: {
@@ -116,66 +158,223 @@ function AuthProvider({ children }) {
   }, [])
 
   const login = async (username, password) => {
-    const response = await axios.post('/api/users/login', {
-      username,
-      password,
-    })
-    const { data } = response.data
-    console.log('🚀 ~ file: jwtContext.js ~ line 117 ~ login ~ data', data)
+    await axios
+      .post('/api/users/login', {
+        username,
+        password,
+      })
+      .then((response) => {
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+        const { data } = response.data
 
-    setSession(data.token)
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user: data,
-      },
-    })
+        setSession(data.access_token)
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: data,
+          },
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
   }
 
-  const register = async (email, password, firstName, lastName) => {
-    const response = await axios.post('/api/users/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    })
-    const { accessToken, user } = response.data
+  const studentLogin = async (email, password) => {
+    await axios
+      .post('/api/students/login', {
+        email,
+        password,
+      })
+      .then((response) => {
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+        const { data } = response.data
 
-    window.localStorage.setItem('accessToken', accessToken)
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user,
-      },
-    })
+        setSession(data.access_token)
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: data,
+          },
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+  }
+
+  const register = async (payload) => {
+    // const data = {
+    //   email,
+    //   password,
+    //   username,
+    //   name,
+    //   phone,
+    //   jobs,
+    //   skills,
+    //   isAdmin,
+    //   avatarUrl,
+    // }
+    await axios
+      .post('/api/users', payload)
+      .then((response) => {
+        const { data } = response.data
+
+        window.localStorage.setItem('accessToken', data.access_token)
+        dispatch({
+          type: 'REGISTER',
+          payload: {
+            user: data,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+  }
+
+  const studentRegister = async (payload) => {
+    await axios
+      .post('/api/students', payload)
+      .then((response) => {
+        const { data } = response.data
+
+        window.localStorage.setItem('accessToken', data.access_token)
+        dispatch({
+          type: 'REGISTER',
+          payload: {
+            user: data,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
   }
 
   const logout = async () => {
     setSession(null)
     dispatch({ type: 'LOGOUT' })
+    dispatch({
+      type: 'RESET_ERROR',
+    })
   }
 
   const resetPassword = () => {}
 
-  const updateProfile = async ({ name, email, phone, avatarUrl, education, job, skill }) => {
+  const updateProfile = async ({ name, email, phone, avatarUrl, jobs, skills }) => {
     const payload = {
       name,
       email,
       phone,
       avatar_url: avatarUrl,
-      education,
-      job,
-      skill,
+      jobs,
+      skills,
     }
-    const response = await axios.put(`/api/users/${state.user.username}`, payload)
-    const { data } = response.data
+    await axios
+      .put(`/api/users/${state.user.username}`, payload)
+      .then((response) => {
+        const { data } = response.data
 
-    dispatch({
-      type: 'UPDATE_PROFILE',
-      payload: {
-        user: data,
-      },
-    })
+        dispatch({
+          type: 'UPDATE_PROFILE',
+          payload: {
+            user: data,
+          },
+        })
+
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+  }
+
+  const updateProfileStudent = async ({ name, phone, avatarUrl, education }) => {
+    const payload = {
+      name,
+      phone,
+      avatar_url: avatarUrl,
+      education,
+    }
+    await axios
+      .put(`/api/students/${state.user.student_id}`, payload)
+      .then((response) => {
+        const { data } = response.data
+
+        dispatch({
+          type: 'UPDATE_PROFILE',
+          payload: {
+            user: data,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
   }
 
   return (
@@ -184,10 +383,13 @@ function AuthProvider({ children }) {
         ...state,
         method: 'jwt',
         login,
+        studentLogin,
         logout,
         register,
+        studentRegister,
         resetPassword,
         updateProfile,
+        updateProfileStudent,
       }}
     >
       {children}

@@ -6,8 +6,12 @@
   },
   "extends": ["airbnb", "prettier", "plugin:jsx-a11y/recommended", "plugin:react-hooks/recommended"],
   "plugins": ["prettier", "react", "react-hooks"],
+  "presets": ["@babel/preset-react"],
   "parser": "@babel/eslint-parser",
   "parserOptions": {
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    },
     "ecmaVersion": 8,
     "requireConfigFile": false,
     "ecmaFeatures": {

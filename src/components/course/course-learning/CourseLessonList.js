@@ -20,10 +20,14 @@ import {
   AccordionDetails,
 } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
-
+// redux
+import { useDispatch, useSelector } from 'react-redux'
+import { getAttachmentsByLessonId } from '../../../redux/actions'
+import { attachmentsState$ } from '../../../redux/selectors'
 // components
 import Page from '../../Page'
 import CourseVideoEmbed from './CourseVideoEmbed'
+import CourseAttachmentList from './CourseAttachmentList'
 
 // ----------------------------------------------------------------------
 
@@ -43,43 +47,57 @@ export default function CourseLessonList({ course, onChangeLesson }) {
   const [value, setValue] = useState('1')
   const [videoUrl, setVideoUrl] = useState('')
 
+  const dispatch = useDispatch()
+  const { data } = useSelector(attachmentsState$)
+
+  const [lesson_id, setLesson_id] = useState(undefined)
   const [lessonTitle, setLessonTitle] = useState('')
   const [lessonNumber, setLessonNumber] = useState(1)
 
   useEffect(() => {
-    setVideoUrl(sections.length > 0 ? sections[0].lessons[0].video_url : '')
-    setLessonTitle(sections.length > 0 ? sections[0].lessons[0].name : '')
-    setLessonNumber(sections.length > 0 ? sections[0].lessons[0].lesson_number : '')
+    setLesson_id(sections.length > 0 ? sections[0].lessons[0]?.lesson_id : undefined)
+    setVideoUrl(sections.length > 0 ? sections[0].lessons[0]?.video_url : '')
+    setLessonTitle(sections.length > 0 ? sections[0].lessons[0]?.name : '')
+    setLessonNumber(sections.length > 0 ? sections[0].lessons[0]?.lesson_number : '')
   }, [sections])
+
+  useEffect(() => {
+    if (lesson_id) {
+      dispatch(getAttachmentsByLessonId.getAttachmentsByLessonIdRequest({ lessonId: lesson_id }))
+    }
+  }, [dispatch, lesson_id])
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)
   }
 
   const handleChangeLesson = (lesson) => {
+    setLesson_id(lesson.lesson_id)
     setVideoUrl(lesson.video_url)
     setLessonTitle(lesson.name)
     setLessonNumber(lesson.lesson_number)
   }
 
   return (
-    <>
-      <Card sx={{ mb: 2 }}>
-        <CourseVideoEmbed videoUrl={videoUrl} />
-      </Card>
+    <RootStyle>
+      <Card sx={{ mb: 2 }}>{videoUrl && <CourseVideoEmbed videoUrl={videoUrl} />}</Card>
       <Typography variant="h6" component="h2" sx={{ pl: 2 }}>
-        {sections.length > 0 ? `Bài ${lessonNumber}: ${lessonTitle}` : ''}
+        {sections.length > 0 && lessonNumber ? `Bài ${lessonNumber}: ${lessonTitle}` : ''}
       </Typography>
       <Card sx={{ mb: 2, mt: 2 }}>
         <TabContext value={value}>
           <Box sx={{ px: 3, bgcolor: 'background.neutral' }}>
             <TabList onChange={handleChangeTab}>
-              <Tab value="1" label="Danh sách bài học" sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }} />
+              <Tab disableRipple value="1" label="Danh sách bài học" />
+              <Tab
+                disableRipple
+                value="2"
+                label={`Tệp đính kèm (${data?.count})`}
+                sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
+              />
             </TabList>
           </Box>
-
           <Divider />
-
           <TabPanel value="1">
             <Box>
               <RootStyle>
@@ -116,8 +134,13 @@ export default function CourseLessonList({ course, onChangeLesson }) {
               </RootStyle>
             </Box>
           </TabPanel>
+          <TabPanel value="2">
+            <Box sx={{ p: 3 }}>
+              <CourseAttachmentList attachments={data?.attachments} />
+            </Box>
+          </TabPanel>
         </TabContext>
       </Card>
-    </>
+    </RootStyle>
   )
 }

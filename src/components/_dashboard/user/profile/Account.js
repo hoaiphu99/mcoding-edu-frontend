@@ -1,4 +1,5 @@
 import * as Yup from 'yup'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useSnackbar } from 'notistack'
 import { useCallback, useEffect } from 'react'
@@ -22,7 +23,7 @@ export default function Account() {
   const isMountedRef = useIsMountedRef()
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
-  const { user, updateProfile } = useAuth()
+  const { user, updateProfile, updateProfileStudent } = useAuth()
 
   useEffect(() => {
     if (!user) {
@@ -41,17 +42,23 @@ export default function Account() {
       username: user?.username,
       name: user?.name || '',
       email: user?.email || '',
-      avatarUrl: user?.avatar_url,
-      phone: user?.phone,
-      education: user?.student?.education,
-      job: user?.professor?.job,
-      skill: user?.professor?.skill,
+      avatarUrl: user?.avatar_url || '',
+      preAvatar: user?.avatar_url || null,
+      phone: user?.phone || '',
+      education: user?.student?.education || '',
+      jobs: user?.jobs || [],
+      skills: user?.skills || [],
     },
 
     validationSchema: UpdateUserSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
+      console.log('🚀 ~ file: Account.js ~ line 55 ~ onSubmit: ~ values', values)
       try {
-        await updateProfile({ ...values })
+        if (user?.student_id) {
+          await updateProfileStudent({ ...values })
+        } else {
+          await updateProfile({ ...values })
+        }
         enqueueSnackbar('Đã cập nhật', { variant: 'success' })
         if (isMountedRef.current) {
           setSubmitting(false)
@@ -68,17 +75,40 @@ export default function Account() {
   const { values, errors, touched, isSubmitting, handleSubmit, getFieldProps, setFieldValue } = formik
 
   const handleDrop = useCallback(
-    (acceptedFiles) => {
+    async (acceptedFiles) => {
       const file = acceptedFiles[0]
       if (file) {
-        setFieldValue('avatarUrl', {
+        setFieldValue('preAvatar', {
           ...file,
           preview: URL.createObjectURL(file),
         })
       }
+      const newAvatar = await handleUpload(file)
+      console.log('🚀 ~ file: Account.js ~ line 87 ~ newAvatar', newAvatar)
+      setFieldValue('avatarUrl', newAvatar)
     },
+
     [setFieldValue],
   )
+
+  const handleUpload = async (file) => {
+    const formData = new FormData()
+    formData.set('image', file, `${file.name}`)
+    try {
+      const config = {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+      const { data } = await axios.post('/api/upload', formData, config)
+      const newImage = {
+        imageName: data.fileName,
+        imageLink: data.fileLocation,
+      }
+      return newImage.imageLink
+    } catch (error) {
+      console.log(error)
+      return error
+    }
+  }
 
   return (
     <FormikProvider value={formik}>
@@ -88,7 +118,7 @@ export default function Account() {
             <Card sx={{ py: 10, px: 3, textAlign: 'center' }}>
               <UploadAvatar
                 accept="image/*"
-                file={values.avatarUrl}
+                file={values.preAvatar}
                 maxSize={3145728}
                 onDrop={handleDrop}
                 error={Boolean(touched.avatarUrl && errors.avatarUrl)}
@@ -119,7 +149,9 @@ export default function Account() {
             <Card sx={{ p: 3 }}>
               <Stack spacing={{ xs: 2, md: 3 }}>
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                  <TextField fullWidth disabled label="Tên tài khoản" {...getFieldProps('username')} />
+                  {user?.username && (
+                    <TextField fullWidth disabled label="Tên tài khoản" {...getFieldProps('username')} />
+                  )}
                   <TextField fullWidth label="Họ và tên" {...getFieldProps('name')} />
                 </Stack>
 
@@ -127,11 +159,11 @@ export default function Account() {
                   <TextField fullWidth label="Email" {...getFieldProps('email')} />
                   <TextField fullWidth label="Số điện thoại" {...getFieldProps('phone')} />
                 </Stack>
-                {user?.student && <TextField fullWidth label="Học vấn" {...getFieldProps('education')} />}
-                {user?.professor && (
+                {user?.student_id && <TextField fullWidth label="Học vấn" {...getFieldProps('education')} />}
+                {user?.username && (
                   <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                    <TextField fullWidth label="Nghề nghiệp" {...getFieldProps('job')} />
-                    <TextField fullWidth label="Kỹ năng" {...getFieldProps('skill')} />
+                    <TextField fullWidth label="Nghề nghiệp" {...getFieldProps('jobs')} />
+                    <TextField fullWidth label="Kỹ năng" {...getFieldProps('skills')} />
                   </Stack>
                 )}
               </Stack>

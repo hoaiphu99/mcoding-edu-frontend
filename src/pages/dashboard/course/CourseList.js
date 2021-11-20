@@ -1,4 +1,5 @@
 import { filter } from 'lodash'
+import slugify from 'slugify'
 import { useSnackbar } from 'notistack'
 import { Icon } from '@iconify/react'
 import { useState, useEffect } from 'react'
@@ -22,8 +23,16 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getAllCourses, deleteCourse, updateCourseStatus } from '../../../redux/actions'
-import { coursesState$, userLoginState$ } from '../../../redux/selectors'
+import {
+  getAllCourses,
+  deleteCourse,
+  updateCourseStatus,
+  getCategories,
+  getProgramLanguages,
+} from '../../../redux/actions'
+import { coursesState$ } from '../../../redux/selectors'
+// hook
+import useAuth from '../../../hooks/useAuth'
 // utils
 import { fDate } from '../../../utils/formatTime'
 // routes
@@ -42,7 +51,7 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Khóa học', alignRight: false },
   { id: 'created_at', label: 'Đã tạo', alignRight: false },
   { id: 'status_code', label: 'Trạng thái', alignRight: false },
-  { id: 'professor', label: 'Người tạo', alignRight: true },
+  { id: 'teachable', label: 'Người tạo', alignRight: true },
   { id: 'action' },
   { id: '' },
 ]
@@ -100,10 +109,11 @@ export default function CourseList() {
   const [orderBy, setOrderBy] = useState('created_at')
   const [tag, setTag] = useState('')
 
+  const { user: userLogin } = useAuth()
+
   const { enqueueSnackbar } = useSnackbar()
 
   const { data: courses, error, success } = useSelector(coursesState$)
-  const { data: userLogin } = useSelector(userLoginState$)
 
   useEffect(() => {
     if (error) {
@@ -117,6 +127,8 @@ export default function CourseList() {
       setTag('')
     }
     dispatch(getAllCourses.getAllCoursesRequest())
+    dispatch(getCategories.getCategoriesRequest())
+    dispatch(getProgramLanguages.getProgramLanguagesRequest())
   }, [dispatch, error, enqueueSnackbar, tag, success])
 
   const handleRequestSort = (event, property) => {
@@ -164,7 +176,7 @@ export default function CourseList() {
 
   const handleDeleteCourse = (courseId) => {
     console.log(courseId)
-    dispatch(deleteCourse.deleteCourseRequest({ id: courseId, userLogin }))
+    dispatch(deleteCourse.deleteCourseRequest({ id: courseId }))
     setTag('delete')
   }
 
@@ -188,7 +200,7 @@ export default function CourseList() {
         data.status_code = 'PEN'
         break
     }
-    dispatch(updateCourseStatus.updateCourseStatusRequest({ data, userLogin }))
+    dispatch(updateCourseStatus.updateCourseStatusRequest({ data }))
     setTag('update')
   }
 
@@ -240,7 +252,7 @@ export default function CourseList() {
                 />
                 <TableBody>
                   {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { course_id, name, image_url, professor, created_at, status_code, slug } = row
+                    const { course_id, name, image_url, user, created_at, status_code } = row
 
                     const isItemSelected = selected.indexOf(name) !== -1
 
@@ -289,9 +301,9 @@ export default function CourseList() {
                               'Đã hủy'}
                           </Label>
                         </TableCell>
-                        <TableCell align="right">{professor.username}</TableCell>
+                        <TableCell align="right">{user.name}</TableCell>
                         <TableCell align="right">
-                          {status_code !== 'PUB' && status_code !== 'CAN' && userLogin.admin && (
+                          {status_code !== 'PUB' && status_code !== 'CAN' && userLogin.is_admin && (
                             <Button variant="outlined" onClick={() => handleUpdateCourseStatus(course_id, status_code)}>
                               {(status_code === 'PEN' && 'Duyệt') ||
                                 (status_code === 'APP' && 'Hủy') ||
@@ -302,7 +314,7 @@ export default function CourseList() {
                         <TableCell align="right">
                           <CourseMoreMenu
                             onDelete={() => handleDeleteCourse(course_id)}
-                            courseSlug={slug}
+                            courseSlug={slugify(name, { lower: true, locale: 'vi' })}
                             courseId={course_id}
                           />
                         </TableCell>

@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { getUsers, registerUser, authUser, getUserProfile } from '../actions'
-import { fetchUsers, login, register, fetchUserProfile } from '../../api'
+import { getUsers, registerUser, authUser, getUserProfile, bannedUser } from '../actions'
+import { fetchUsers, login, register, fetchUserProfile, banUser } from '../../api'
 
 function* authUserSaga(action) {
   try {
@@ -39,11 +39,22 @@ function* getUserProfileSaga() {
   }
 }
 
+function* bannedUserSaga(action) {
+  try {
+    const user = yield call(banUser, action.payload.data)
+    console.log('🚀 ~ file: userSaga.js ~ line 45 ~ function*bannedUserSaga ~ user', user)
+    yield put(bannedUser.bannedUserSuccess(user.data))
+  } catch (error) {
+    yield put(bannedUser.bannedUserFailure(error.response && error.response.data ? error.response.data : error))
+  }
+}
+
 function* userSaga() {
   yield takeLatest(getUsers.getUsersRequest, getUsersSaga)
   yield takeLatest(authUser.authUserRequest, authUserSaga)
   yield takeLatest(registerUser.registerUserRequest, registerUserSaga)
   yield takeLatest(getUserProfile.getUserProfileRequest, getUserProfileSaga)
+  yield takeLatest(bannedUser.bannedUserRequest, bannedUserSaga)
 }
 
 export default userSaga

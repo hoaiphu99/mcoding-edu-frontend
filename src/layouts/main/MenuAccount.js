@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react'
 import { useSnackbar } from 'notistack'
-import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
 import { Icon } from '@iconify/react'
@@ -14,14 +13,12 @@ import useAuth from '../../hooks/useAuth'
 // Components
 import MenuPopover from '../../components/MenuPopover'
 import { MIconButton } from '../../components/@material-extend'
-// redux
-import { authUser } from '../../redux/actions'
 
 // ------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   { label: 'Trang cá nhân', icon: personFill, linkTo: '/trang-ca-nhan', access: 'protect' },
-  { label: 'Dashboard', icon: settings2Fill, linkTo: '/dashboard', access: 'private' },
+  { label: 'Bảng điều khiển', icon: settings2Fill, linkTo: '/bang-dieu-khien', access: 'private' },
 ]
 
 MenuAccount.propTypes = {
@@ -34,7 +31,6 @@ export default function MenuAccount({ userLogin }) {
   const { logout } = useAuth()
 
   const { enqueueSnackbar } = useSnackbar()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleOpen = () => {
@@ -46,7 +42,6 @@ export default function MenuAccount({ userLogin }) {
 
   const handleLogout = () => {
     logout()
-    dispatch(authUser.authUserLogout())
     enqueueSnackbar('Đăng xuất thành công', {
       variant: 'success',
     })
@@ -94,7 +89,7 @@ export default function MenuAccount({ userLogin }) {
         <Divider sx={{ my: 1 }} />
 
         {MENU_OPTIONS.filter((option) => {
-          if (userLogin.student) return option.access === 'protect'
+          if (userLogin.student_id) return option.access === 'protect'
           return option
         }).map((option) => (
           <MenuItem

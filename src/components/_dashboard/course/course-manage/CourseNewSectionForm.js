@@ -9,7 +9,7 @@ import { LoadingButton } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { createSection, updateSection } from '../../../../redux/actions'
-import { userLoginState$, courseLessonState$ } from '../../../../redux/selectors'
+import { courseLessonState$ } from '../../../../redux/selectors'
 // ----------------------------------------------------------------------
 
 CourseNewSectionForm.propTypes = {
@@ -24,7 +24,6 @@ export default function CourseNewSectionForm({ isEdit, open, onClose, section_id
   const { enqueueSnackbar } = useSnackbar()
 
   const { data: course, error } = useSelector(courseLessonState$)
-  const { data: userLogin } = useSelector(userLoginState$)
 
   const currentSection = course.sections.find((item) => item.section_id === section_id)
 
@@ -53,10 +52,10 @@ export default function CourseNewSectionForm({ isEdit, open, onClose, section_id
       }
       try {
         if (!isEdit) {
-          dispatch(createSection.createSectionRequest({ data, userLogin }))
+          dispatch(createSection.createSectionRequest({ data }))
         } else {
           data.id = section_id
-          dispatch(updateSection.updateSectionRequest({ data, userLogin }))
+          dispatch(updateSection.updateSectionRequest({ data }))
         }
         handleCancel()
         resetForm()

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import slugify from 'slugify'
 import PropTypes from 'prop-types'
 import { Icon } from '@iconify/react'
 import { useNavigate } from 'react-router-dom'
@@ -48,11 +49,10 @@ function CourseItem({ course }) {
     image_url: imageUrl,
     name,
     student_course: { process },
-    slug,
   } = course
 
   const handleClick = () => {
-    navigate(`/${slug}`)
+    navigate(`/${slugify(name, { lower: true, locale: 'vi' })}`)
   }
   return (
     <Card sx={{ pt: '100%', cursor: 'pointer' }}>

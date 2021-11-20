@@ -1,4 +1,5 @@
 import Slider from 'react-slick'
+import slugify from 'slugify'
 import PropTypes from 'prop-types'
 import { motion } from 'framer-motion'
 import { useState, useRef } from 'react'
@@ -38,7 +39,7 @@ CarouselItem.propTypes = {
 
 function CarouselItem({ item, isActive }) {
   const theme = useTheme()
-  const { image_url, name, professor, slug } = item
+  const { image_url, name, user } = item
 
   return (
     <Paper
@@ -73,20 +74,25 @@ function CarouselItem({ item, isActive }) {
       >
         <MotionContainer open={isActive}>
           <motion.div variants={varFadeInRight}>
-            <Link to={`/khoa-hoc/${slug}`} underline="none" color="inherit" component={RouterLink}>
+            <Link
+              to={`/khoa-hoc/${slugify(name, { lower: true, locale: 'vi' })}`}
+              underline="none"
+              color="inherit"
+              component={RouterLink}
+            >
               <Typography variant="h3" gutterBottom>
                 {name}
               </Typography>
             </Link>
           </motion.div>
           <motion.div variants={varFadeInRight}>
-            <Avatar src={professor.user.avatar_url} />
+            <Avatar src={user.avatar_url} />
             <Typography variant="body2" noWrap gutterBottom>
-              {professor.user.name}
+              {user.name}
             </Typography>
           </motion.div>
           <motion.div variants={varFadeInRight}>
-            <Link to={`/khoa-hoc/${slug}`} component={RouterLink}>
+            <Link to={`/khoa-hoc/${slugify(name, { lower: true, locale: 'vi' })}`} component={RouterLink}>
               <Button variant="contained"> Xem thêm </Button>
             </Link>
           </motion.div>
@@ -127,9 +133,12 @@ export default function CourseCarouselAnimation({ course }) {
   return (
     <Card sx={{ mb: 2 }}>
       <Slider ref={carouselRef} {...settings}>
-        {course.map((item, index) => (
-          <CarouselItem key={item.course_id} item={item} isActive={index === currentIndex} />
-        ))}
+        {course.map((item, index) => {
+          if (item.status_code === 'PUB') {
+            return <CarouselItem key={item.course_id} item={item} isActive={index === currentIndex} />
+          }
+          return null
+        })}
       </Slider>
 
       <CarouselControlsArrowsIndex

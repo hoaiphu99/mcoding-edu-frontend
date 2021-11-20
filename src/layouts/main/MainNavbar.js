@@ -1,9 +1,9 @@
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 // material
 import { styled } from '@mui/material/styles'
 import { Box, Button, AppBar, Toolbar, Container } from '@mui/material'
 // hooks
+import useAuth from '../../hooks/useAuth'
 import useOffSetTop from '../../hooks/useOffSetTop'
 // components
 import Logo from '../../components/Logo'
@@ -17,7 +17,6 @@ import MenuAccount from './MenuAccount'
 import Searchbar from './Searchbar'
 
 // ----------------------------------------------------------------------
-import { userLoginState$ } from '../../redux/selectors'
 
 const APP_BAR_MOBILE = 64
 const APP_BAR_DESKTOP = 88
@@ -52,7 +51,8 @@ export default function MainNavbar() {
   const isOffset = useOffSetTop(50)
   const { pathname } = useLocation()
   const isHome = pathname === '/'
-  const { data } = useSelector(userLoginState$)
+
+  const { user } = useAuth()
 
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent' }}>
@@ -85,12 +85,12 @@ export default function MainNavbar() {
             <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
           </MHidden>
           <Searchbar />
-          {!data ? (
+          {!user ? (
             <RouterLink to="/login">
               <Button variant="contained">Đăng nhập</Button>
             </RouterLink>
           ) : (
-            <MenuAccount userLogin={data} />
+            <MenuAccount userLogin={user} />
           )}
           <MHidden width="mdUp">
             <MenuMobile isOffset={isOffset} isHome={isHome} navConfig={navConfig} />

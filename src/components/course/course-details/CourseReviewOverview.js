@@ -38,7 +38,7 @@ CourseReviewOverview.propTypes = {
 }
 
 export default function CourseReviewOverview({ review, onOpen }) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const { count: totalReview, reviews } = review
 
   const totalRating = reviews.reduce((acc, cur) => acc + cur.rating, 0) / totalReview || 0
@@ -60,7 +60,7 @@ export default function CourseReviewOverview({ review, onOpen }) {
       </GridStyle>
 
       <GridStyle item xs={12} md={6}>
-        {isAuthenticated ? (
+        {isAuthenticated && user.student_id ? (
           <ScrollLink to="move_add_review" spy smooth offset={-200}>
             <Button size="large" onClick={onOpen} variant="outlined" startIcon={<Icon icon={edit2Fill} />}>
               Để lại đánh giá của bạn
@@ -68,7 +68,7 @@ export default function CourseReviewOverview({ review, onOpen }) {
           </ScrollLink>
         ) : (
           <Typography variant="h5" gutterBottom sx={{ color: 'error.main' }}>
-            Đăng ký học để đánh giá
+            {user.student_id ? 'Đăng ký học để đánh giá' : 'Mục này dành cho học viên'}
           </Typography>
         )}
       </GridStyle>

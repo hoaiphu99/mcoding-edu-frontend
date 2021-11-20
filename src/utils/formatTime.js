@@ -7,6 +7,10 @@ export function fDate(date) {
   return format(new Date(date), 'dd MMMM yyyy', { locale: vi })
 }
 
+export function fYear(date) {
+  return format(new Date(date), 'yyyy', { locale: vi })
+}
+
 export function fDateTime(date) {
   return format(new Date(date), 'dd MMM yyyy HH:mm', { locale: vi })
 }

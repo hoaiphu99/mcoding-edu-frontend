@@ -14,11 +14,16 @@ export default function CourseCommentList({ comments }) {
   return (
     <List disablePadding>
       {comments.map((comment) => {
-        const { comment_id, content, created_at, user } = comment
+        const { comment_id, content, created_at, student } = comment
 
         return (
           <Box key={comment_id} sx={{}}>
-            <CourseCommentItem name={user.name} avatarUrl={user.avatar_url} postedAt={created_at} message={content} />
+            <CourseCommentItem
+              name={student.name}
+              avatarUrl={student.avatar_url}
+              postedAt={created_at}
+              message={content}
+            />
           </Box>
         )
       })}

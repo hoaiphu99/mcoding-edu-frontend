@@ -13,7 +13,7 @@ ReviewItem.propTypes = {
 
 function ReviewItem({ review }) {
   const {
-    user: { name, avatar_url: avatarUrl },
+    student: { name, avatar_url: avatarUrl },
     details: comment,
     rating,
     created_at: postedAt,

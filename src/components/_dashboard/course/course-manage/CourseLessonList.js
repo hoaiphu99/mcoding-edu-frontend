@@ -14,10 +14,12 @@ import {
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteSection, deleteLesson } from '../../../../redux/actions/courseActions'
-import { userLoginState$, courseLessonState$ } from '../../../../redux/selectors'
+import { courseLessonState$ } from '../../../../redux/selectors'
+
 // components
 import CourseNewLessonForm from './CourseNewLessonForm'
 import CourseNewSectionForm from './CourseNewSectionForm'
+import CourseAttachment from './CourseAttachment'
 import CourseMoreMenu from './CourseMoreMenu'
 // ------------------------------------------
 
@@ -25,11 +27,11 @@ export default function CourseManage() {
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data: userLogin } = useSelector(userLoginState$)
   const { data: course, error } = useSelector(courseLessonState$)
 
   const [openLessonForm, setOpenLessonForm] = useState(false)
   const [openNewSectionForm, setOpenNewSectionForm] = useState(false)
+  const [openAttachForm, setOpenAttachForm] = useState(false)
   const [sectionID, setSectionID] = useState(0)
   const [lessonID, setLessonID] = useState(0)
   const [isEdit, setIsEdit] = useState(false)
@@ -56,19 +58,25 @@ export default function CourseManage() {
     setSectionID(id)
   }
 
+  const handleClickOpenAttachForm = (id) => {
+    setOpenAttachForm(true)
+    setLessonID(id)
+  }
+
   const handleClose = () => {
     setOpenLessonForm(false)
     setOpenNewSectionForm(false)
+    setOpenAttachForm(false)
     setIsEdit(false)
   }
 
   const handleDeleteSection = (id) => {
-    dispatch(deleteSection.deleteSectionRequest({ id, userLogin }))
+    dispatch(deleteSection.deleteSectionRequest({ id }))
     enqueueSnackbar('Xóa thành công', { variant: 'success' })
   }
 
   const handleDeleteLesson = (id) => {
-    dispatch(deleteLesson.deleteLessonRequest({ id, userLogin }))
+    dispatch(deleteLesson.deleteLessonRequest({ id }))
     enqueueSnackbar('Xóa thành công', { variant: 'success' })
   }
 
@@ -100,6 +108,7 @@ export default function CourseManage() {
                             <ListItemSecondaryAction>
                               <CourseMoreMenu
                                 onOpen={() => handleClickEditLesson(section.section_id, lesson.lesson_id)}
+                                onOpenAttach={() => handleClickOpenAttachForm(lesson.lesson_id)}
                                 onDelete={() => handleDeleteLesson(lesson.lesson_id)}
                                 onEdit={() => setIsEdit(true)}
                                 isLesson={Boolean(true)}
@@ -124,6 +133,7 @@ export default function CourseManage() {
       {openNewSectionForm && (
         <CourseNewSectionForm isEdit={isEdit} open={openNewSectionForm} onClose={handleClose} section_id={sectionID} />
       )}
+      {openAttachForm && <CourseAttachment open={openAttachForm} onClose={handleClose} lesson_id={lessonID} />}
     </>
   )
 }

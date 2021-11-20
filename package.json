@@ -22,7 +22,19 @@
   "babel": {
     "presets": [
       "@babel/preset-react"
-    ]
+    ],
+    "env": {
+      "development": {
+        "presets": [
+          [
+            "@babel/preset-react",
+            {
+              "development": true
+            }
+          ]
+        ]
+      }
+    }
   },
   "browserslist": {
     "production": [
@@ -141,8 +153,12 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.5",
-    "@babel/eslint-parser": "^7.15.4",
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.3",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-react": "^7.16.0",
+    "babel-preset-react-app": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",

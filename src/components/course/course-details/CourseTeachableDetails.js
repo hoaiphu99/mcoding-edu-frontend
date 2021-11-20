@@ -12,19 +12,35 @@ CourseProfessorDetails.propTypes = {
 }
 
 export default function CourseProfessorDetails({ course }) {
-  const { professor } = course
+  const { user } = course
   return (
     <Card sx={{ mt: 2, mb: 2 }}>
       <CardHeader title="Thông tin giảng viên" />
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center' }}>
-        <Avatar sx={{ width: 80, height: 80 }} src={professor && professor.user.avatar_url} />
+        <Avatar sx={{ width: 80, height: 80 }} src={user && user.avatar_url} />
         <Typography variant="h6" component="h2" sx={{ pl: 2 }}>
-          {professor && professor.user.name}
+          {user && user.name}
         </Typography>
       </Box>
       <CardContent>
-        <Typography color="text.secondary">Nghề nghiệp: {professor && professor.job}</Typography>
-        <Typography color="text.secondary">Kỹ năng: {professor && professor.skill}</Typography>
+        <Typography color="text.secondary">
+          Nghề nghiệp:{' '}
+          {user &&
+            user.jobs?.map((job) => (
+              <Typography key={job.id} variant="body2" component="p" sx={{ pl: 2 }}>
+                {job.job_name}
+              </Typography>
+            ))}
+        </Typography>
+        <Typography color="text.secondary">
+          Kỹ năng:{' '}
+          {user &&
+            user.skills?.map((skill) => (
+              <Typography key={skill.id} variant="body2" component="p" sx={{ pl: 2 }}>
+                {skill.skill_name}
+              </Typography>
+            ))}
+        </Typography>
       </CardContent>
     </Card>
   )

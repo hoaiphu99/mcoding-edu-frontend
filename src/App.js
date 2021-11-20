@@ -13,12 +13,12 @@ import ScrollToTop from './components/ScrollToTop'
 import LoadingScreen, { ProgressBarStyle } from './components/LoadingScreen'
 import ThemePrimaryColor from './components/ThemePrimaryColor'
 // verify
-import AuthVerify from './common/authVerify'
+// import AuthVerify from './common/authVerify'
 // ----------------------------------------------------------------------
 
 export default function App() {
-  const { isInitialized } = useAuth()
-  console.log('🚀 ~ file: App.js ~ line 21 ~ App ~ isInitialized', isInitialized)
+  const { user, isInitialized } = useAuth()
+  console.log('🚀 ~ file: App.js ~ line 21 ~ App ~ user', user)
   return (
     <ThemeConfig>
       <ThemePrimaryColor>
@@ -29,7 +29,7 @@ export default function App() {
             {/* <Settings /> */}
             <ScrollToTop />
             {isInitialized ? <Router /> : <LoadingScreen />}
-            <AuthVerify />
+            {/* <AuthVerify /> */}
           </NotistackProvider>
         </RtlLayout>
       </ThemePrimaryColor>

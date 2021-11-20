@@ -16,6 +16,7 @@ import {
   getMyCourses,
   getStudentsInCourse,
   deleteStudentInCourse,
+  getLessonById,
 } from '../actions'
 import {
   fetchAllCourses,
@@ -24,7 +25,7 @@ import {
   removeCourse,
   editCourseStatus,
   fetchCourse,
-  fetchCourseLearning,
+  fetchCourseLesson,
   addNewSection,
   editSection,
   removeSection,
@@ -34,6 +35,7 @@ import {
   fetchMyCourses,
   fetchStudentsInCourse,
   removeStudentInCourse,
+  fetchLessonById,
 } from '../../api'
 
 function* getAllCoursesSaga() {
@@ -85,7 +87,7 @@ function* getCourseDetailsSaga(action) {
 
 function* getCourseLessonSaga(action) {
   try {
-    const course = yield call(fetchCourseLearning, action.payload.slug)
+    const course = yield call(fetchCourseLesson, action.payload.id)
     yield put(getCourseLesson.getCourseLessonSuccess(course.data))
   } catch (error) {
     yield put(
@@ -145,8 +147,10 @@ function* deleteStudentInCourseSaga(action) {
 function* createSectionSaga(action) {
   try {
     const section = yield call(addNewSection, action.payload.data)
+
     yield put(createSection.createSectionSuccess(section.data))
   } catch (error) {
+    console.log('🚀 ~ file: courseSaga.js ~ line 150 ~ function*createSectionSaga ~ error', error)
     yield put(createSection.createSectionFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
@@ -171,12 +175,20 @@ function* deleteSectionSaga(action) {
 
 // LessonSagas
 
+function* getLessonByIdSaga(action) {
+  try {
+    const lesson = yield call(fetchLessonById, action.payload.id)
+    yield put(getLessonById.getLessonByIdSuccess(lesson.data))
+  } catch (error) {
+    yield put(getLessonById.getLessonByIdFailure(error.response && error.response.data ? error.response.data : error))
+  }
+}
+
 function* createLessonSaga(action) {
   try {
     const lesson = yield call(addNewLesson, action.payload.data)
     yield put(createLesson.createLessonSuccess(lesson.data))
   } catch (error) {
-    console.log({ error })
     yield put(createLesson.createLessonFailure(error.response && error.response.data ? error.response.data : error))
   }
 }
@@ -216,6 +228,7 @@ function* courseSaga() {
   yield takeLatest(getMyCourses.getMyCoursesRequest, getMyCoursesSaga)
   yield takeLatest(getStudentsInCourse.getStudentsInCourseRequest, getStudentsInCourseSaga)
   yield takeLatest(deleteStudentInCourse.deleteStudentInCourseRequest, deleteStudentInCourseSaga)
+  yield takeLatest(getLessonById.getLessonByIdRequest, getLessonByIdSaga)
 }
 
 export default courseSaga

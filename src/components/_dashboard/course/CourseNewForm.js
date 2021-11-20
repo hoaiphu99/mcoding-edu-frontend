@@ -23,8 +23,8 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { createCourse, updateCourse } from '../../../redux/actions'
-import { coursesState$ } from '../../../redux/selectors'
+import { createCourse, updateCourse, getCategories, getProgramLanguages } from '../../../redux/actions'
+import { coursesState$, categoriesState$, programLanguagesState$ } from '../../../redux/selectors'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 //
@@ -33,18 +33,18 @@ import { UploadSingleFile } from '../../upload'
 
 // ----------------------------------------------------------------------
 
-const CATEGORY_OPTION = [
-  { id: 1, name: 'Lập trình website' },
-  { id: 2, name: 'Machine Learning' },
-  { id: 3, name: 'Lập trình windows form' },
-]
+// const CATEGORY_OPTION = [
+//   { id: 1, name: 'Lập trình website' },
+//   { id: 2, name: 'Machine Learning' },
+//   { id: 3, name: 'Lập trình windows form' },
+// ]
 
-const TAGS_OPTION = [
-  { id: 1, name: 'Javascript' },
-  { id: 2, name: 'Python' },
-  { id: 3, name: 'HTML' },
-  { id: 4, name: 'CSS' },
-]
+// const TAGS_OPTION = [
+//   { id: 1, name: 'Javascript' },
+//   { id: 2, name: 'Python' },
+//   { id: 3, name: 'HTML' },
+//   { id: 4, name: 'CSS' },
+// ]
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -63,6 +63,9 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { error } = useSelector(coursesState$)
+  const { data: categories } = useSelector(categoriesState$)
+  const { data: programLanguages } = useSelector(programLanguagesState$)
+
   const { enqueueSnackbar } = useSnackbar()
 
   const NewProductSchema = Yup.object().shape({
@@ -76,7 +79,9 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [enqueueSnackbar, error])
+    dispatch(getCategories.getCategoriesRequest())
+    dispatch(getProgramLanguages.getProgramLanguagesRequest())
+  }, [enqueueSnackbar, error, dispatch])
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -84,13 +89,14 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
       name: currentCourse?.name || '',
       description: currentCourse?.description || '',
       image_url: currentCourse?.image_url || null,
-      category_id: currentCourse?.category_id || CATEGORY_OPTION[0].id,
-      course_languages: currentCourse?.course_languages || [TAGS_OPTION[0]],
+      category_id: currentCourse?.category_id || categories[0]?.category_id,
+      course_languages: currentCourse?.programingLanguages || [programLanguages[0]],
     },
     validationSchema: NewProductSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
       try {
-        const arrCourseLanguage = values.course_languages.map((item) => item.id)
+        const arrCourseLanguage = values.course_languages.map((item) => item.prolang_id)
+        console.log('🚀 ~ file: CourseNewForm.js ~ line 97 ~ onSubmit: ~ arrCourseLanguage', arrCourseLanguage)
         const data = {
           name: values.name,
           description: values.description,
@@ -189,7 +195,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
                 <div>
                   <LabelStyle>Thêm hình đại diện</LabelStyle>
                   <UploadSingleFile
-                    maxSize={3145728}
+                    maxSize={1000 * 1024 * 1024}
                     accept="image/*"
                     file={values.image_url}
                     onDrop={handleDrop}
@@ -212,8 +218,8 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
                   <FormControl fullWidth>
                     <InputLabel>Danh mục</InputLabel>
                     <Select label="Category" native {...getFieldProps('category_id')} value={values.category_id}>
-                      {CATEGORY_OPTION.map((category) => (
-                        <option key={category.id} value={category.id}>
+                      {categories.map((category) => (
+                        <option key={category.category_id} value={category.category_id}>
                           {category.name}
                         </option>
                       ))}
@@ -227,11 +233,16 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
                       onChange={(event, newValue) => {
                         setFieldValue('course_languages', newValue)
                       }}
-                      options={TAGS_OPTION.map((option) => option)}
+                      options={programLanguages.map((option) => option)}
                       getOptionLabel={(option) => option.name}
                       renderTags={(value, getTagProps) =>
                         value.map((option, index) => (
-                          <Chip {...getTagProps({ index })} key={option.id} size="small" label={option.name} />
+                          <Chip
+                            {...getTagProps({ index })}
+                            key={option?.prolang_id}
+                            size="small"
+                            label={option?.name}
+                          />
                         ))
                       }
                       renderInput={(params) => <TextField label="Ngôn ngữ lập trình" {...params} />}

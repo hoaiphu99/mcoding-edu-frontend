@@ -1,15 +1,22 @@
+import propTypes from 'prop-types'
 import { Icon } from '@iconify/react'
 import { useRef, useState } from 'react'
 import editFill from '@iconify/icons-eva/edit-fill'
 import { Link as RouterLink } from 'react-router-dom'
-import trash2Outline from '@iconify/icons-eva/trash-2-outline'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
+import lockFill from '@iconify/icons-eva/lock-fill'
+import unlockOutline from '@iconify/icons-eva/unlock-outline'
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+UserMoreMenu.propTypes = {
+  onBanned: propTypes.func,
+  isBanned: propTypes.bool,
+}
+
+export default function UserMoreMenu({ onBanned, isBanned }) {
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -29,18 +36,27 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        {!isBanned ? (
+          <MenuItem sx={{ color: 'error' }} onClick={onBanned}>
+            <ListItemIcon>
+              <Icon icon={lockFill} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Khóa người dùng" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        ) : (
+          <MenuItem sx={{ color: 'error' }} onClick={onBanned}>
+            <ListItemIcon>
+              <Icon icon={unlockOutline} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Mở khóa " primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="Chỉnh sửa" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

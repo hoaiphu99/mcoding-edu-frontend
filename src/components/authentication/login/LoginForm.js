@@ -1,8 +1,7 @@
 import * as Yup from 'yup'
 import { useSnackbar } from 'notistack'
 import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useFormik, Form, FormikProvider } from 'formik'
 import { Icon } from '@iconify/react'
 import eyeFill from '@iconify/icons-eva/eye-fill'
@@ -13,54 +12,51 @@ import { LoadingButton } from '@mui/lab'
 // hooks
 import useAuth from '../../../hooks/useAuth'
 // ----------------------------------------------------------------------
-import { authUser } from '../../../redux/actions/userActions'
-import { userLoginState$ } from '../../../redux/selectors/index'
 
 export default function LoginForm() {
-  const { login } = useAuth()
-  const location = useLocation()
-  const isProfessor = location.pathname.includes('professor')
-  console.log('🚀 ~ file: LoginForm.js ~ line 23 ~ LoginForm ~ isProfessor', isProfessor)
+  const { studentLogin, error, success } = useAuth()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
-
-  const { loading, error, data } = useSelector(userLoginState$)
 
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (error) {
+      console.log('🚀 ~ file: LoginForm.js ~ line 25 ~ useEffect ~ error', error)
       enqueueSnackbar(`${error}`, {
         variant: 'error',
       })
-    } else if (data) {
+    }
+    if (success) {
       enqueueSnackbar('Đăng nhập thành công', {
         variant: 'success',
       })
       navigate('/dashboard', { replace: true })
     }
-  }, [error, data, navigate, enqueueSnackbar])
+  }, [error, navigate, enqueueSnackbar, success])
 
   const LoginSchema = Yup.object().shape({
-    username: Yup.string().required('Tên tài khoản bắt buộc'),
+    email: Yup.string().required('Email không được để trống').email('Email không hợp lệ'),
     password: Yup.string().min(6, 'Mật khẩu từ 6 ký tự trở lên').required('Mật khẩu bắt buộc'),
   })
 
   const formik = useFormik({
     initialValues: {
-      username: '',
+      email: '',
       password: '',
       remember: true,
     },
     validationSchema: LoginSchema,
     onSubmit: async () => {
-      await login(values.username, values.password)
-      dispatch(authUser.authUserRequest(values))
+      try {
+        await studentLogin(values.email, values.password)
+      } catch (error) {
+        console.log('🚀 ~ file: LoginForm.js ~ line 55 ~ onSubmit: ~ error', error)
+      }
     },
   })
 
-  const { errors, touched, values, handleSubmit, getFieldProps } = formik
+  const { errors, touched, values, handleSubmit, isSubmitting, getFieldProps } = formik
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show)
@@ -72,12 +68,12 @@ export default function LoginForm() {
         <Stack spacing={3}>
           <TextField
             fullWidth
-            autoComplete="username"
+            autoComplete="email"
             type="text"
-            label="Tên tài khoản"
-            {...getFieldProps('username')}
-            error={Boolean(touched.username && errors.username)}
-            helperText={touched.username && errors.username}
+            label="Email"
+            {...getFieldProps('email')}
+            error={Boolean(touched.email && errors.email)}
+            helperText={touched.email && errors.email}
           />
 
           <TextField
@@ -111,7 +107,7 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
           Đăng nhập
         </LoadingButton>
       </Form>

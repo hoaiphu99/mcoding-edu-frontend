@@ -17,6 +17,7 @@ import {
   getMyCourses,
   getStudentsInCourse,
   deleteStudentInCourse,
+  getLessonById,
 } from '../actions'
 
 // @desc reducer for courses
@@ -432,6 +433,41 @@ export const studentsInCourseReducers = (state = INIT_STATE.studentsInCourse, ac
         error: null,
       }
     case getType(deleteStudentInCourse.deleteStudentInCourseFailure()):
+      return {
+        ...state,
+        success: null,
+        loading: false,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    case 'RESET_STATE':
+      return {
+        ...state,
+        success: null,
+      }
+    default:
+      return state
+  }
+}
+
+export const lessonDetailsReducers = (state = INIT_STATE.lessonDetails, action) => {
+  switch (action.type) {
+    // Get Lesson Details
+    case getType(getLessonById.getLessonByIdRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(getLessonById.getLessonByIdSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.LOAD,
+        loading: false,
+        data: action.payload.data,
+        error: null,
+      }
+    case getType(getLessonById.getLessonByIdFailure()):
       return {
         ...state,
         success: null,

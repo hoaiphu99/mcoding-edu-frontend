@@ -19,10 +19,11 @@ import ProductNewForm from '../../../components/_dashboard/course/CourseNewForm'
 export default function CourseCreate() {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const { slug } = useParams()
+  const { id } = useParams()
   const { data: courses } = useSelector(coursesState$)
+
   const isEdit = pathname.includes('edit')
-  const currentCourse = courses.find((course) => course.slug === slug)
+  const currentCourse = courses.find((course) => course.course_id === Number(id))
 
   useEffect(() => {
     if (!courses.length) {

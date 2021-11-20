@@ -38,12 +38,12 @@ export default function Router() {
   return useRoutes([
     // Dashboard Routes
     {
-      path: 'dashboard',
+      path: 'bang-dieu-khien',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/one" replace /> },
-        { path: 'one', element: <PageOne /> },
-        { path: 'two', element: <PageTwo /> },
+        { element: <Navigate to="/bang-dieu-khien/chinh" replace /> },
+        { path: 'chinh', element: <GeneralAnalytics /> },
+        { path: 'bieu-do-thong-ke', element: <ChartAnalytics /> },
         { path: 'three', element: <PageThree /> },
         {
           path: 'users',
@@ -55,12 +55,22 @@ export default function Router() {
           ],
         },
         {
+          path: 'students',
+          children: [
+            { element: <Navigate to="/dashboard/students/student-list" replace /> },
+            {
+              path: 'student-list',
+              element: <StudentList />,
+            },
+          ],
+        },
+        {
           path: 'courses',
           children: [
             { element: <Navigate to="/dashboard/courses/course-list" replace /> },
             { path: 'course-list', element: <CourseList /> },
             { path: 'new-course', element: <NewCourse /> },
-            { path: ':slug/edit', element: <NewCourse /> },
+            { path: ':id/edit', element: <NewCourse /> },
             { path: 'manage/:slug', element: <CourseManage /> },
             { path: ':id/students', element: <CourseStudentList /> },
           ],
@@ -105,8 +115,8 @@ export default function Router() {
       element: <Login />,
     },
     {
-      path: 'login/professor',
-      element: <LoginProfessor />,
+      path: 'login/teachable',
+      element: <LoginTeachable />,
     },
     {
       path: 'register',
@@ -119,20 +129,21 @@ export default function Router() {
 // IMPORT COMPONENTS
 
 // Dashboard
-const PageOne = Loadable(lazy(() => import('../pages/PageOne')))
-const PageTwo = Loadable(lazy(() => import('../pages/PageTwo')))
 const PageThree = Loadable(lazy(() => import('../pages/PageThree')))
-const UserList = Loadable(lazy(() => import('../pages/dashboard/UserList')))
+const UserList = Loadable(lazy(() => import('../pages/dashboard/user/UserList')))
+const StudentList = Loadable(lazy(() => import('../pages/dashboard/student/StudentList')))
 const PageFive = Loadable(lazy(() => import('../pages/PageFive')))
 const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
 const Login = Loadable(lazy(() => import('../pages/authentication/Login')))
-const LoginProfessor = Loadable(lazy(() => import('../pages/authentication/LoginProfessor')))
+const LoginTeachable = Loadable(lazy(() => import('../pages/authentication/LoginTeachable')))
 const Register = Loadable(lazy(() => import('../pages/authentication/Register')))
 const CourseList = Loadable(lazy(() => import('../pages/dashboard/course/CourseList')))
 const NewCourse = Loadable(lazy(() => import('../pages/dashboard/course/CourseCreate')))
 const CourseManage = Loadable(lazy(() => import('../pages/dashboard/course/CourseManage')))
 const CourseStudentList = Loadable(lazy(() => import('../pages/dashboard/course/CourseStudentList')))
+const GeneralAnalytics = Loadable(lazy(() => import('../pages/dashboard/GeneralAnalytics')))
+const ChartAnalytics = Loadable(lazy(() => import('../pages/dashboard/ChartAnalytics')))
 
 // Page
 const Courses = Loadable(lazy(() => import('../pages/Courses')))

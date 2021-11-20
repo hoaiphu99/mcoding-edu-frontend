@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
-// import { Icon } from '@iconify/react'
+import slugify from 'slugify'
 import { useSnackbar } from 'notistack'
 // import { sentenceCase } from 'change-case'
 import { useParams, useNavigate } from 'react-router-dom'
 
 // material
-import { Card, CardContent, Grid, Skeleton, Container, Typography } from '@mui/material'
+import { Card, CardContent, Grid, Skeleton, Container, Typography, CardHeader } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseLesson, getCommentsByLessonID } from '../redux/actions'
-import { courseLessonState$, userLoginState$, commentsState$ } from '../redux/selectors'
-
+import { getAllCourses, getCourseLesson, getCommentsByLessonID } from '../redux/actions'
+import { coursesState$, courseLessonState$, commentsState$ } from '../redux/selectors'
+// hook
+import useAuth from '../hooks/useAuth'
 // routes
 import { PATH_PAGE } from '../routes/paths'
 // components
@@ -35,26 +36,38 @@ export default function CourseLearning() {
   const { slug } = useParams()
   const { enqueueSnackbar } = useSnackbar()
 
+  const { user } = useAuth()
+
   const [lessonID, setLessonID] = useState(null)
 
-  const { data: userLogin } = useSelector(userLoginState$)
+  const { data: courses } = useSelector(coursesState$)
+
   const { data: course, error } = useSelector(courseLessonState$)
   const { data: comments } = useSelector(commentsState$)
 
+  const courseID = courses.find((item) => slugify(item.name, { lower: true, locale: 'vi' }) === slug)?.course_id
+
   useEffect(() => {
-    if (!userLogin) {
+    if (!user) {
       navigate('/login')
     }
-    if (!course || course.slug !== slug) {
-      dispatch(getCourseLesson.getCourseLessonRequest({ slug }))
+  }, [user, navigate])
+
+  useEffect(() => {
+    if (!courses || courses.length <= 0) {
+      dispatch(getAllCourses.getAllCoursesRequest())
+    }
+
+    if (!course) {
+      dispatch(getCourseLesson.getCourseLessonRequest({ id: courseID }))
     }
     if (course) {
-      setLessonID(course.sections[0]?.lessons[0].lesson_id)
+      setLessonID(course.sections[0]?.lessons[0]?.lesson_id)
     }
     if (error) {
       enqueueSnackbar(error, { variant: 'error' })
     }
-  }, [dispatch, course, slug, error, enqueueSnackbar, userLogin, navigate])
+  }, [dispatch, courses, course, courseID, error, enqueueSnackbar])
 
   useEffect(() => {
     if (lessonID) {
@@ -67,28 +80,32 @@ export default function CourseLearning() {
   }
 
   return (
-    <Page title={`${course && course.slug}`}>
+    <Page title={`${course && course.name}`}>
       <Container>
         <HeaderBreadcrumbs
           sx={{ mb: 5, mt: 15 }}
           heading={`${course && course.name}`}
           links={[
             { name: 'Trang chủ', href: '/' },
-            { name: 'Khóa học', href: PATH_PAGE.courses },
+            {
+              name: 'Khóa học',
+              href: `${PATH_PAGE.courses}/${course && slugify(course.name, { lower: true, locale: 'vi' })}`,
+            },
             { name: `${course && course.name}` },
           ]}
         />
-
+        {!lessonID && <Typography variant="h6">Khóa học này chưa có bài học nào</Typography>}
         {course && (
           <>
             <CourseLessonList course={course} onChangeLesson={handleChangeLesson} />
-            {/* <CourseProfessorDetails course={course} /> */}
           </>
         )}
-        {course?.sections[0] && (
+        {course?.sections[0] && lessonID && (
           <Card sx={{ mb: 2 }}>
+            <CardHeader title="Bình luận" />
             <CardContent>
-              <CourseCommentForm lessonID={lessonID} />
+              {user.student_id && <CourseCommentForm lessonID={lessonID} />}
+
               {comments && comments.length <= 0 ? (
                 <Typography variant="subtitle1">Không có bình luận nào</Typography>
               ) : (

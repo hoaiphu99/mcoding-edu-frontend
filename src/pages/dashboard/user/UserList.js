@@ -12,7 +12,7 @@ import {
   Stack,
   Avatar,
   Button,
-  Checkbox,
+  // Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -22,26 +22,27 @@ import {
   TablePagination,
 } from '@mui/material'
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths'
+import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
-import Page from '../../components/Page'
-import Label from '../../components/Label'
-import Scrollbar from '../../components/Scrollbar'
-import SearchNotFound from '../../components/SearchNotFound'
-import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs'
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user/user-list'
+import Page from '../../../components/Page'
+import Label from '../../../components/Label'
+import Scrollbar from '../../../components/Scrollbar'
+import SearchNotFound from '../../../components/SearchNotFound'
+import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
+import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../components/_dashboard/user/user-list'
 //
-import { getUsers } from '../../redux/actions'
-import { usersState$, userLoginState$ } from '../../redux/selectors'
+import { getUsers, bannedUser } from '../../../redux/actions'
+import { usersState$ } from '../../../redux/selectors'
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'username', label: 'Tên tài khoản', alignRight: false },
+  { id: 'username', label: 'Tên người dùng', alignRight: false },
   { id: 'name', label: 'Họ tên', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'phone', label: 'Số điện thoại', alignRight: false },
   { id: 'is_banned', label: 'Trạng thái', alignRight: false },
+  { id: 'is_admin', label: 'Quyền', alignRight: false },
   { id: '' },
 ]
 
@@ -86,11 +87,10 @@ export default function UserList() {
 
   const dispatch = useDispatch()
   const { data: userList } = useSelector(usersState$)
-  const { data: userLogin } = useSelector(userLoginState$)
 
   useEffect(() => {
-    dispatch(getUsers.getUsersRequest(userLogin))
-  }, [dispatch, userLogin])
+    dispatch(getUsers.getUsersRequest())
+  }, [dispatch])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -107,20 +107,20 @@ export default function UserList() {
     setSelected([])
   }
 
-  const handleClick = (event, username) => {
-    const selectedIndex = selected.indexOf(username)
-    let newSelected = []
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, username)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
-    }
-    setSelected(newSelected)
-  }
+  // const handleClick = (event, username) => {
+  //   const selectedIndex = selected.indexOf(username)
+  //   let newSelected = []
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, username)
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1))
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1))
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+  //   }
+  //   setSelected(newSelected)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -133,6 +133,15 @@ export default function UserList() {
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value)
+  }
+
+  const handleBannedUser = (username, isBanned) => {
+    const data = {
+      username,
+      isBanned: !isBanned,
+    }
+
+    dispatch(bannedUser.bannedUserRequest({ data }))
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0
@@ -183,7 +192,7 @@ export default function UserList() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { username, name, is_banned, email, phone, avatar_url } = row
+                    const { username, name, is_banned, is_admin, email, phone, avatar_url } = row
                     const isItemSelected = selected.indexOf(username) !== -1
 
                     return (
@@ -195,9 +204,9 @@ export default function UserList() {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, username)} />
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={username} src={avatar_url} />
@@ -214,9 +223,14 @@ export default function UserList() {
                             {is_banned ? 'Banned' : 'Active'}
                           </Label>
                         </TableCell>
+                        <TableCell align="left">
+                          <Label variant="ghost" color={(is_admin && 'secondary') || 'success'}>
+                            {is_admin ? 'Admin' : 'Teachable'}
+                          </Label>
+                        </TableCell>
 
                         <TableCell align="right">
-                          <UserMoreMenu />
+                          <UserMoreMenu onBanned={() => handleBannedUser(username, is_banned)} isBanned={is_banned} />
                         </TableCell>
                       </TableRow>
                     )

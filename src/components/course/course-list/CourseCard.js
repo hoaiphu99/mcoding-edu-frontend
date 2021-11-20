@@ -27,15 +27,15 @@ ShopCourseCard.propTypes = {
 }
 
 export default function ShopCourseCard({ course }) {
-  const { name, image_url, status_code, slug } = course
+  const { name, image_url, price } = course
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status_code && (
+        {price === 0 && (
           <Label
             variant="filled"
-            color={(status_code === 'sale' && 'error') || 'info'}
+            color="info"
             sx={{
               zIndex: 9,
               top: 16,
@@ -44,7 +44,7 @@ export default function ShopCourseCard({ course }) {
               textTransform: 'uppercase',
             }}
           >
-            {status_code}
+            Miễn phí
           </Label>
         )}
         <Link to={`/khoa-hoc/${slugify(name, { lower: true, locale: 'vi' })}`} color="inherit" component={RouterLink}>
@@ -53,7 +53,12 @@ export default function ShopCourseCard({ course }) {
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to={`/khoa-hoc/${slug}`} color="inherit" underline="hover" component={RouterLink}>
+        <Link
+          to={`/khoa-hoc/${slugify(name, { lower: true, locale: 'vi' })}`}
+          color="inherit"
+          underline="hover"
+          component={RouterLink}
+        >
           <Typography variant="subtitle2" noWrap>
             {name}
           </Typography>

@@ -24,3 +24,9 @@ export const getUserProfile = createActions({
   getUserProfileSuccess: (payload) => payload,
   getUserProfileFailure: (err) => err,
 })
+
+export const bannedUser = createActions({
+  bannedUserRequest: (payload) => payload,
+  bannedUserSuccess: (payload) => payload,
+  bannedUserFailure: (err) => err,
+})

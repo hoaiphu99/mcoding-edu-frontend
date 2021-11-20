@@ -1,4 +1,4 @@
-const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
+// const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
 
 export const INIT_STATE = {
   users: {
@@ -7,12 +7,18 @@ export const INIT_STATE = {
     data: [],
     error: null,
   },
-  userLogin: {
+  students: {
     success: false,
     loading: false,
-    data: userInfoFromStorage,
+    data: [],
     error: null,
   },
+  // userLogin: {
+  //   success: false,
+  //   loading: false,
+  //   data: userInfoFromStorage,
+  //   error: null,
+  // },
   userProfile: {
     success: false,
     loading: false,
@@ -65,6 +71,43 @@ export const INIT_STATE = {
     success: null,
     loading: false,
     data: [],
+    error: null,
+  },
+  categories: {
+    success: null,
+    loading: false,
+    data: [],
+    error: null,
+  },
+  programLanguages: {
+    success: null,
+    loading: false,
+    data: [],
+    error: null,
+  },
+  attachments: {
+    success: null,
+    loading: false,
+    data: {
+      attachments: [],
+    },
+    error: null,
+  },
+  lessonDetails: {
+    success: null,
+    loading: false,
+    data: null,
+    error: null,
+  },
+  analytics: {
+    success: null,
+    loading: false,
+    data: {
+      studentInCourse: [],
+      courseTotal: 0,
+      userTotal: 0,
+      studentTotal: 0,
+    },
     error: null,
   },
 }

@@ -5,7 +5,7 @@ import { Stack, Link, Container, Typography } from '@mui/material'
 // components
 import Page from '../../components/Page'
 import { MHidden } from '../../components/@material-extend'
-import { LoginForm } from '../../components/authentication/login'
+import { LoginFormTeachable } from '../../components/authentication/login'
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default function LoginProfessor() {
             <Typography sx={{ color: 'text.secondary' }}>Nhập thông tin tài khoản bên dưới.</Typography>
           </Stack>
 
-          <LoginForm />
+          <LoginFormTeachable />
 
           <MHidden width="smUp">
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>

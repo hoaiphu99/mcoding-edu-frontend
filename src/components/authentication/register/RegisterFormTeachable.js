@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import { useSnackbar } from 'notistack'
 import { useFormik, Form, FormikProvider } from 'formik'
@@ -9,19 +9,16 @@ import { useNavigate } from 'react-router-dom'
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-// redux
-import { useDispatch, useSelector } from 'react-redux'
-import { registerUser } from '../../../redux/actions'
-import { userLoginState$ } from '../../../redux/selectors'
 
+// hook
+import useAuth from '../../../hooks/useAuth'
 // ----------------------------------------------------------------------
 
 export default function RegisterFormProfessor() {
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
 
-  const { error, success } = useSelector(userLoginState$)
+  const { register } = useAuth()
 
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
@@ -36,15 +33,15 @@ export default function RegisterFormProfessor() {
     passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
   })
 
-  useEffect(() => {
-    if (success) {
-      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
-      navigate('/dashboard', { replace: true })
-    }
-    if (error) {
-      enqueueSnackbar('Đăng ký thất bại!', { variant: 'error' })
-    }
-  }, [success, error, enqueueSnackbar, navigate])
+  // useEffect(() => {
+  //   if (success) {
+  //     enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
+  //     navigate('/dashboard', { replace: true })
+  //   }
+  //   if (error) {
+  //     enqueueSnackbar('Đăng ký thất bại!', { variant: 'error' })
+  //   }
+  // }, [success, error, enqueueSnackbar, navigate])
 
   const formik = useFormik({
     initialValues: {
@@ -58,8 +55,10 @@ export default function RegisterFormProfessor() {
       role: 'professor',
     },
     validationSchema: RegisterSchema,
-    onSubmit: (values) => {
-      dispatch(registerUser.registerUserRequest(values))
+    onSubmit: async (values) => {
+      await register(values)
+      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
+      navigate('/dashboard', { replace: true })
     },
   })
 
