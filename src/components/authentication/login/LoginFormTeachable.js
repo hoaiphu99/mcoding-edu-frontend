@@ -30,7 +30,7 @@ export default function LoginForm() {
       enqueueSnackbar('Đăng nhập thành công', {
         variant: 'success',
       })
-      navigate('/dashboard', { replace: true })
+      navigate('/bang-dieu-khien', { replace: true })
     }
   }, [error, success, navigate, enqueueSnackbar])
 

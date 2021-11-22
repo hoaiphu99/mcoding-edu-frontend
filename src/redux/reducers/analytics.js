@@ -1,4 +1,11 @@
-import { getType, getCourseTotal, getUserTotal, getStudentTotal, getStudentInCourseAnalytics } from '../actions'
+import {
+  getType,
+  getCourseTotal,
+  getUserTotal,
+  getStudentTotal,
+  getStudentInCourseAnalytics,
+  getStudentsAttendedCourseAnalytics,
+} from '../actions'
 import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
 
 export const analyticsReducers = (state = INIT_STATE.analytics, action) => {
@@ -88,6 +95,29 @@ export const analyticsReducers = (state = INIT_STATE.analytics, action) => {
         error: null,
       }
     case getType(getStudentTotal.getStudentTotalFailure()):
+      return {
+        ...state,
+        success: null,
+        loading: false,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    // student attended course
+    case getType(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.LOAD,
+        loading: false,
+        data: { ...state.data, studentsAttendedCourse: action.payload.data },
+        error: null,
+      }
+    case getType(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsFailure()):
       return {
         ...state,
         success: null,

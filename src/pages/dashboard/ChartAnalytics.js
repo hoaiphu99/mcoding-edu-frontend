@@ -12,12 +12,14 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getStudentInCourseAnalytics } from '../../redux/actions'
+import { getStudentInCourseAnalytics, getStudentsAttendedCourseAnalytics } from '../../redux/actions'
 import { analyticsState$ } from '../../redux/selectors'
 // components
 import Page from '../../components/Page'
-import { PickerYear } from '../../components/picker'
-import { ChartColumnSingle } from '../../components/charts'
+import { PickerYear, PickerMonthYear, PickerQuarterYear } from '../../components/picker'
+import { ChartColumnSingle, ChartBar } from '../../components/charts'
+// utils
+import { fMonthYear, fYear } from '../../utils/formatTime'
 
 // ----------------------------------------------------------------------
 
@@ -29,10 +31,40 @@ export default function ChartAnalytics() {
 
   useEffect(() => {
     dispatch(getStudentInCourseAnalytics.getStudentInCourseAnalyticsRequest())
-  }, [dispatch])
+    if (type === 'month') {
+      const dateFormat = fMonthYear(new Date())
+      const query = `year=${dateFormat.split(' ')[1]}&&month=${dateFormat.split(' ')[0]}`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
+    if (type === 'quarter') {
+      const dateFormat = fYear(new Date())
+      const query = `year=${dateFormat}&&quarter=1`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
+    if (type === 'year') {
+      const dateFormat = fYear(new Date())
+      const query = `year=${dateFormat}`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
+  }, [dispatch, type])
 
   const handleChangeType = (event, newType) => {
     setType(newType)
+  }
+
+  const handleChangeDate = (value) => {
+    if (type === 'month') {
+      const query = `year=${value.split(' ')[1]}&&month=${value.split(' ')[0]}`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
+    if (type === 'quarter') {
+      const query = `year=${value.year}&&quarter=${value.quarter}`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
+    if (type === 'year') {
+      const query = `year=${value}`
+      dispatch(getStudentsAttendedCourseAnalytics.getStudentsAttendedCourseAnalyticsRequest({ query }))
+    }
   }
 
   return (
@@ -46,7 +78,7 @@ export default function ChartAnalytics() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader title="Thống kê số lượng học viên đăng ký theo tháng/quý/năm" />
+          <CardHeader title="Thống kê số lượng học viên tham gia khóa học" />
           <CardContent>
             <Stack spacing={3} direction="column">
               <ToggleButtonGroup value={type} exclusive onChange={handleChangeType}>
@@ -54,8 +86,11 @@ export default function ChartAnalytics() {
                 <ToggleButton value="quarter">Quý</ToggleButton>
                 <ToggleButton value="year">Năm</ToggleButton>
               </ToggleButtonGroup>
-              <PickerYear />
+              {type === 'month' && <PickerMonthYear onHandleChange={handleChangeDate} />}
+              {type === 'quarter' && <PickerQuarterYear onHandleChange={handleChangeDate} />}
+              {type === 'year' && <PickerYear onHandleChange={handleChangeDate} />}
             </Stack>
+            <ChartBar data={analytics.studentsAttendedCourse} />
           </CardContent>
         </Card>
       </Container>

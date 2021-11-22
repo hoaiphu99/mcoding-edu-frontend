@@ -1,16 +1,16 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
 // Actions
-import { getStudentCourseByCourseID, registerStudentCourse } from '../actions'
+import { getStudentCourseByStudentId, registerStudentCourse } from '../actions'
 // Api
-import { fetchStudentCourseByCourseID, addNewStudentCourse } from '../../api'
+import { fetchStudentCourseByStudentId, addNewStudentCourse } from '../../api'
 
-function* getStudentCourseByCourseIDSaga(action) {
+function* getStudentCourseByStudentIdSaga(action) {
   try {
-    const data = yield call(fetchStudentCourseByCourseID, action.payload.id)
-    yield put(getStudentCourseByCourseID.getStudentCourseByCourseIDSuccess(data.data))
+    const data = yield call(fetchStudentCourseByStudentId, action.payload.id)
+    yield put(getStudentCourseByStudentId.getStudentCourseByStudentIdSuccess(data.data))
   } catch (error) {
     yield put(
-      getStudentCourseByCourseID.getStudentCourseByCourseIDFailure(
+      getStudentCourseByStudentId.getStudentCourseByStudentIdFailure(
         error.response && error.response.data ? error.response.data : error,
       ),
     )
@@ -31,7 +31,7 @@ function* registerStudentCourseSaga(action) {
 }
 
 function* studentCourseSaga() {
-  yield takeLatest(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest, getStudentCourseByCourseIDSaga)
+  yield takeLatest(getStudentCourseByStudentId.getStudentCourseByStudentIdRequest, getStudentCourseByStudentIdSaga)
   yield takeLatest(registerStudentCourse.registerStudentCourseRequest, registerStudentCourseSaga)
 }
 export default studentCourseSaga

@@ -1,4 +1,5 @@
 // material
+import viLocale from 'date-fns/locale/vi'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
 
@@ -54,7 +55,7 @@ sagaMiddleware.run(rootSaga)
 ReactDOM.render(
   <ReduxProvider store={store}>
     <HelmetProvider>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <LocalizationProvider dateAdapter={AdapterDateFns} locale={viLocale}>
         <SettingsProvider>
           <CollapseDrawerProvider>
             <BrowserRouter>

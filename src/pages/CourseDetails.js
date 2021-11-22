@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   getAllCourses,
   getCourseDetails,
-  getStudentCourseByCourseID,
+  getStudentCourseByStudentId,
   registerStudentCourse,
   getReviewsByCourseID,
 } from '../redux/actions'
@@ -68,19 +68,19 @@ export default function CourseDetails() {
   }, [dispatch, courses, error, enqueueSnackbar])
 
   useEffect(() => {
-    if (!course) {
+    if (!course || course.course_id !== courseID) {
       dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
+      if (user && user.student_id) {
+        dispatch(getStudentCourseByStudentId.getStudentCourseByStudentIdRequest({ id: user.student_id }))
+      }
     }
-  }, [dispatch, course, slug, courseID])
+  }, [dispatch, course, courseID, user])
 
   useEffect(() => {
-    if (user && courseID) {
-      dispatch(getStudentCourseByCourseID.getStudentCourseByCourseIDRequest({ id: courseID }))
-    }
     if (courseID) {
       dispatch(getReviewsByCourseID.getReviewsByCourseIDRequest({ id: courseID }))
     }
-  }, [dispatch, user, courseID])
+  }, [dispatch, courseID])
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue)

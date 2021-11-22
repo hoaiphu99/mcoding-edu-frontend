@@ -23,3 +23,9 @@ export const getStudentTotal = createActions({
   getStudentTotalSuccess: (payload) => payload,
   getStudentTotalFailure: (err) => err,
 })
+
+export const getStudentsAttendedCourseAnalytics = createActions({
+  getStudentsAttendedCourseAnalyticsRequest: (payload) => payload,
+  getStudentsAttendedCourseAnalyticsSuccess: (payload) => payload,
+  getStudentsAttendedCourseAnalyticsFailure: (err) => err,
+})

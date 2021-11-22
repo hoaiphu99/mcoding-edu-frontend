@@ -107,6 +107,7 @@ export const INIT_STATE = {
       courseTotal: 0,
       userTotal: 0,
       studentTotal: 0,
+      studentsAttendedCourse: [],
     },
     error: null,
   },

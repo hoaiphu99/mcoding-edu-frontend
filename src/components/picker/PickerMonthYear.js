@@ -4,26 +4,28 @@ import { useState } from 'react'
 import { TextField, Stack, Typography } from '@mui/material'
 import { DatePicker } from '@mui/lab'
 // utils
-import { fYear } from '../../utils/formatTime'
+import { fMonthYear } from '../../utils/formatTime'
 
 // ----------------------------------------------------------------------
 
-PickerYear.propTypes = {
+PickerMonthYear.propTypes = {
   onHandleChange: propTypes.func.isRequired,
 }
 
-export default function PickerYear({ onHandleChange }) {
+export default function PickerMonthYear({ onHandleChange }) {
   const [value, setValue] = useState(new Date())
 
   return (
     <Stack spacing={3} direction="column" sx={{ width: '30%' }}>
-      <Typography variant="body1">Chọn năm</Typography>
+      <Typography variant="body1">Chọn tháng</Typography>
       <DatePicker
-        views={['year']}
-        label="Năm"
+        views={['year', 'month']}
+        label="Tháng và năm"
+        minDate={new Date('2021-01-01')}
+        maxDate={new Date('2035-12-30')}
         value={value}
         onChange={(newValue) => {
-          onHandleChange(fYear(newValue))
+          onHandleChange(fMonthYear(newValue))
           setValue(newValue)
         }}
         renderInput={(params) => <TextField {...params} fullWidth margin="normal" helperText={null} />}

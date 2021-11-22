@@ -48,7 +48,7 @@ export const editLesson = (payload) => axios.put(`${URL}/api/lessons/${payload.i
 export const removeLesson = (payload) => axios.delete(`${URL}/api/lessons/${payload}`)
 
 // StudentCourse
-export const fetchStudentCourseByCourseID = (payload) => axios.get(`${URL}/api/student-courses/course/${payload}`)
+export const fetchStudentCourseByStudentId = (payload) => axios.get(`${URL}/api/student-courses/student/${payload}`)
 export const addNewStudentCourse = (payload) => axios.post(`${URL}/api/student-courses`, payload)
 
 // Comment
@@ -69,3 +69,5 @@ export const fetchStudentsInCourseAnalytics = () => axios.get(`${URL}/api/analyt
 export const countCourseTotalAnalytics = () => axios.get(`${URL}/api/analytics/course-total`)
 export const countUserTotalAnalytics = () => axios.get(`${URL}/api/analytics/user-total`)
 export const countStudentTotalAnalytics = () => axios.get(`${URL}/api/analytics/student-total`)
+export const fetchStudentsAttendedCourseAnalytics = (payload) =>
+  axios.get(`${URL}/api/analytics/students-attended-course?${payload}`)

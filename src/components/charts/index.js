@@ -1,8 +1,8 @@
 export { default as BaseOptionChart } from './BaseOptionChart'
 export { default as ChartColumnSingle } from './ChartColumnSingle'
+export { default as ChartBar } from './ChartBar'
 //
 // export { default as ChartArea } from './ChartArea';
-// export { default as ChartBar } from './ChartBar';
 // export { default as ChartColumnMultiple } from './ChartColumnMultiple';
 // export { default as ChartColumnNegative } from './ChartColumnNegative';
 // export { default as ChartColumnStacked } from './ChartColumnStacked';

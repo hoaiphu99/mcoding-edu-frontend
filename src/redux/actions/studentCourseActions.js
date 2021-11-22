@@ -1,9 +1,9 @@
 import { createActions } from 'redux-actions'
 
-export const getStudentCourseByCourseID = createActions({
-  getStudentCourseByCourseIDRequest: (payload) => payload,
-  getStudentCourseByCourseIDSuccess: (payload) => payload,
-  getStudentCourseByCourseIDFailure: (err) => err,
+export const getStudentCourseByStudentId = createActions({
+  getStudentCourseByStudentIdRequest: (payload) => payload,
+  getStudentCourseByStudentIdSuccess: (payload) => payload,
+  getStudentCourseByStudentIdFailure: (err) => err,
 })
 
 export const registerStudentCourse = createActions({
