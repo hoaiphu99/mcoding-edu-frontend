@@ -31,7 +31,7 @@ export default function ResetPasswordForm({ onSent, onGetEmail }) {
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       try {
         await axios
-          .post('http://localhost:3030/api/auth/forgot-password', { email: values.email })
+          .post('/api/auth/forgot-password', { email: values.email })
           .then((res) => {
             if (isMountedRef.current) {
               onSent()

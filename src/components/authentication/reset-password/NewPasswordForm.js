@@ -54,7 +54,7 @@ export default function NewPasswordForm() {
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         await axios
-          .post('http://localhost:3030/api/auth/new-password', { newPassword: values.newPassword, token })
+          .post('/api/auth/new-password', { newPassword: values.newPassword, token })
           .then((res) => {
             console.log('🚀 ~ file: NewPasswordForm.js ~ line 55 ~ .then ~ res', res)
             setSuccess(true)
