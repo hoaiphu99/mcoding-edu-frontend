@@ -1,17 +1,15 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
-import Avatar from '@mui/material/Avatar'
-import Typography from '@mui/material/Typography'
+import { Card, CardHeader, CardContent, Avatar, Typography, Stack } from '@mui/material'
 import { Box } from '@mui/system'
 
-CourseProfessorDetails.propTypes = {
+import Label from '../../Label'
+
+CourseTeachableDetails.propTypes = {
   course: PropTypes.object.isRequired,
 }
 
-export default function CourseProfessorDetails({ course }) {
+export default function CourseTeachableDetails({ course }) {
   const { user } = course
   return (
     <Card sx={{ mt: 2, mb: 2 }}>
@@ -23,24 +21,30 @@ export default function CourseProfessorDetails({ course }) {
         </Typography>
       </Box>
       <CardContent>
-        <Typography color="text.secondary">
-          Nghề nghiệp:{' '}
-          {user &&
-            user.jobs?.map((job) => (
-              <Typography key={job.id} variant="body2" component="p" sx={{ pl: 2 }}>
-                {job.job_name}
-              </Typography>
-            ))}
-        </Typography>
-        <Typography color="text.secondary">
-          Kỹ năng:{' '}
-          {user &&
-            user.skills?.map((skill) => (
-              <Typography key={skill.id} variant="body2" component="p" sx={{ pl: 2 }}>
-                {skill.skill_name}
-              </Typography>
-            ))}
-        </Typography>
+        <Stack spacing={3} direction="column">
+          <Typography color="text.secondary">
+            Nghề nghiệp
+            <Stack spacing={2} direction="row" component="span">
+              {user &&
+                user.jobs?.map((job, index) => (
+                  <Label key={index} variant="outlined" color="secondary">
+                    {job.job_name}
+                  </Label>
+                ))}
+            </Stack>
+          </Typography>
+          <Typography color="text.secondary">
+            Kỹ năng
+            <Stack spacing={2} direction="row" component="span">
+              {user &&
+                user.skills?.map((skill, index) => (
+                  <Label key={index} color="primary">
+                    {skill.skill_name}
+                  </Label>
+                ))}
+            </Stack>
+          </Typography>
+        </Stack>
       </CardContent>
     </Card>
   )

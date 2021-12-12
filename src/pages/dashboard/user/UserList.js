@@ -1,7 +1,7 @@
 import { filter } from 'lodash'
 import { Icon } from '@iconify/react'
-// import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react'
+// import { useSnackbar } from 'notistack'
 import { useDispatch, useSelector } from 'react-redux'
 import plusFill from '@iconify/icons-eva/plus-fill'
 import { Link as RouterLink } from 'react-router-dom'
@@ -21,6 +21,8 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material'
+// hook
+import useAuth from '../../../hooks/useAuth'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 // components
@@ -31,7 +33,7 @@ import SearchNotFound from '../../../components/SearchNotFound'
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../components/_dashboard/user/user-list'
 //
-import { getUsers, bannedUser } from '../../../redux/actions'
+import { getUsers, bannedUser, editUserStatus } from '../../../redux/actions'
 import { usersState$ } from '../../../redux/selectors'
 
 // ----------------------------------------------------------------------
@@ -41,8 +43,9 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Họ tên', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'phone', label: 'Số điện thoại', alignRight: false },
-  { id: 'is_banned', label: 'Trạng thái', alignRight: false },
-  { id: 'is_admin', label: 'Quyền', alignRight: false },
+  { id: 'role_id', label: 'Quyền', alignRight: false },
+  { id: 'status_code', label: 'Trạng thái', alignRight: false },
+  { id: 'action', label: '', alignRight: true },
   { id: '' },
 ]
 
@@ -85,12 +88,25 @@ export default function UserList() {
   const [filterName, setFilterName] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
+  // const { enqueueSnackbar } = useSnackbar()
+
+  const { user } = useAuth()
+
   const dispatch = useDispatch()
   const { data: userList } = useSelector(usersState$)
 
   useEffect(() => {
     dispatch(getUsers.getUsersRequest())
   }, [dispatch])
+
+  // useEffect(() => {
+  //   if (success === 'update') {
+  //     enqueueSnackbar('Đã gửi mail thông báo tới người dùng', { variant: 'success' })
+  //     dispatch({
+  //       type: 'RESET_STATE',
+  //     })
+  //   }
+  // }, [dispatch, success, enqueueSnackbar])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -135,13 +151,22 @@ export default function UserList() {
     setFilterName(event.target.value)
   }
 
-  const handleBannedUser = (username, isBanned) => {
+  const handleBannedUser = (username, status_code) => {
     const data = {
       username,
-      isBanned: !isBanned,
+      isBanned: status_code === 'VER' ? 'BAN' : 'VER',
     }
 
     dispatch(bannedUser.bannedUserRequest({ data }))
+  }
+
+  const handleChangeStatus = (username, status_code) => {
+    const data = {
+      username,
+      status: status_code,
+    }
+
+    dispatch(editUserStatus.editUserStatusRequest({ data }))
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList.length) : 0
@@ -192,7 +217,7 @@ export default function UserList() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { username, name, is_banned, is_admin, email, phone, avatar_url } = row
+                    const { username, name, status_code, role_id, email, phone, avatar_url } = row
                     const isItemSelected = selected.indexOf(username) !== -1
 
                     return (
@@ -219,18 +244,48 @@ export default function UserList() {
                         <TableCell align="left">{email}</TableCell>
                         <TableCell align="left">{phone}</TableCell>
                         <TableCell align="left">
-                          <Label variant="ghost" color={(is_banned && 'error') || 'success'}>
-                            {is_banned ? 'Banned' : 'Active'}
+                          <Label variant="ghost" color={(role_id === 1 && 'secondary') || 'success'}>
+                            {role_id === 1 ? 'Admin' : 'Teachable'}
                           </Label>
                         </TableCell>
                         <TableCell align="left">
-                          <Label variant="ghost" color={(is_admin && 'secondary') || 'success'}>
-                            {is_admin ? 'Admin' : 'Teachable'}
+                          <Label
+                            variant="ghost"
+                            color={
+                              (status_code === 'BAN' && 'error') ||
+                              (status_code === 'VER' && 'success') ||
+                              (status_code === 'REJ' && 'default') ||
+                              'warning'
+                            }
+                          >
+                            {(status_code === 'BAN' && 'Banned') ||
+                              (status_code === 'VER' && 'Active') ||
+                              (status_code === 'REJ' && 'Rejected') ||
+                              'Verifying'}
                           </Label>
+                        </TableCell>
+                        <TableCell align="right">
+                          {status_code === 'PEN' && user.role_id === 1 && (
+                            <>
+                              <Button
+                                onClick={() => handleChangeStatus(username, 'VER')}
+                                sx={{ mr: 1 }}
+                                variant="contained"
+                              >
+                                {status_code === 'PEN' && 'Duyệt'}
+                              </Button>
+                              <Button onClick={() => handleChangeStatus(username, 'REJ')} variant="outlined">
+                                {status_code === 'PEN' && 'Từ chối'}
+                              </Button>
+                            </>
+                          )}
                         </TableCell>
 
                         <TableCell align="right">
-                          <UserMoreMenu onBanned={() => handleBannedUser(username, is_banned)} isBanned={is_banned} />
+                          <UserMoreMenu
+                            onBanned={() => handleBannedUser(username, status_code)}
+                            statusCode={status_code}
+                          />
                         </TableCell>
                       </TableRow>
                     )

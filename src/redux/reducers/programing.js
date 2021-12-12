@@ -1,22 +1,22 @@
-import { getType, getProgramLanguages } from '../actions'
+import { getType, getPrograming } from '../actions'
 import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
 
-export const programLanguagesReducers = (state = INIT_STATE.programLanguages, action) => {
+export const programingReducers = (state = INIT_STATE.programing, action) => {
   switch (action.type) {
-    case getType(getProgramLanguages.getProgramLanguagesRequest()):
+    case getType(getPrograming.getProgramingRequest()):
       return {
         ...state,
         loading: true,
         error: null,
       }
-    case getType(getProgramLanguages.getProgramLanguagesSuccess()):
+    case getType(getPrograming.getProgramingSuccess()):
       return {
         ...state,
         loading: false,
         success: SUCCESS_ACTION_TYPE.LOAD,
         data: action.payload.data,
       }
-    case getType(getProgramLanguages.getProgramLanguagesFailure()):
+    case getType(getPrograming.getProgramingFailure()):
       return {
         ...state,
         loading: false,

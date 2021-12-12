@@ -11,6 +11,15 @@ const ROOTS_DASHBOARD = '/bang-dieu-khien'
 export const PATH_PAGE = {
   courses: '/khoa-hoc',
   profile: '/trang-ca-nhan',
+  webDev: '/khoa-hoc/danh-muc/lap-trinh-web',
+  mobileDev: '/khoa-hoc/danh-muc/lap-trinh-mobile',
+  gameDev: '/khoa-hoc/danh-muc/lap-trinh-game',
+  applicationDev: '/khoa-hoc/danh-muc/lap-trinh-ung-dung',
+  AI: '/khoa-hoc/danh-muc/machine-learning-ai',
+  embeddedDev: '/khoa-hoc/danh-muc/lap-trinh-nhung',
+  automationTest: '/khoa-hoc/danh-muc/automation-test',
+  basicDev: '/khoa-hoc/danh-muc/lap-trinh-co-ban',
+  advancedDev: '/khoa-hoc/danh-muc/lap-trinh-nang-cao',
 }
 
 export const PATH_DASHBOARD = {
@@ -37,5 +46,10 @@ export const PATH_DASHBOARD = {
     courseList: path(ROOTS_DASHBOARD, '/courses/course-list'),
     newCourse: path(ROOTS_DASHBOARD, '/courses/new-course'),
     courseManage: path(ROOTS_DASHBOARD, '/courses/manage'),
+  },
+  categories: {
+    root: path(ROOTS_DASHBOARD, '/categories'),
+    categoryList: path(ROOTS_DASHBOARD, '/categories/category-list'),
+    newCategory: path(ROOTS_DASHBOARD, '/categories/new-category'),
   },
 }

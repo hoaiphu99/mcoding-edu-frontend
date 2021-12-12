@@ -68,16 +68,16 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar alt="My Avatar" src={user.avatar_url} />
+        <Avatar alt="My Avatar" src={user?.avatar_url} />
       </MIconButton>
 
       <MenuPopover open={open} onClose={handleClose} anchorEl={anchorRef.current} sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {user.name}
+            {user?.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user.username}
+            {user?.username}
           </Typography>
         </Box>
 

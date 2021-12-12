@@ -1,9 +1,21 @@
 import { createActions } from 'redux-actions'
 
 export const getAllCourses = createActions({
-  getAllCoursesRequest: () => undefined,
+  getAllCoursesRequest: (payload) => payload,
   getAllCoursesSuccess: (payload) => payload,
   getAllCoursesFailure: (err) => err,
+})
+
+export const getAllCoursesByCategoryId = createActions({
+  getAllCoursesByCategoryIdRequest: (payload) => payload,
+  getAllCoursesByCategoryIdSuccess: (payload) => payload,
+  getAllCoursesByCategoryIdFailure: (err) => err,
+})
+
+export const getAllCoursesPublic = createActions({
+  getAllCoursesPublicRequest: (payload) => payload,
+  getAllCoursesPublicSuccess: (payload) => payload,
+  getAllCoursesPublicFailure: (err) => err,
 })
 
 export const createCourse = createActions({

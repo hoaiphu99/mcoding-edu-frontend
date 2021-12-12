@@ -11,6 +11,9 @@ export const register = (payload) => axios.post(`${URL}/api/users`, payload)
 export const fetchUserProfile = () => axios.get(`${URL}/api/users/profile`)
 export const banUser = (payload) =>
   axios.put(`${URL}/api/users/${payload.username}/banned?isBanned=${payload.isBanned}`)
+export const updateUserStatus = (payload) =>
+  axios.put(`${URL}/api/users/${payload.username}/status?status=${payload.status}`)
+export const updatePassword = (payload) => axios.put(`${URL}/api/users/change-password`, payload)
 
 // Students
 export const fetchStudents = () => axios.get(`${URL}/api/students`)
@@ -19,12 +22,16 @@ export const banStudent = (payload) =>
 
 // Category
 export const fetchCategories = () => axios.get(`${URL}/api/categories`)
+export const addCategory = (payload) => axios.post(`${URL}/api/categories`, payload)
+export const editCategory = (payload) => axios.put(`${URL}/api/categories/${payload.id}`, payload)
+export const removeCategory = (payload) => axios.delete(`${URL}/api/categories/${payload}`)
 
 // Programing Languages
-export const fetchProgramingLanguages = () => axios.get(`${URL}/api/program-languages`)
+export const fetchPrograming = () => axios.get(`${URL}/api/programing`)
 
 // Courses
-export const fetchAllCourses = () => axios.get(`${URL}/api/courses`)
+export const fetchAllCourses = (payload) => axios.get(`${URL}/api/courses?${payload}`)
+export const fetchAllCoursesByCategoryId = (payload) => axios.get(`${URL}/api/courses/category/${payload}?public=true`)
 export const addNewCourse = (payload) => axios.post(`${URL}/api/courses`, payload)
 export const editCourse = (payload) => axios.put(`${URL}/api/courses/${payload.id}`, payload)
 export const removeCourse = (payload) => axios.delete(`${URL}/api/courses/${payload}`)
@@ -48,7 +55,8 @@ export const editLesson = (payload) => axios.put(`${URL}/api/lessons/${payload.i
 export const removeLesson = (payload) => axios.delete(`${URL}/api/lessons/${payload}`)
 
 // StudentCourse
-export const fetchStudentCourseByStudentId = (payload) => axios.get(`${URL}/api/student-courses/student/${payload}`)
+export const fetchStudentCourseByStudentAndCourseId = (payload) =>
+  axios.get(`${URL}/api/student-courses/student/${payload.studentId}/course/${payload.courseId}`)
 export const addNewStudentCourse = (payload) => axios.post(`${URL}/api/student-courses`, payload)
 
 // Comment
@@ -71,3 +79,9 @@ export const countUserTotalAnalytics = () => axios.get(`${URL}/api/analytics/use
 export const countStudentTotalAnalytics = () => axios.get(`${URL}/api/analytics/student-total`)
 export const fetchStudentsAttendedCourseAnalytics = (payload) =>
   axios.get(`${URL}/api/analytics/students-attended-course?${payload}`)
+
+// Assignments
+export const fetchAssignmentsByLessonID = (payload) => axios.get(`${URL}/api/assignments/lesson/${payload}`)
+export const addAssignments = (payload) => axios.post(`${URL}/api/assignments`, payload)
+export const editAssignments = (payload) => axios.put(`${URL}/api/assignments/${payload.id}`, payload)
+export const removeAssignments = (payload) => axios.delete(`${URL}/api/assignments/${payload}`)

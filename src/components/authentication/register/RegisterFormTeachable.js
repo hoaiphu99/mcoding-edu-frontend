@@ -1,13 +1,13 @@
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
 import { useSnackbar } from 'notistack'
 import { useFormik, Form, FormikProvider } from 'formik'
 import eyeFill from '@iconify/icons-eva/eye-fill'
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 // material
-import { Stack, TextField, IconButton, InputAdornment } from '@mui/material'
+import { Stack, TextField, IconButton, InputAdornment, Alert, AlertTitle } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
 // hook
@@ -15,10 +15,11 @@ import useAuth from '../../../hooks/useAuth'
 // ----------------------------------------------------------------------
 
 export default function RegisterFormProfessor() {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
 
-  const { register } = useAuth()
+  const { register, success, error } = useAuth()
+  console.log('🚀 ~ file: RegisterFormTeachable.js ~ line 22 ~ RegisterFormProfessor ~ success', success)
 
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
@@ -33,15 +34,16 @@ export default function RegisterFormProfessor() {
     passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
   })
 
-  // useEffect(() => {
-  //   if (success) {
-  //     enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
-  //     navigate('/dashboard', { replace: true })
-  //   }
-  //   if (error) {
-  //     enqueueSnackbar('Đăng ký thất bại!', { variant: 'error' })
-  //   }
-  // }, [success, error, enqueueSnackbar, navigate])
+  useEffect(() => {
+    if (success) {
+      enqueueSnackbar('Chúng tôi đã gửi thông tin đăng ký về email của bạn —>Xin hãy kiểm tra email!', {
+        variant: 'success',
+      })
+    }
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' })
+    }
+  }, [success, error, enqueueSnackbar])
 
   const formik = useFormik({
     initialValues: {
@@ -52,13 +54,21 @@ export default function RegisterFormProfessor() {
       skill: '',
       password: '',
       passwordConfirmation: '',
-      role: 'professor',
     },
     validationSchema: RegisterSchema,
     onSubmit: async (values) => {
-      await register(values)
-      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
-      navigate('/dashboard', { replace: true })
+      const jobs = values.job.split(',')
+      const skills = values.skill.split(',')
+      const data = {
+        ...values,
+        jobs,
+        skills,
+      }
+      try {
+        await register(data)
+      } catch (error) {
+        console.log('🚀 ~ file: RegisterFormTeachable.js ~ line 70 ~ onSubmit: ~ error', error)
+      }
     },
   })
 
@@ -68,6 +78,12 @@ export default function RegisterFormProfessor() {
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Stack spacing={3}>
+          {success && (
+            <Alert severity="info">
+              <AlertTitle>Đăng ký thành công</AlertTitle>
+              Chúng tôi đã gửi thông tin đăng ký về email của bạn — <strong>Xin hãy kiểm tra email!</strong>
+            </Alert>
+          )}
           {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}> */}
           <TextField
             fullWidth
@@ -97,33 +113,6 @@ export default function RegisterFormProfessor() {
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
           />
-
-          <TextField
-            fullWidth
-            type="text"
-            label="Nghề nghiệp"
-            multiline
-            minRows={3}
-            maxRows={5}
-            placeholder="Cách nhau bởi dấu phẩy ,"
-            {...getFieldProps('job')}
-            error={Boolean(touched.job && errors.job)}
-            helperText={touched.job && errors.job}
-          />
-
-          <TextField
-            fullWidth
-            type="text"
-            label="Kỹ năng"
-            multiline
-            minRows={3}
-            maxRows={5}
-            placeholder="Cách nhau bởi dấu phẩy ,"
-            {...getFieldProps('skill')}
-            error={Boolean(touched.skill && errors.skill)}
-            helperText={touched.skill && errors.skill}
-          />
-
           <TextField
             fullWidth
             required
@@ -160,6 +149,31 @@ export default function RegisterFormProfessor() {
             }}
             error={Boolean(touched.passwordConfirmation && errors.passwordConfirmation)}
             helperText={touched.passwordConfirmation && errors.passwordConfirmation}
+          />
+          <TextField
+            fullWidth
+            type="text"
+            label="Nghề nghiệp"
+            multiline
+            minRows={3}
+            maxRows={5}
+            placeholder="Cách nhau bởi dấu phẩy ,"
+            {...getFieldProps('job')}
+            error={Boolean(touched.job && errors.job)}
+            helperText={touched.job && errors.job}
+          />
+
+          <TextField
+            fullWidth
+            type="text"
+            label="Kỹ năng"
+            multiline
+            minRows={3}
+            maxRows={5}
+            placeholder="Cách nhau bởi dấu phẩy ,"
+            {...getFieldProps('skill')}
+            error={Boolean(touched.skill && errors.skill)}
+            helperText={touched.skill && errors.skill}
           />
 
           <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>

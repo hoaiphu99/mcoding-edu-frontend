@@ -13,10 +13,10 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 
 UserMoreMenu.propTypes = {
   onBanned: propTypes.func,
-  isBanned: propTypes.bool,
+  statusCode: propTypes.string,
 }
 
-export default function UserMoreMenu({ onBanned, isBanned }) {
+export default function UserMoreMenu({ onBanned, statusCode }) {
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -36,7 +36,7 @@ export default function UserMoreMenu({ onBanned, isBanned }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {!isBanned ? (
+        {statusCode === 'VER' ? (
           <MenuItem sx={{ color: 'error' }} onClick={onBanned}>
             <ListItemIcon>
               <Icon icon={lockFill} width={24} height={24} />
@@ -44,12 +44,14 @@ export default function UserMoreMenu({ onBanned, isBanned }) {
             <ListItemText primary="Khóa người dùng" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
         ) : (
-          <MenuItem sx={{ color: 'error' }} onClick={onBanned}>
-            <ListItemIcon>
-              <Icon icon={unlockOutline} width={24} height={24} />
-            </ListItemIcon>
-            <ListItemText primary="Mở khóa " primaryTypographyProps={{ variant: 'body2' }} />
-          </MenuItem>
+          statusCode === 'BAN' && (
+            <MenuItem sx={{ color: 'error' }} onClick={onBanned}>
+              <ListItemIcon>
+                <Icon icon={unlockOutline} width={24} height={24} />
+              </ListItemIcon>
+              <ListItemText primary="Mở khóa " primaryTypographyProps={{ variant: 'body2' }} />
+            </MenuItem>
+          )
         )}
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>

@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
 import { useSnackbar } from 'notistack'
 import { useFormik, Form, FormikProvider } from 'formik'
@@ -17,7 +17,7 @@ export default function RegisterForm() {
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
 
-  const { studentRegister } = useAuth()
+  const { studentRegister, success, error } = useAuth()
 
   const [showPassword, setShowPassword] = useState(false)
   const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false)
@@ -29,15 +29,15 @@ export default function RegisterForm() {
     passwordConfirmation: Yup.string().oneOf([Yup.ref('password'), null], 'Mật khẩu không khớp'),
   })
 
-  // useEffect(() => {
-  //   if (success) {
-  //     enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
-  //     navigate('/dashboard', { replace: true })
-  //   }
-  //   if (error) {
-  //     enqueueSnackbar('Đăng ký thất bại!', { variant: 'error' })
-  //   }
-  // }, [success, error, enqueueSnackbar, navigate])
+  useEffect(() => {
+    if (success) {
+      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
+      navigate('/', { replace: true })
+    }
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' })
+    }
+  }, [success, error, enqueueSnackbar, navigate])
 
   const formik = useFormik({
     initialValues: {
@@ -53,10 +53,11 @@ export default function RegisterForm() {
         name: values.name,
         password: values.password,
       }
-      const res = await studentRegister(data)
-      console.log('🚀 ~ file: RegisterForm.js ~ line 63 ~ onSubmit: ~ res', res)
-      enqueueSnackbar('Đăng ký thành công!', { variant: 'success' })
-      navigate('/dashboard', { replace: true })
+      try {
+        await studentRegister(data)
+      } catch (error) {
+        console.log('🚀 ~ file: RegisterForm.js ~ line 59 ~ onSubmit: ~ error', error)
+      }
     },
   })
 
@@ -80,6 +81,7 @@ export default function RegisterForm() {
 
           <TextField
             fullWidth
+            required
             autoComplete="email"
             type="email"
             label="Email"

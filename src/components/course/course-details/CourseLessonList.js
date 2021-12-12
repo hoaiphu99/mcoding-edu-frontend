@@ -31,29 +31,34 @@ export default function CourseLessonList({ course }) {
   return (
     <RootStyle>
       <Container>
-        {sections.length === 0 ? (
-          <Typography>Không có bài học nào</Typography>
-        ) : (
-          sections.map((section) => (
-            <Accordion key={section.section_id}>
-              <AccordionSummary expandIcon={<Icon icon={arrowIosDownwardFill} width={20} height={20} />}>
-                <Typography variant="subtitle1">
-                  Chương {section.section_number}: {section.name}
+        {(sections.length === 0 && <Typography>Không có bài học nào</Typography>) ||
+        (sections.length === 1 && sections[0]?.section_number === 0)
+          ? sections[0]?.lessons.map((lesson) => (
+              <>
+                <Typography key={lesson.lesson_id} sx={{ p: 1, mb: 1, mt: 1 }}>
+                  Bài {lesson.lesson_number}: {lesson.name}
                 </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                {section.lessons.map((lesson, index) => (
-                  <>
-                    <Typography key={lesson.lesson_id} sx={{ p: 1, mb: 1, mt: 1 }}>
-                      Bài {lesson.lesson_number}: {lesson.name}
-                    </Typography>
-                    {index === section.lessons.length - 1 ? null : <Divider />}
-                  </>
-                ))}
-              </AccordionDetails>
-            </Accordion>
-          ))
-        )}
+              </>
+            ))
+          : sections.map((section) => (
+              <Accordion key={section.section_id}>
+                <AccordionSummary expandIcon={<Icon icon={arrowIosDownwardFill} width={20} height={20} />}>
+                  <Typography variant="subtitle1">
+                    Chương {section.section_number}: {section.name}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {section.lessons.map((lesson, index) => (
+                    <>
+                      <Typography key={lesson.lesson_id} sx={{ p: 1, mb: 1, mt: 1 }}>
+                        Bài {lesson.lesson_number}: {lesson.name}
+                      </Typography>
+                      {index === section.lessons.length - 1 ? null : <Divider />}
+                    </>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+            ))}
       </Container>
     </RootStyle>
   )

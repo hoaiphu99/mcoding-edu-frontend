@@ -7,6 +7,8 @@ import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill'
 // material
 import { alpha, useTheme, styled } from '@mui/material/styles'
 import { Box, List, Collapse, ListItemText, ListItemIcon, ListSubheader, ListItemButton } from '@mui/material'
+// hook
+import useAuth from '../hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -176,6 +178,7 @@ NavSection.propTypes = {
 }
 
 export default function NavSection({ navConfig, isShow = true, ...other }) {
+  const { user } = useAuth()
   return (
     <Box {...other}>
       {navConfig.map((list) => {
@@ -183,9 +186,15 @@ export default function NavSection({ navConfig, isShow = true, ...other }) {
         return (
           <List key={subheader} disablePadding>
             {isShow && <ListSubheaderStyle>{subheader}</ListSubheaderStyle>}
-            {items.map((item) => (
-              <NavItem key={item.title} item={item} isShow={isShow} />
-            ))}
+            {items.map((item) => {
+              if (
+                (item.path === '/bang-dieu-khien/users' || item.path === '/bang-dieu-khien/students') &&
+                user?.role_id !== 1
+              ) {
+                return null
+              }
+              return <NavItem key={item.title} item={item} isShow={isShow} />
+            })}
           </List>
         )
       })}

@@ -7,16 +7,32 @@ import { Icon } from '@iconify/react'
 import eyeFill from '@iconify/icons-eva/eye-fill'
 import eyeOffFill from '@iconify/icons-eva/eye-off-fill'
 // material
-import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material'
+import {
+  Link,
+  Stack,
+  Checkbox,
+  TextField,
+  IconButton,
+  InputAdornment,
+  FormControlLabel,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // hooks
 import useAuth from '../../../hooks/useAuth'
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const { login, error, success } = useAuth()
+  const { login, loginVerify, error, success, isVerified } = useAuth()
   const navigate = useNavigate()
   const { enqueueSnackbar } = useSnackbar()
+
+  const [OTP, setOTP] = useState('')
 
   const [showPassword, setShowPassword] = useState(false)
 
@@ -26,13 +42,25 @@ export default function LoginForm() {
         variant: 'error',
       })
     }
-    if (success) {
+    if (!isVerified && success) {
+      handleClickOpen()
+    } else if (isVerified && success) {
       enqueueSnackbar('Đăng nhập thành công', {
         variant: 'success',
       })
       navigate('/bang-dieu-khien', { replace: true })
     }
-  }, [error, success, navigate, enqueueSnackbar])
+  }, [isVerified, success, error, navigate, enqueueSnackbar])
+
+  const [open, setOpen] = useState(false)
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   const LoginSchema = Yup.object().shape({
     username: Yup.string().required('Tên tài khoản bắt buộc'),
@@ -47,7 +75,11 @@ export default function LoginForm() {
     },
     validationSchema: LoginSchema,
     onSubmit: async () => {
-      await login(values.username, values.password)
+      try {
+        await login(values.username, values.password)
+      } catch (error) {
+        console.log('🚀 ~ file: LoginFormTeachable.js ~ line 53 ~ onSubmit: ~ error', error)
+      }
     },
   })
 
@@ -57,55 +89,90 @@ export default function LoginForm() {
     setShowPassword((show) => !show)
   }
 
+  const handleVerify = async () => {
+    console.log(OTP)
+    await loginVerify(values.username, OTP)
+  }
+
   return (
-    <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+    <>
+      <FormikProvider value={formik}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+          <Stack spacing={3}>
+            <TextField
+              fullWidth
+              autoComplete="username"
+              type="text"
+              label="Tên tài khoản"
+              {...getFieldProps('username')}
+              error={Boolean(touched.username && errors.username)}
+              helperText={touched.username && errors.username}
+            />
+
+            <TextField
+              fullWidth
+              autoComplete="current-password"
+              type={showPassword ? 'text' : 'password'}
+              label="Mật khẩu"
+              {...getFieldProps('password')}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleShowPassword} edge="end">
+                      <Icon icon={showPassword ? eyeFill : eyeOffFill} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={Boolean(touched.password && errors.password)}
+              helperText={touched.password && errors.password}
+            />
+          </Stack>
+
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+            <FormControlLabel
+              control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
+              label="Nhớ tài khoản"
+            />
+
+            <Link component={RouterLink} variant="subtitle2" to="/dat-lai-mat-khau">
+              Quên mật khẩu?
+            </Link>
+          </Stack>
+
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+            Đăng nhập
+          </LoadingButton>
+        </Form>
+      </FormikProvider>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Nhập mã xác thực</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Một mã xác thực đã được gửi đến email của bạn</DialogContentText>
           <TextField
+            autoFocus
             fullWidth
-            autoComplete="username"
             type="text"
-            label="Tên tài khoản"
-            {...getFieldProps('username')}
-            error={Boolean(touched.username && errors.username)}
-            helperText={touched.username && errors.username}
+            margin="dense"
+            value={OTP}
+            onChange={(e) => setOTP(e.target.value)}
+            variant="outlined"
+            label="Mã xác thực"
           />
-
-          <TextField
-            fullWidth
-            autoComplete="current-password"
-            type={showPassword ? 'text' : 'password'}
-            label="Mật khẩu"
-            {...getFieldProps('password')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleShowPassword} edge="end">
-                    <Icon icon={showPassword ? eyeFill : eyeOffFill} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={Boolean(touched.password && errors.password)}
-            helperText={touched.password && errors.password}
-          />
-        </Stack>
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Nhớ tài khoản"
-          />
-
-          <Link component={RouterLink} variant="subtitle2" to="#">
-            Quên mật khẩu?
-          </Link>
-        </Stack>
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Đăng nhập
-        </LoadingButton>
-      </Form>
-    </FormikProvider>
+        </DialogContent>
+        <DialogActions>
+          {/* <Button onClick={handleClose} color="inherit">
+            Gửi lại
+          </Button> */}
+          <Button onClick={handleClose} color="inherit">
+            Hủy
+          </Button>
+          <Button onClick={handleVerify} variant="contained">
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }

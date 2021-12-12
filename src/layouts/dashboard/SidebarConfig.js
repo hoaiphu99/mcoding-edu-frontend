@@ -15,6 +15,7 @@ const ICONS = {
   ecommerce: getIcon('ic_ecommerce'),
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
+  categories: getIcon('ic_categories'),
 }
 
 const sidebarConfig = [
@@ -56,6 +57,12 @@ const sidebarConfig = [
           { title: 'tất cả', path: PATH_DASHBOARD.courses.courseList },
           { title: 'thêm mới', path: PATH_DASHBOARD.courses.newCourse },
         ],
+      },
+      {
+        title: 'Danh mục',
+        path: PATH_DASHBOARD.categories.root,
+        icon: ICONS.categories,
+        children: [{ title: 'tất cả', path: PATH_DASHBOARD.categories.categoryList }],
       },
     ],
   },

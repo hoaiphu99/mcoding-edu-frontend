@@ -30,3 +30,15 @@ export const bannedUser = createActions({
   bannedUserSuccess: (payload) => payload,
   bannedUserFailure: (err) => err,
 })
+
+export const editUserStatus = createActions({
+  editUserStatusRequest: (payload) => payload,
+  editUserStatusSuccess: (payload) => payload,
+  editUserStatusFailure: (err) => err,
+})
+
+export const changeUserPassword = createActions({
+  changeUserPasswordRequest: (payload) => payload,
+  changeUserPasswordSuccess: (payload) => payload,
+  changeUserPasswordFailure: (err) => err,
+})

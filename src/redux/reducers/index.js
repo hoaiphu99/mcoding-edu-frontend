@@ -3,6 +3,7 @@ import { userReducers, userProfileReducers } from './users'
 import { studentReducers } from './students'
 import {
   coursesReducers,
+  coursesPublicReducers,
   courseDetailsReducers,
   courseLessonReducers,
   myCoursesReducers,
@@ -13,9 +14,10 @@ import { studentCourseReducer } from './studentCourse'
 import { commentsReducers } from './comments'
 import { reviewsReducers } from './reviews'
 import { categoriesReducers } from './categories'
-import { programLanguagesReducers } from './programLanguages'
+import { programingReducers } from './programing'
 import { attachmentReducers } from './attachments'
 import { analyticsReducers } from './analytics'
+import { assignmentsReducers } from './assignments'
 
 export default combineReducers({
   users: userReducers,
@@ -23,6 +25,7 @@ export default combineReducers({
   // userLogin: userLoginReducers,
   userProfile: userProfileReducers,
   courses: coursesReducers,
+  coursesPublic: coursesPublicReducers,
   courseDetails: courseDetailsReducers,
   courseLesson: courseLessonReducers,
   studentCourse: studentCourseReducer,
@@ -31,8 +34,9 @@ export default combineReducers({
   coursesMy: myCoursesReducers,
   studentsInCourse: studentsInCourseReducers,
   categories: categoriesReducers,
-  programLanguages: programLanguagesReducers,
+  programing: programingReducers,
   attachments: attachmentReducers,
   lessonDetails: lessonDetailsReducers,
   analytics: analyticsReducers,
+  assignments: assignmentsReducers,
 })

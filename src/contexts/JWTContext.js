@@ -12,6 +12,7 @@ const initialState = {
   user: null,
   error: null,
   success: false,
+  isVerified: false,
 }
 
 const handlers = {
@@ -27,13 +28,15 @@ const handlers = {
     }
   },
   LOGIN: (state, action) => {
-    const { user } = action.payload
+    const { user, isVerified } = action.payload
+    console.log('🚀 ~ file: JWTContext.js ~ line 32 ~ isVerified', isVerified)
 
     return {
       ...state,
       isAuthenticated: true,
       user,
       success: true,
+      isVerified,
     }
   },
   LOGOUT: (state) => ({
@@ -41,6 +44,7 @@ const handlers = {
     isAuthenticated: false,
     user: null,
     success: true,
+    isVerified: false,
   }),
   REGISTER: (state, action) => {
     const { user } = action.payload
@@ -83,7 +87,9 @@ const AuthContext = createContext({
   ...initialState,
   method: 'jwt',
   login: () => Promise.resolve(),
+  loginVerify: () => Promise.resolve(),
   studentLogin: () => Promise.resolve(),
+  studentLoginVerify: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
   studentRegister: () => Promise.resolve(),
@@ -167,13 +173,51 @@ function AuthProvider({ children }) {
         dispatch({
           type: 'RESET_ERROR',
         })
-        const { data } = response.data
+        const { data, is2fa } = response.data
+        let isVerified = false
+        if (!is2fa) {
+          setSession(data.access_token)
+          isVerified = true
+        }
 
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: data,
+            isVerified,
+          },
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+  }
+
+  const loginVerify = async (username, code) => {
+    await axios
+      .post('/api/users/login/verify', {
+        username,
+        code,
+      })
+      .then((response) => {
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+        const { data } = response.data
         setSession(data.access_token)
         dispatch({
           type: 'LOGIN',
           payload: {
             user: data,
+            isVerified: true,
           },
         })
       })
@@ -200,13 +244,51 @@ function AuthProvider({ children }) {
         dispatch({
           type: 'RESET_ERROR',
         })
-        const { data } = response.data
+        const { data, is2fa } = response.data
+        let isVerified = false
+        if (!is2fa) {
+          setSession(data.access_token)
+          isVerified = true
+        }
 
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: data,
+            isVerified,
+          },
+        })
+      })
+      .catch((err) => {
+        dispatch({
+          type: 'ERROR',
+          payload: {
+            error: err.error.message,
+          },
+        })
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+      })
+  }
+
+  const studentLoginVerify = async (email, code) => {
+    await axios
+      .post('/api/students/login/verify', {
+        email,
+        code,
+      })
+      .then((response) => {
+        dispatch({
+          type: 'RESET_ERROR',
+        })
+        const { data } = response.data
         setSession(data.access_token)
         dispatch({
           type: 'LOGIN',
           payload: {
             user: data,
+            isVerified: true,
           },
         })
       })
@@ -241,10 +323,11 @@ function AuthProvider({ children }) {
         const { data } = response.data
 
         window.localStorage.setItem('accessToken', data.access_token)
+        setSession(data.access_token)
         dispatch({
           type: 'REGISTER',
           payload: {
-            user: data,
+            user: null,
           },
         })
         dispatch({
@@ -271,6 +354,7 @@ function AuthProvider({ children }) {
         const { data } = response.data
 
         window.localStorage.setItem('accessToken', data.access_token)
+        setSession(data.access_token)
         dispatch({
           type: 'REGISTER',
           payload: {
@@ -304,7 +388,7 @@ function AuthProvider({ children }) {
 
   const resetPassword = () => {}
 
-  const updateProfile = async ({ name, email, phone, avatarUrl, jobs, skills }) => {
+  const updateProfile = async ({ name, email, phone, avatarUrl, jobs, skills, is2fa }) => {
     const payload = {
       name,
       email,
@@ -312,7 +396,9 @@ function AuthProvider({ children }) {
       avatar_url: avatarUrl,
       jobs,
       skills,
+      is_2fa: is2fa,
     }
+
     await axios
       .put(`/api/users/${state.user.username}`, payload)
       .then((response) => {
@@ -342,12 +428,13 @@ function AuthProvider({ children }) {
       })
   }
 
-  const updateProfileStudent = async ({ name, phone, avatarUrl, education }) => {
+  const updateProfileStudent = async ({ name, phone, avatarUrl, education, is2fa }) => {
     const payload = {
       name,
       phone,
       avatar_url: avatarUrl,
       education,
+      is_2fa: is2fa,
     }
     await axios
       .put(`/api/students/${state.user.student_id}`, payload)
@@ -383,7 +470,9 @@ function AuthProvider({ children }) {
         ...state,
         method: 'jwt',
         login,
+        loginVerify,
         studentLogin,
+        studentLoginVerify,
         logout,
         register,
         studentRegister,

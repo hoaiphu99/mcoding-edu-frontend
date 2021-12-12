@@ -48,7 +48,7 @@ export default function Router() {
         {
           path: 'users',
           children: [
-            { element: <Navigate to="/dashboard/users/user-list" replace /> },
+            { element: <Navigate to="/bang-dieu-khien/users/user-list" replace /> },
             { path: 'user-list', element: <UserList /> },
             { path: 'five', element: <PageFive /> },
             { path: 'six', element: <PageSix /> },
@@ -57,7 +57,7 @@ export default function Router() {
         {
           path: 'students',
           children: [
-            { element: <Navigate to="/dashboard/students/student-list" replace /> },
+            { element: <Navigate to="/bang-dieu-khien/students/student-list" replace /> },
             {
               path: 'student-list',
               element: <StudentList />,
@@ -67,12 +67,21 @@ export default function Router() {
         {
           path: 'courses',
           children: [
-            { element: <Navigate to="/dashboard/courses/course-list" replace /> },
+            { element: <Navigate to="/bang-dieu-khien/courses/course-list" replace /> },
             { path: 'course-list', element: <CourseList /> },
             { path: 'new-course', element: <NewCourse /> },
             { path: ':id/edit', element: <NewCourse /> },
             { path: 'manage/:slug', element: <CourseManage /> },
+            { path: 'manage/:slug/assignments/:id', element: <Assignments /> },
             { path: ':id/students', element: <CourseStudentList /> },
+          ],
+        },
+        {
+          path: 'categories',
+          children: [
+            { element: <Navigate to="/bang-dieu-khien/categories/category-list" replace /> },
+            { path: 'category-list', element: <CategoryList /> },
+            // { path: 'new-category', element: <NewCourse /> },
           ],
         },
       ],
@@ -97,17 +106,23 @@ export default function Router() {
           element: <Courses />,
         },
         {
+          path: '/khoa-hoc/danh-muc/:slug',
+          element: <Courses />,
+        },
+        {
           path: '/khoa-hoc/:slug',
           element: <CourseDetails />,
         },
         {
-          path: '/:slug',
+          path: '/dang-hoc/:slug',
           element: <CourseLearning />,
         },
         {
           path: '/trang-ca-nhan',
           element: <Profile />,
         },
+        { path: '/dat-lai-mat-khau', element: <ResetPassword /> },
+        { path: 'reset-password/:token', element: <NewPassword /> },
       ],
     },
     {
@@ -144,11 +159,15 @@ const CourseManage = Loadable(lazy(() => import('../pages/dashboard/course/Cours
 const CourseStudentList = Loadable(lazy(() => import('../pages/dashboard/course/CourseStudentList')))
 const GeneralAnalytics = Loadable(lazy(() => import('../pages/dashboard/GeneralAnalytics')))
 const ChartAnalytics = Loadable(lazy(() => import('../pages/dashboard/ChartAnalytics')))
+const Assignments = Loadable(lazy(() => import('../pages/dashboard/course/Assignments')))
+const CategoryList = Loadable(lazy(() => import('../pages/dashboard/category/CategoryList')))
 
 // Page
 const Courses = Loadable(lazy(() => import('../pages/Courses')))
 const CourseDetails = Loadable(lazy(() => import('../pages/CourseDetails')))
 const CourseLearning = Loadable(lazy(() => import('../pages/CourseLearning')))
 const Profile = Loadable(lazy(() => import('../pages/Profile')))
+const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')))
+const NewPassword = Loadable(lazy(() => import('../pages/authentication/NewPassword')))
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/HomePage')))

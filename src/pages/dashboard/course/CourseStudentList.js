@@ -12,7 +12,6 @@ import {
   Stack,
   Avatar,
   Button,
-  Checkbox,
   TableRow,
   TableBody,
   TableCell,
@@ -36,9 +35,9 @@ import { studentsInCourseState$ } from '../../../redux/selectors'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'username', label: 'Tên tài khoản', alignRight: false },
-  { id: 'name', label: 'Họ tên', alignRight: false },
+  { id: 'student_id', label: 'Mã học viên', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
+  { id: 'name', label: 'Họ tên', alignRight: false },
   { id: '' },
 ]
 
@@ -106,20 +105,20 @@ export default function UserList() {
     setSelected([])
   }
 
-  const handleClick = (event, username) => {
-    const selectedIndex = selected.indexOf(username)
-    let newSelected = []
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, username)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
-    }
-    setSelected(newSelected)
-  }
+  // const handleClick = (event, username) => {
+  //   const selectedIndex = selected.indexOf(username)
+  //   let newSelected = []
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, username)
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1))
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1))
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+  //   }
+  //   setSelected(newSelected)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -189,35 +188,31 @@ export default function UserList() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      username,
-                      student_id,
-                      user: { name, avatar_url, email },
-                    } = row
-                    const isItemSelected = selected.indexOf(username) !== -1
+                    const { student_id, name, avatar_url, email } = row
+                    const isItemSelected = selected.indexOf(student_id) !== -1
 
                     return (
                       <TableRow
                         hover
-                        key={username}
+                        key={student_id}
                         tabIndex={-1}
                         role="checkbox"
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, username)} />
-                        </TableCell>
+                        {/* <TableCell padding="checkbox">
+                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, student_id)} />
+                        </TableCell> */}
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={username} src={avatar_url} />
+                            <Avatar alt={name} src={avatar_url} />
                             <Typography variant="subtitle2" noWrap>
-                              {username}
+                              {student_id}
                             </Typography>
                           </Stack>
                         </TableCell>
-                        <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{email}</TableCell>
+                        <TableCell align="left">{name}</TableCell>
                         <TableCell align="right">
                           <Button
                             variant="outlined"

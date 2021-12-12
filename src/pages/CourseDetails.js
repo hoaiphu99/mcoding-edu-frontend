@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   getAllCourses,
   getCourseDetails,
-  getStudentCourseByStudentId,
+  getStudentCourseByStudentAndCourseId,
   registerStudentCourse,
   getReviewsByCourseID,
 } from '../redux/actions'
@@ -58,8 +58,8 @@ export default function CourseDetails() {
   const courseID = courses.find((item) => slugify(item.name, { lower: true, locale: 'vi' }) === slug)?.course_id
 
   useEffect(() => {
-    if (!courses || courses.length <= 0) {
-      dispatch(getAllCourses.getAllCoursesRequest())
+    if (!courses.length) {
+      dispatch(getAllCourses.getAllCoursesRequest({ query: 'all=true' }))
     }
 
     if (error) {
@@ -71,7 +71,11 @@ export default function CourseDetails() {
     if (!course || course.course_id !== courseID) {
       dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
       if (user && user.student_id) {
-        dispatch(getStudentCourseByStudentId.getStudentCourseByStudentIdRequest({ id: user.student_id }))
+        const data = {
+          studentId: user.student_id,
+          courseId: courseID,
+        }
+        dispatch(getStudentCourseByStudentAndCourseId.getStudentCourseByStudentAndCourseIdRequest({ data }))
       }
     }
   }, [dispatch, course, courseID, user])
@@ -150,7 +154,11 @@ export default function CourseDetails() {
                       </Box>
                     </TabPanel>
                     <TabPanel value="3">
-                      <Box>{review && <CourseReview review={review} courseId={course.course_id} />}</Box>
+                      <Box>
+                        {review && (
+                          <CourseReview review={review} courseId={course.course_id} studentCourse={studentCourse} />
+                        )}
+                      </Box>
                     </TabPanel>
                   </TabContext>
                 </Card>

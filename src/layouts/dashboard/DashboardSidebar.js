@@ -134,17 +134,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Stack>
 
         {isCollapse ? (
-          <Avatar alt="My Avatar" src={user.avatar_url} sx={{ mx: 'auto', mb: 2 }} />
+          <Avatar alt="My Avatar" src={user?.avatar_url} sx={{ mx: 'auto', mb: 2 }} />
         ) : (
           <Link underline="none" component={RouterLink} to="#">
             <AccountStyle>
-              <Avatar alt="My Avatar" src={user.avatar_url} />
+              <Avatar alt="My Avatar" src={user?.avatar_url} />
               <Box sx={{ ml: 2 }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                  {user.name}
+                  {user?.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {user.username}
+                  {user?.username}
                 </Typography>
               </Box>
             </AccountStyle>

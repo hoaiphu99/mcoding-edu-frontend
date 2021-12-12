@@ -46,7 +46,7 @@ export default function CourseLearning() {
 
   useEffect(() => {
     if (!courses || courses.length <= 0) {
-      dispatch(getAllCourses.getAllCoursesRequest())
+      dispatch(getAllCourses.getAllCoursesRequest({ query: 'all=true' }))
     }
   }, [dispatch, courses, enqueueSnackbar])
 
@@ -54,7 +54,7 @@ export default function CourseLearning() {
     if (!user) {
       navigate('/login')
     }
-    if (!course) {
+    if ((!course && courseID) || course?.course_id !== courseID) {
       dispatch(getCourseLesson.getCourseLessonRequest({ id: courseID }))
     }
     if (error) {

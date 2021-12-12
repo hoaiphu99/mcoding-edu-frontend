@@ -2,6 +2,8 @@ import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
 import {
   getType,
   getAllCourses,
+  getAllCoursesPublic,
+  getAllCoursesByCategoryId,
   createCourse,
   updateCourse,
   deleteCourse,
@@ -34,6 +36,9 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         ...state,
         loading: false,
         data: action.payload.data,
+        page: action.payload.page,
+        pageSize: action.payload.pageSize,
+        count: action.payload.count,
         error: null,
       }
     case getType(getAllCourses.getAllCoursesFailure()):
@@ -53,6 +58,8 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         ...state,
         loading: false,
         data: [...state.data, action.payload.data],
+        pageSize: Math.ceil((state.count + 1) / state.rowsPerPage),
+        count: state.count + 1,
         error: null,
       }
     case getType(createCourse.createCourseFailure()):
@@ -99,6 +106,8 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
         ...state,
         loading: false,
         data: newData,
+        pageSize: Math.ceil((state.count - 1) / state.rowsPerPage),
+        count: state.count - 1,
         error: null,
       }
     }
@@ -135,6 +144,59 @@ export const coursesReducers = (state = INIT_STATE.courses, action) => {
       return {
         ...state,
         success: action.payload.success,
+        loading: false,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    default:
+      return state
+  }
+}
+
+// @desc reducer for courses public
+export const coursesPublicReducers = (state = INIT_STATE.coursesPublic, action) => {
+  switch (action.type) {
+    case getType(getAllCoursesPublic.getAllCoursesPublicRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(getAllCoursesPublic.getAllCoursesPublicSuccess()):
+      return {
+        ...state,
+        loading: false,
+        data: action.payload.data,
+        page: action.payload.page,
+        pageSize: action.payload.pageSize,
+        count: action.payload.count,
+        error: null,
+      }
+    case getType(getAllCoursesPublic.getAllCoursesPublicFailure()):
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    // getAllCoursesByCategoryId
+    case getType(getAllCoursesByCategoryId.getAllCoursesByCategoryIdRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(getAllCoursesByCategoryId.getAllCoursesByCategoryIdSuccess()):
+      return {
+        ...state,
+        loading: false,
+        data: action.payload.data,
+        page: action.payload.page,
+        pageSize: action.payload.pageSize,
+        count: action.payload.count,
+        error: null,
+      }
+    case getType(getAllCoursesByCategoryId.getAllCoursesByCategoryIdFailure()):
+      return {
+        ...state,
         loading: false,
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
@@ -228,7 +290,8 @@ export const courseLessonReducers = (state = INIT_STATE.courseLesson, action) =>
       const newData = state.data
       newData.sections = newData.sections.map((item) => {
         if (item.section_id === action.payload.data.section_id) {
-          item = action.payload.data
+          item.section_number = action.payload.data.section_number
+          item.name = action.payload.data.name
         }
         return item
       })

@@ -38,7 +38,7 @@ export const commentsReducers = (state = INIT_STATE.comments, action) => {
         success: SUCCESS_ACTION_TYPE.CREATE,
         loading: false,
         error: null,
-        data: [...state.data, action.payload.data],
+        data: [action.payload.data, ...state.data],
       }
     case getType(createNewComment.createNewCommentFailure()):
       return {

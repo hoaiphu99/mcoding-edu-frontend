@@ -23,8 +23,8 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { createCourse, updateCourse, getCategories, getProgramLanguages } from '../../../redux/actions'
-import { coursesState$, categoriesState$, programLanguagesState$ } from '../../../redux/selectors'
+import { createCourse, updateCourse, getCategories, getPrograming } from '../../../redux/actions'
+import { coursesState$, categoriesState$, programingState$ } from '../../../redux/selectors'
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths'
 //
@@ -64,7 +64,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
   const dispatch = useDispatch()
   const { error } = useSelector(coursesState$)
   const { data: categories } = useSelector(categoriesState$)
-  const { data: programLanguages } = useSelector(programLanguagesState$)
+  const { data: programing } = useSelector(programingState$)
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -80,7 +80,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
       enqueueSnackbar(error, { variant: 'error' })
     }
     dispatch(getCategories.getCategoriesRequest())
-    dispatch(getProgramLanguages.getProgramLanguagesRequest())
+    dispatch(getPrograming.getProgramingRequest())
   }, [enqueueSnackbar, error, dispatch])
 
   const formik = useFormik({
@@ -90,7 +90,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
       description: currentCourse?.description || '',
       image_url: currentCourse?.image_url || null,
       category_id: currentCourse?.category_id || categories[0]?.category_id,
-      course_languages: currentCourse?.programingLanguages || [programLanguages[0]],
+      course_languages: currentCourse?.programingLanguages || [programing[0]],
     },
     validationSchema: NewProductSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
@@ -233,7 +233,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
                       onChange={(event, newValue) => {
                         setFieldValue('course_languages', newValue)
                       }}
-                      options={programLanguages.map((option) => option)}
+                      options={programing.map((option) => option)}
                       getOptionLabel={(option) => option.name}
                       renderTags={(value, getTagProps) =>
                         value.map((option, index) => (
@@ -245,7 +245,7 @@ export default function CourseNewForm({ isEdit, currentCourse }) {
                           />
                         ))
                       }
-                      renderInput={(params) => <TextField label="Ngôn ngữ lập trình" {...params} />}
+                      renderInput={(params) => <TextField label="Yêu cầu kỹ năng" {...params} />}
                     />
                     {touched.course_languages && errors.course_languages && (
                       <FormHelperText error sx={{ px: 2 }}>

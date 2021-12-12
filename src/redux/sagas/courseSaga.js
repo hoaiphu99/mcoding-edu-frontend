@@ -1,6 +1,8 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
 import {
   getAllCourses,
+  getAllCoursesPublic,
+  getAllCoursesByCategoryId,
   createCourse,
   updateCourse,
   deleteCourse,
@@ -20,6 +22,7 @@ import {
 } from '../actions'
 import {
   fetchAllCourses,
+  fetchAllCoursesByCategoryId,
   addNewCourse,
   editCourse,
   removeCourse,
@@ -38,12 +41,38 @@ import {
   fetchLessonById,
 } from '../../api'
 
-function* getAllCoursesSaga() {
+function* getAllCoursesSaga(action) {
   try {
-    const courses = yield call(fetchAllCourses)
+    const courses = yield call(fetchAllCourses, action.payload.query)
     yield put(getAllCourses.getAllCoursesSuccess(courses.data))
   } catch (error) {
     yield put(getAllCourses.getAllCoursesFailure(error.response && error.response.data ? error.response.data : error))
+  }
+}
+
+function* getAllCoursesByCategoryIdSaga(action) {
+  try {
+    const courses = yield call(fetchAllCoursesByCategoryId, action.payload.id)
+    yield put(getAllCoursesByCategoryId.getAllCoursesByCategoryIdSuccess(courses.data))
+  } catch (error) {
+    yield put(
+      getAllCoursesByCategoryId.getAllCoursesByCategoryIdFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
+  }
+}
+
+function* getAllCoursesPublicSaga(action) {
+  try {
+    const courses = yield call(fetchAllCourses, action.payload.query)
+    yield put(getAllCoursesPublic.getAllCoursesPublicSuccess(courses.data))
+  } catch (error) {
+    yield put(
+      getAllCoursesPublic.getAllCoursesPublicFailure(
+        error.response && error.response.data ? error.response.data : error,
+      ),
+    )
   }
 }
 
@@ -213,6 +242,8 @@ function* deleteLessonSaga(action) {
 
 function* courseSaga() {
   yield takeLatest(getAllCourses.getAllCoursesRequest, getAllCoursesSaga)
+  yield takeLatest(getAllCoursesByCategoryId.getAllCoursesByCategoryIdRequest, getAllCoursesByCategoryIdSaga)
+  yield takeLatest(getAllCoursesPublic.getAllCoursesPublicRequest, getAllCoursesPublicSaga)
   yield takeLatest(createCourse.createCourseRequest, createCourseSaga)
   yield takeLatest(updateCourse.updateCourseRequest, updateCourseSaga)
   yield takeLatest(deleteCourse.deleteCourseRequest, deleteCourseSaga)

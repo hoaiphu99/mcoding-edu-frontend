@@ -13,7 +13,7 @@ import ScrollToTop from './components/ScrollToTop'
 import LoadingScreen, { ProgressBarStyle } from './components/LoadingScreen'
 import ThemePrimaryColor from './components/ThemePrimaryColor'
 // verify
-// import AuthVerify from './common/authVerify'
+import AuthVerify from './common/authVerify'
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -29,7 +29,7 @@ export default function App() {
             {/* <Settings /> */}
             <ScrollToTop />
             {isInitialized ? <Router /> : <LoadingScreen />}
-            {/* <AuthVerify /> */}
+            <AuthVerify />
           </NotistackProvider>
         </RtlLayout>
       </ThemePrimaryColor>

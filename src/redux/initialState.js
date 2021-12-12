@@ -29,6 +29,19 @@ export const INIT_STATE = {
     success: false,
     loading: false,
     data: [],
+    count: 0,
+    page: 1,
+    pageSize: 1,
+    rowsPerPage: 5,
+    error: null,
+  },
+  coursesPublic: {
+    success: false,
+    loading: false,
+    data: [],
+    count: 0,
+    page: 1,
+    pageSize: 1,
     error: null,
   },
   courseDetails: {
@@ -79,7 +92,7 @@ export const INIT_STATE = {
     data: [],
     error: null,
   },
-  programLanguages: {
+  programing: {
     success: null,
     loading: false,
     data: [],
@@ -94,6 +107,12 @@ export const INIT_STATE = {
     error: null,
   },
   lessonDetails: {
+    success: null,
+    loading: false,
+    data: null,
+    error: null,
+  },
+  assignments: {
     success: null,
     loading: false,
     data: null,

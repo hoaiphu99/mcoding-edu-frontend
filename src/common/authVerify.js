@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 // material
 import { Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from '@mui/material'
-// redux
-import { authUser } from '../redux/actions'
+// hook
+import useAuth from '../hooks/useAuth'
 
 const parseJwt = (token) => {
   try {
@@ -19,8 +18,7 @@ const parseJwt = (token) => {
 
 const AuthVerify = () => {
   const location = useLocation()
-  const dispatch = useDispatch()
-
+  const { logout } = useAuth()
   const [open, setOpen] = useState(false)
 
   const handleClose = () => {
@@ -28,15 +26,18 @@ const AuthVerify = () => {
   }
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('userInfo'))
-    if (user) {
-      const decodedJwt = parseJwt(user.token)
+    const token = localStorage.getItem('accessToken')
+    const handleLogout = async () => {
+      await logout()
+    }
+    if (token) {
+      const decodedJwt = parseJwt(token)
       if (decodedJwt?.exp * 1000 < Date.now()) {
+        handleLogout()
         setOpen(true)
-        dispatch(authUser.authUserLogout())
       }
     }
-  }, [dispatch, location])
+  }, [location, logout])
 
   return (
     <>

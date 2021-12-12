@@ -22,12 +22,17 @@ import {
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { getAttachmentsByLessonId } from '../../../redux/actions'
-import { attachmentsState$ } from '../../../redux/selectors'
+import { getAttachmentsByLessonId, getAssignmentsByLessonId } from '../../../redux/actions'
+import { attachmentsState$, assignmentsState$ } from '../../../redux/selectors'
+// utils
+import axios from '../../../utils/axios'
+// hooks
+import useAuth from '../../../hooks/useAuth'
 // components
 import Page from '../../Page'
 import CourseVideoEmbed from './CourseVideoEmbed'
 import CourseAttachmentList from './CourseAttachmentList'
+import Markdown from '../../Markdown'
 
 // ----------------------------------------------------------------------
 
@@ -44,26 +49,61 @@ CourseLessonList.propTypes = {
 
 export default function CourseLessonList({ course, onChangeLesson }) {
   const { sections } = course
-  const [value, setValue] = useState('1')
-  const [videoUrl, setVideoUrl] = useState('')
+
+  const { user } = useAuth()
 
   const dispatch = useDispatch()
   const { data } = useSelector(attachmentsState$)
+  const { data: assignments } = useSelector(assignmentsState$)
 
+  const [countdown, setCountdown] = useState(0)
+  const [value, setValue] = useState('1')
+  const [videoUrl, setVideoUrl] = useState('')
   const [lesson_id, setLesson_id] = useState(undefined)
   const [lessonTitle, setLessonTitle] = useState('')
   const [lessonNumber, setLessonNumber] = useState(1)
+
+  useEffect(() => {
+    let timerId = null
+    async function updateProcess() {
+      if (countdown === 0) {
+        await axios
+          .post(`http://localhost:3030/api/lessons/learned/${lesson_id}`, {
+            learned: true,
+            courseId: course.course_id,
+          })
+          .then((res) => {
+            console.log('🚀 ~ file: CourseLessonList.js ~ line 78 ~ .then ~ res', res)
+          })
+          .catch((err) => {
+            console.log('🚀 ~ file: CourseLessonList.js ~ line 81 ~ .then ~ err', err)
+          })
+      }
+    }
+    if (user && user?.student_id) {
+      if (countdown > 0) {
+        timerId = setTimeout(() => {
+          setCountdown(countdown - 1)
+        }, 1000)
+      }
+
+      updateProcess()
+    }
+    return () => clearTimeout(timerId)
+  }, [user, countdown, course, lesson_id])
 
   useEffect(() => {
     setLesson_id(sections.length > 0 ? sections[0].lessons[0]?.lesson_id : undefined)
     setVideoUrl(sections.length > 0 ? sections[0].lessons[0]?.video_url : '')
     setLessonTitle(sections.length > 0 ? sections[0].lessons[0]?.name : '')
     setLessonNumber(sections.length > 0 ? sections[0].lessons[0]?.lesson_number : '')
+    setCountdown(sections.length > 0 ? sections[0].lessons[0]?.duration : 0)
   }, [sections])
 
   useEffect(() => {
     if (lesson_id) {
       dispatch(getAttachmentsByLessonId.getAttachmentsByLessonIdRequest({ lessonId: lesson_id }))
+      dispatch(getAssignmentsByLessonId.getAssignmentsByLessonIdRequest({ lessonId: lesson_id }))
     }
   }, [dispatch, lesson_id])
 
@@ -76,6 +116,7 @@ export default function CourseLessonList({ course, onChangeLesson }) {
     setVideoUrl(lesson.video_url)
     setLessonTitle(lesson.name)
     setLessonNumber(lesson.lesson_number)
+    setCountdown(lesson.duration)
   }
 
   return (
@@ -95,6 +136,7 @@ export default function CourseLessonList({ course, onChangeLesson }) {
                 label={`Tệp đính kèm (${data?.count})`}
                 sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }}
               />
+              <Tab disableRipple value="3" label="Bài tập" sx={{ '& .MuiTab-wrapper': { whiteSpace: 'nowrap' } }} />
             </TabList>
           </Box>
           <Divider />
@@ -102,8 +144,23 @@ export default function CourseLessonList({ course, onChangeLesson }) {
             <Box>
               <RootStyle>
                 <Container>
-                  {sections.length === 0 ? (
-                    <Typography>Không có bài học nào</Typography>
+                  {(sections.length === 0 && <Typography>Không có bài học nào</Typography>) ||
+                  (sections.length === 1 && sections[0]?.section_number === 0) ? (
+                    <List>
+                      {sections[0]?.lessons.map((lesson) => (
+                        <ListItem key={lesson.lesson_id} disablePadding>
+                          <ListItemButton
+                            sx={{ pl: 4 }}
+                            onClick={() => {
+                              handleChangeLesson(lesson)
+                              onChangeLesson(lesson.lesson_id)
+                            }}
+                          >
+                            <ListItemText primary={`Bài ${lesson.lesson_number}: ${lesson.name}`} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
                   ) : (
                     sections.map((section) => (
                       <Accordion key={section.section_id}>
@@ -137,6 +194,23 @@ export default function CourseLessonList({ course, onChangeLesson }) {
           <TabPanel value="2">
             <Box sx={{ p: 3 }}>
               <CourseAttachmentList attachments={data?.attachments} />
+            </Box>
+          </TabPanel>
+          <TabPanel value="3">
+            <Box sx={{ p: 3 }}>
+              {assignments && (
+                <>
+                  <Markdown children={assignments.details} />
+                  <Accordion key={assignments.assignments_id}>
+                    <AccordionSummary expandIcon={<Icon icon={arrowIosDownwardFill} width={20} height={20} />}>
+                      <Typography variant="subtitle1">Trả lời</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Markdown children={assignments.answer} />
+                    </AccordionDetails>
+                  </Accordion>
+                </>
+              )}
             </Box>
           </TabPanel>
         </TabContext>

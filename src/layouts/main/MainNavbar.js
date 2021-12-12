@@ -1,7 +1,11 @@
 import { Link as RouterLink, useLocation } from 'react-router-dom'
+import slugify from 'slugify'
 // material
 import { styled } from '@mui/material/styles'
 import { Box, Button, AppBar, Toolbar, Container } from '@mui/material'
+// redux
+import { useSelector } from 'react-redux'
+import { categoriesState$ } from '../../redux/selectors'
 // hooks
 import useAuth from '../../hooks/useAuth'
 import useOffSetTop from '../../hooks/useOffSetTop'
@@ -52,6 +56,17 @@ export default function MainNavbar() {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
 
+  const { data: categories } = useSelector(categoriesState$)
+
+  navConfig.forEach((item) => {
+    if (item.path === '#') {
+      item.children[0].items = categories.map((category) => ({
+        title: category.name,
+        path: `/khoa-hoc/danh-muc/${slugify(category.name, { lower: true, locale: 'vi' })}`,
+      }))
+    }
+  })
+
   const { user } = useAuth()
 
   return (
@@ -82,7 +97,7 @@ export default function MainNavbar() {
           <Box sx={{ flexGrow: 1 }} />
 
           <MHidden width="mdDown">
-            <MenuDesktop isOffset={isOffset} isHome={isHome} navConfig={navConfig} />
+            <MenuDesktop navConfig={navConfig} />
           </MHidden>
           <Searchbar />
           {!user ? (

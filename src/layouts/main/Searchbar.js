@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import searchFill from '@iconify/icons-eva/search-fill'
 // material
 import { styled, alpha } from '@mui/material/styles'
@@ -37,6 +38,7 @@ const SearchbarStyle = styled('div')(({ theme }) => ({
 export default function Searchbar() {
   const [isOpen, setOpen] = useState(false)
   const [keyword, setKeyword] = useState('')
+  const navigate = useNavigate()
 
   const handleOpen = () => {
     setOpen((prev) => !prev)
@@ -47,7 +49,7 @@ export default function Searchbar() {
   }
 
   const handleSearch = () => {
-    alert(keyword)
+    navigate(`/khoa-hoc?keyword=${keyword}`)
   }
 
   return (

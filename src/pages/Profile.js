@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react'
 import { useState } from 'react'
 import roundAccountBox from '@iconify/icons-ic/round-account-box'
 import bookOpenFill from '@iconify/icons-eva/book-open-fill'
+import outlineVpnKey from '@iconify/icons-ic/outline-vpn-key'
 // material
 import { Container, Tab, Box, Tabs, Stack } from '@mui/material'
 // redux
@@ -10,6 +11,7 @@ import { Container, Tab, Box, Tabs, Stack } from '@mui/material'
 import Page from '../components/Page'
 import HeaderBreadcrumbs from '../components/HeaderBreadcrumbs'
 import { Account, ProfileMyCourse } from '../components/_dashboard/user/profile'
+import { AccountChangePassword } from '../components/_dashboard/user/account'
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +30,12 @@ export default function UserAccount() {
       label: 'Khóa học của tôi',
       icon: <Icon icon={bookOpenFill} width={20} height={20} />,
       component: <ProfileMyCourse />,
+    },
+    {
+      value: 'change-password',
+      label: 'Đổi mật khẩu',
+      icon: <Icon icon={outlineVpnKey} width={20} height={20} />,
+      component: <AccountChangePassword />,
     },
   ]
 

@@ -1,16 +1,16 @@
 import { INIT_STATE } from '../initialState'
-import { getType, getStudentCourseByStudentId, registerStudentCourse } from '../actions'
+import { getType, getStudentCourseByStudentAndCourseId, registerStudentCourse } from '../actions'
 
 export const studentCourseReducer = (state = INIT_STATE.studentCourse, action) => {
   switch (action.type) {
-    case getType(getStudentCourseByStudentId.getStudentCourseByStudentIdRequest()):
+    case getType(getStudentCourseByStudentAndCourseId.getStudentCourseByStudentAndCourseIdRequest()):
       return {
         ...state,
         success: false,
         loading: true,
         error: null,
       }
-    case getType(getStudentCourseByStudentId.getStudentCourseByStudentIdSuccess()):
+    case getType(getStudentCourseByStudentAndCourseId.getStudentCourseByStudentAndCourseIdSuccess()):
       return {
         ...state,
         success: action.payload.success,
@@ -18,7 +18,7 @@ export const studentCourseReducer = (state = INIT_STATE.studentCourse, action) =
         error: null,
         data: action.payload.data,
       }
-    case getType(getStudentCourseByStudentId.getStudentCourseByStudentIdFailure()):
+    case getType(getStudentCourseByStudentAndCourseId.getStudentCourseByStudentAndCourseIdFailure()):
       return {
         ...state,
         success: action.payload.success,

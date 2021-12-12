@@ -6,8 +6,9 @@ import studentCourseSaga from './studentCourseSaga'
 import commentSaga from './commentSaga'
 import reviewSaga from './reviewSaga'
 import categorySaga from './categorySaga'
-import programingLanguagesSaga from './programLanguagesSaga'
+import programingSaga from './programingSaga'
 import attachmentSaga from './attachmentSaga'
+import assignmentsSaga from './assignmentsSaga'
 import analyticsSaga from './analyticsSaga'
 
 function* rootSaga() {
@@ -19,9 +20,10 @@ function* rootSaga() {
     commentSaga(),
     reviewSaga(),
     categorySaga(),
-    programingLanguagesSaga(),
+    programingSaga(),
     attachmentSaga(),
     analyticsSaga(),
+    assignmentsSaga(),
   ])
 }
 

@@ -2,15 +2,17 @@ import { useEffect } from 'react'
 import slugify from 'slugify'
 import PropTypes from 'prop-types'
 import { Icon } from '@iconify/react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link as RouterLink } from 'react-router-dom'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
 // material
 import { alpha, styled } from '@mui/material/styles'
-import { Box, Grid, Card, IconButton, Typography, CardContent } from '@mui/material'
+import { Box, Grid, Card, IconButton, Typography, CardContent, Link } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { getMyCourses } from '../../../../redux/actions'
 import { coursesMyState$ } from '../../../../redux/selectors'
+// hook
+import useAuth from '../../../../hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +47,7 @@ CourseItem.propTypes = {
 
 function CourseItem({ course }) {
   const navigate = useNavigate()
+
   const {
     image_url: imageUrl,
     name,
@@ -52,7 +55,7 @@ function CourseItem({ course }) {
   } = course
 
   const handleClick = () => {
-    navigate(`/${slugify(name, { lower: true, locale: 'vi' })}`)
+    navigate(`/dang-hoc/${slugify(name, { lower: true, locale: 'vi' })}`)
   }
   return (
     <Card sx={{ pt: '100%', cursor: 'pointer' }}>
@@ -75,10 +78,13 @@ function CourseItem({ course }) {
 
 export default function ProfileMyCourse() {
   const dispatch = useDispatch()
+  const { user } = useAuth()
   const { data: courses } = useSelector(coursesMyState$)
+
   useEffect(() => {
     dispatch(getMyCourses.getMyCoursesRequest())
   }, [dispatch])
+
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 3 }}>
@@ -86,7 +92,13 @@ export default function ProfileMyCourse() {
       </Typography>
       {courses && courses.length <= 0 ? (
         <Typography variant="body1" sx={{ opacity: 0.72 }}>
-          Bạn chưa có khóa học nào
+          {!user?.student_id ? (
+            <Link to="/bang-dieu-khien/courses" component={RouterLink} underline="none">
+              Quản lý khóa học
+            </Link>
+          ) : (
+            'Bạn chưa có khóa học nào'
+          )}
         </Typography>
       ) : (
         <Card sx={{ p: 3 }}>

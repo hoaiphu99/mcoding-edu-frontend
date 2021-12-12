@@ -5,13 +5,15 @@ import { useSnackbar } from 'notistack'
 import { useCallback, useEffect } from 'react'
 import { Form, FormikProvider, useFormik } from 'formik'
 // material
-import { Box, Grid, Card, Stack, TextField, Typography, FormHelperText } from '@mui/material'
+import { Box, Grid, Card, Stack, TextField, Typography, FormHelperText, FormControlLabel, Switch } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
 // hooks
 import useAuth from '../../../../hooks/useAuth'
 import useIsMountedRef from '../../../../hooks/useIsMountedRef'
 import { UploadAvatar } from '../../../upload'
+// components
+import { Block } from '../../../Block'
 // utils
 import { fData } from '../../../../utils/formatNumber'
 //
@@ -39,24 +41,31 @@ export default function Account() {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
+      student_id: user?.student_id || null,
       username: user?.username,
       name: user?.name || '',
       email: user?.email || '',
+      is2fa: user?.is_2fa || false,
       avatarUrl: user?.avatar_url || '',
       preAvatar: user?.avatar_url || null,
       phone: user?.phone || '',
-      education: user?.student?.education || '',
-      jobs: user?.jobs || [],
-      skills: user?.skills || [],
+      education: user?.education || '',
+      jobs: user?.jobs?.map((job) => job.job_name).join(',') || '',
+      skills: user?.skills?.map((skill) => skill.skill_name).join(',') || '',
     },
 
     validationSchema: UpdateUserSchema,
     onSubmit: async (values, { setErrors, setSubmitting }) => {
       console.log('🚀 ~ file: Account.js ~ line 55 ~ onSubmit: ~ values', values)
+
       try {
         if (user?.student_id) {
           await updateProfileStudent({ ...values })
         } else {
+          const j = values.jobs.split(',')
+          const s = values.skills.split(',')
+          values.jobs = j
+          values.skills = s
           await updateProfile({ ...values })
         }
         enqueueSnackbar('Đã cập nhật', { variant: 'success' })
@@ -115,7 +124,7 @@ export default function Account() {
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
-            <Card sx={{ py: 10, px: 3, textAlign: 'center' }}>
+            <Card sx={{ py: 10, px: 3, textAlign: 'center', mb: 3 }}>
               <UploadAvatar
                 accept="image/*"
                 file={values.preAvatar}
@@ -143,6 +152,13 @@ export default function Account() {
                 {touched.avatarUrl && errors.avatarUrl}
               </FormHelperText>
             </Card>
+            <Block title="Bảo mật">
+              <FormControlLabel
+                control={<Switch {...getFieldProps('is2fa')} checked={values.is2fa} />}
+                label="Xác thực 2 bước"
+                sx={{ mb: 2 }}
+              />
+            </Block>
           </Grid>
 
           <Grid item xs={12} md={8}>
@@ -151,6 +167,9 @@ export default function Account() {
                 <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                   {user?.username && (
                     <TextField fullWidth disabled label="Tên tài khoản" {...getFieldProps('username')} />
+                  )}
+                  {user?.student_id && (
+                    <TextField fullWidth disabled label="Mã học viên" {...getFieldProps('student_id')} />
                   )}
                   <TextField fullWidth label="Họ và tên" {...getFieldProps('name')} />
                 </Stack>
@@ -162,8 +181,31 @@ export default function Account() {
                 {user?.student_id && <TextField fullWidth label="Học vấn" {...getFieldProps('education')} />}
                 {user?.username && (
                   <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-                    <TextField fullWidth label="Nghề nghiệp" {...getFieldProps('jobs')} />
-                    <TextField fullWidth label="Kỹ năng" {...getFieldProps('skills')} />
+                    <TextField
+                      fullWidth
+                      type="text"
+                      label="Nghề nghiệp"
+                      multiline
+                      minRows={3}
+                      maxRows={5}
+                      placeholder="Cách nhau bởi dấu phẩy ,"
+                      {...getFieldProps('jobs')}
+                      error={Boolean(touched.jobs && errors.jobs)}
+                      helperText={touched.jobs && errors.jobs}
+                    />
+
+                    <TextField
+                      fullWidth
+                      type="text"
+                      label="Kỹ năng"
+                      multiline
+                      minRows={3}
+                      maxRows={5}
+                      placeholder="Cách nhau bởi dấu phẩy ,"
+                      {...getFieldProps('skills')}
+                      error={Boolean(touched.skills && errors.skills)}
+                      helperText={touched.skills && errors.skills}
+                    />
                   </Stack>
                 )}
               </Stack>

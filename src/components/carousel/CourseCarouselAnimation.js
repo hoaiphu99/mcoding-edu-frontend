@@ -133,12 +133,9 @@ export default function CourseCarouselAnimation({ course }) {
   return (
     <Card sx={{ mb: 2 }}>
       <Slider ref={carouselRef} {...settings}>
-        {course.map((item, index) => {
-          if (item.status_code === 'PUB') {
-            return <CarouselItem key={item.course_id} item={item} isActive={index === currentIndex} />
-          }
-          return null
-        })}
+        {course.map((item, index) => (
+          <CarouselItem key={item.course_id} item={item} isActive={index === currentIndex} />
+        ))}
       </Slider>
 
       <CarouselControlsArrowsIndex

@@ -54,8 +54,8 @@ export default function CourseLearning() {
   }, [user, navigate])
 
   useEffect(() => {
-    if (!courses || courses.length <= 0) {
-      dispatch(getAllCourses.getAllCoursesRequest())
+    if (!courses.length) {
+      dispatch(getAllCourses.getAllCoursesRequest({ query: 'all=true' }))
     }
 
     if (!course || course.course_id !== courseID) {
@@ -109,7 +109,7 @@ export default function CourseLearning() {
               {comments && comments.length <= 0 ? (
                 <Typography variant="subtitle1">Không có bình luận nào</Typography>
               ) : (
-                <CourseCommentList comments={comments} />
+                <CourseCommentList comments={comments} teachable={course.user} />
               )}
             </CardContent>
           </Card>

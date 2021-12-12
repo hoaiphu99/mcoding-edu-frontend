@@ -133,14 +133,25 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
           </Box>
         </Box>
 
-        {(studentCourse && course_id === studentCourse.course_id) || user?.username ? (
-          <Link to={`/${slugify(name, { lower: true, locale: 'vi' })}`} component={RouterLink}>
+        {(studentCourse && course_id === studentCourse.course_id) || (user && user.username) ? (
+          <Link to={`/dang-hoc/${slugify(name, { lower: true, locale: 'vi' })}`} component={RouterLink}>
             <Button variant="contained">Học ngay</Button>
           </Link>
         ) : (
-          <Button variant="contained" onClick={handleClick}>
-            Đăng ký học miễn phí
-          </Button>
+          (!user && (
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigate('/login', { replace: true })
+              }}
+            >
+              Đăng nhập để đăng ký học
+            </Button>
+          )) || (
+            <Button variant="contained" onClick={handleClick}>
+              Đăng ký học miễn phí
+            </Button>
+          )
         )}
 
         <Dialog open={open} onClose={handleClose}>
@@ -154,7 +165,7 @@ export default function CourseHero({ course, studentCourse, onHandleClick, ...ot
               onClick={() => {
                 onHandleClick()
                 handleClose()
-                navigate(`/${slugify(name, { lower: true, locale: 'vi' })}`, { replace: true })
+                navigate(`/dang-hoc/${slugify(name, { lower: true, locale: 'vi' })}`, { replace: true })
               }}
               autoFocus
             >

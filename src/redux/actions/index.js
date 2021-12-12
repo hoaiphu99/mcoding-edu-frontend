@@ -1,9 +1,19 @@
 export const getType = (reduxAction) => reduxAction.type
 
-export { getUsers, registerUser, authUser, getUserProfile, bannedUser } from './userActions'
+export {
+  getUsers,
+  registerUser,
+  authUser,
+  getUserProfile,
+  bannedUser,
+  editUserStatus,
+  changeUserPassword,
+} from './userActions'
 export { getStudentList, bannedStudent } from './studentActions'
 export {
   getAllCourses,
+  getAllCoursesPublic,
+  getAllCoursesByCategoryId,
   createCourse,
   updateCourse,
   deleteCourse,
@@ -21,12 +31,13 @@ export {
   deleteStudentInCourse,
   getLessonById,
 } from './courseActions'
-export { getStudentCourseByStudentId, registerStudentCourse } from './studentCourseActions'
+export { getStudentCourseByStudentAndCourseId, registerStudentCourse } from './studentCourseActions'
 export { getCommentsByLessonID, createNewComment } from './commentActions'
 export { getReviewsByCourseID, createNewReview } from './reviewActions'
-export { getCategories } from './categoryActions'
-export { getProgramLanguages } from './programLanguagesActions'
+export { getCategories, createCategory, updateCategory, deleteCategory } from './categoryActions'
+export { getPrograming } from './programingActions'
 export { getAttachmentsByLessonId, createAttachment, deleteAttachment } from './attachmentActions'
+export { getAssignmentsByLessonId, createAssignments, updateAssignments, deleteAssignments } from './assignmentsActions'
 export {
   getCourseTotal,
   getUserTotal,

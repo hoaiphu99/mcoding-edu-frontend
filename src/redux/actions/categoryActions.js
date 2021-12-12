@@ -5,3 +5,21 @@ export const getCategories = createActions({
   getCategoriesSuccess: (payload) => payload,
   getCategoriesFailure: (err) => err,
 })
+
+export const createCategory = createActions({
+  createCategoryRequest: (payload) => payload,
+  createCategorySuccess: (payload) => payload,
+  createCategoryFailure: (err) => err,
+})
+
+export const updateCategory = createActions({
+  updateCategoryRequest: (payload) => payload,
+  updateCategorySuccess: (payload) => payload,
+  updateCategoryFailure: (err) => err,
+})
+
+export const deleteCategory = createActions({
+  deleteCategoryRequest: (payload) => payload,
+  deleteCategorySuccess: (payload) => payload,
+  deleteCategoryFailure: (err) => err,
+})

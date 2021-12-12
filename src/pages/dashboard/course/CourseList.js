@@ -13,7 +13,7 @@ import {
   Table,
   Button,
   TableRow,
-  Checkbox,
+  // Checkbox,
   TableBody,
   TableCell,
   Container,
@@ -23,13 +23,7 @@ import {
 } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  getAllCourses,
-  deleteCourse,
-  updateCourseStatus,
-  getCategories,
-  getProgramLanguages,
-} from '../../../redux/actions'
+import { getAllCourses, deleteCourse, updateCourseStatus, getCategories, getPrograming } from '../../../redux/actions'
 import { coursesState$ } from '../../../redux/selectors'
 // hook
 import useAuth from '../../../hooks/useAuth'
@@ -50,9 +44,10 @@ import { CourseListHead, CourseListToolbar, CourseMoreMenu } from '../../../comp
 const TABLE_HEAD = [
   { id: 'name', label: 'Khóa học', alignRight: false },
   { id: 'created_at', label: 'Đã tạo', alignRight: false },
+  { id: 'teachable', label: 'Người tạo', alignRight: false },
   { id: 'status_code', label: 'Trạng thái', alignRight: false },
-  { id: 'teachable', label: 'Người tạo', alignRight: true },
   { id: 'action' },
+  { id: 'action1' },
   { id: '' },
 ]
 
@@ -102,7 +97,7 @@ function applySortFilter(array, comparator, query) {
 export default function CourseList() {
   const dispatch = useDispatch()
   const [page, setPage] = useState(0)
-  const [order, setOrder] = useState('asc')
+  const [order, setOrder] = useState('desc')
   const [selected, setSelected] = useState([])
   const [filterName, setFilterName] = useState('')
   const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -113,7 +108,7 @@ export default function CourseList() {
 
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data: courses, error, success } = useSelector(coursesState$)
+  const { data: courses, error, success, count } = useSelector(coursesState$)
 
   useEffect(() => {
     if (error) {
@@ -126,10 +121,11 @@ export default function CourseList() {
       enqueueSnackbar('Cập nhật trạng thái thành công', { variant: 'success' })
       setTag('')
     }
-    dispatch(getAllCourses.getAllCoursesRequest())
+    dispatch(getAllCourses.getAllCoursesRequest({ query: `rowsPerPage=${rowsPerPage}&&page=${page + 1}` }))
+
     dispatch(getCategories.getCategoriesRequest())
-    dispatch(getProgramLanguages.getProgramLanguagesRequest())
-  }, [dispatch, error, enqueueSnackbar, tag, success])
+    dispatch(getPrograming.getProgramingRequest())
+  }, [dispatch, error, enqueueSnackbar, tag, success, rowsPerPage, page])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -146,20 +142,20 @@ export default function CourseList() {
     setSelected([])
   }
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name)
-    let newSelected = []
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
-    }
-    setSelected(newSelected)
-  }
+  // const handleClick = (event, name) => {
+  //   const selectedIndex = selected.indexOf(name)
+  //   let newSelected = []
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name)
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1))
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1))
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+  //   }
+  //   setSelected(newSelected)
+  // }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -180,21 +176,30 @@ export default function CourseList() {
     setTag('delete')
   }
 
-  const handleUpdateCourseStatus = (courseId, statusCode) => {
+  const handleUpdateCourseStatus = (courseId, statusCode, rejected) => {
     const data = {
       id: courseId,
-      status_code: statusCode,
     }
 
     switch (statusCode) {
       case 'PEN':
+        if (rejected) {
+          data.status_code = 'REJ'
+          break
+        }
         data.status_code = 'APP'
         break
       case 'APP':
+        data.status_code = 'PUB'
+        break
+      case 'PUB':
         data.status_code = 'CAN'
         break
       case 'REJ':
         data.status_code = 'APP'
+        break
+      case 'CAN':
+        data.status_code = 'CAN'
         break
       default:
         data.status_code = 'PEN'
@@ -204,9 +209,18 @@ export default function CourseList() {
     setTag('update')
   }
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - courses.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - count) : 0
 
-  const filteredCourses = applySortFilter(courses, getComparator(order, orderBy), filterName)
+  const filteredCourses = applySortFilter(
+    courses.filter((course) => {
+      if (userLogin.role_id !== 1) {
+        return course.user.username === userLogin.username
+      }
+      return course
+    }),
+    getComparator(order, orderBy),
+    filterName,
+  )
 
   const isCourseNotFound = filteredCourses.length === 0
 
@@ -214,14 +228,14 @@ export default function CourseList() {
     <Page title="Danh sách khóa học">
       <Container>
         <HeaderBreadcrumbs
-          heading="Danh sách khóa học"
+          heading={`Danh sách khóa học ${(userLogin.role_id !== 1 && 'của tôi') || ''}`}
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
               name: 'Khóa học',
               href: PATH_DASHBOARD.courses.root,
             },
-            { name: 'Danh sách khóa học' },
+            { name: `Danh sách khóa học ${userLogin.role_id !== 1 && 'của tôi'}` },
           ]}
           action={
             <Button
@@ -251,7 +265,7 @@ export default function CourseList() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredCourses.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredCourses.map((row) => {
                     const { course_id, name, image_url, user, created_at, status_code } = row
 
                     const isItemSelected = selected.indexOf(name) !== -1
@@ -265,10 +279,10 @@ export default function CourseList() {
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
+                        </TableCell> */}
+                        <TableCell component="th" scope="row" padding="none" style={{ maxWidth: 360 }}>
                           <Box
                             sx={{
                               py: 2,
@@ -282,8 +296,9 @@ export default function CourseList() {
                             </Typography>
                           </Box>
                         </TableCell>
-                        <TableCell style={{ minWidth: 160 }}>{fDate(created_at)}</TableCell>
-                        <TableCell style={{ minWidth: 160 }}>
+                        <TableCell style={{ minWidth: 130 }}>{fDate(created_at)}</TableCell>
+                        <TableCell align="right">{user.name}</TableCell>
+                        <TableCell style={{ minWidth: 130 }}>
                           <Label
                             variant="ghost"
                             color={
@@ -301,22 +316,58 @@ export default function CourseList() {
                               'Đã hủy'}
                           </Label>
                         </TableCell>
-                        <TableCell align="right">{user.name}</TableCell>
+
                         <TableCell align="right">
-                          {status_code !== 'PUB' && status_code !== 'CAN' && userLogin.is_admin && (
-                            <Button variant="outlined" onClick={() => handleUpdateCourseStatus(course_id, status_code)}>
-                              {(status_code === 'PEN' && 'Duyệt') ||
-                                (status_code === 'APP' && 'Hủy') ||
-                                (status_code === 'REJ' && 'Duyệt lại')}
+                          {status_code !== 'CAN' &&
+                            status_code !== 'PUB' &&
+                            status_code !== 'APP' &&
+                            userLogin.role_id === 1 && (
+                              <>
+                                {status_code === 'PEN' && (
+                                  <Button
+                                    sx={{ mr: 1 }}
+                                    variant="outlined"
+                                    onClick={() => handleUpdateCourseStatus(course_id, status_code, true)}
+                                  >
+                                    Từ chối
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="contained"
+                                  onClick={() => handleUpdateCourseStatus(course_id, status_code)}
+                                >
+                                  {(status_code === 'PEN' && 'Duyệt') || (status_code === 'REJ' && 'Duyệt lại')}
+                                </Button>
+                              </>
+                            )}
+                          {user.username === userLogin.username && status_code === 'APP' && (
+                            <Button
+                              variant="contained"
+                              onClick={() => handleUpdateCourseStatus(course_id, status_code)}
+                            >
+                              Đăng
                             </Button>
                           )}
                         </TableCell>
                         <TableCell align="right">
-                          <CourseMoreMenu
-                            onDelete={() => handleDeleteCourse(course_id)}
-                            courseSlug={slugify(name, { lower: true, locale: 'vi' })}
-                            courseId={course_id}
-                          />
+                          {status_code !== 'CAN' && (status_code !== 'PEN' || userLogin.role_id !== 1) && (
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => handleUpdateCourseStatus(course_id, 'CAN')}
+                            >
+                              Hủy bỏ
+                            </Button>
+                          )}
+                        </TableCell>
+                        <TableCell align="right">
+                          {status_code !== 'PEN' && (
+                            <CourseMoreMenu
+                              onDelete={() => handleDeleteCourse(course_id)}
+                              courseSlug={slugify(name, { lower: true, locale: 'vi' })}
+                              courseId={course_id}
+                            />
+                          )}
                         </TableCell>
                       </TableRow>
                     )
@@ -345,7 +396,7 @@ export default function CourseList() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={courses.length}
+            count={count}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

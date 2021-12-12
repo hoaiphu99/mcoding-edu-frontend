@@ -35,9 +35,11 @@ const GridStyle = styled(Grid)(({ theme }) => ({
 CourseReviewOverview.propTypes = {
   review: PropTypes.object,
   onOpen: PropTypes.func,
+  studentCourse: PropTypes.object,
+  // courseId: PropTypes.number,
 }
 
-export default function CourseReviewOverview({ review, onOpen }) {
+export default function CourseReviewOverview({ review, onOpen, studentCourse }) {
   const { isAuthenticated, user } = useAuth()
   const { count: totalReview, reviews } = review
 
@@ -60,7 +62,7 @@ export default function CourseReviewOverview({ review, onOpen }) {
       </GridStyle>
 
       <GridStyle item xs={12} md={6}>
-        {isAuthenticated && user.student_id ? (
+        {isAuthenticated && user?.student_id === studentCourse?.student_id && user?.student_id ? (
           <ScrollLink to="move_add_review" spy smooth offset={-200}>
             <Button size="large" onClick={onOpen} variant="outlined" startIcon={<Icon icon={edit2Fill} />}>
               Để lại đánh giá của bạn
@@ -68,7 +70,7 @@ export default function CourseReviewOverview({ review, onOpen }) {
           </ScrollLink>
         ) : (
           <Typography variant="h5" gutterBottom sx={{ color: 'error.main' }}>
-            {user.student_id ? 'Đăng ký học để đánh giá' : 'Mục này dành cho học viên'}
+            {(!user?.student_id && 'Mục này dành cho học viên') || (!studentCourse && 'Bạn chưa tham gia khóa học này')}
           </Typography>
         )}
       </GridStyle>

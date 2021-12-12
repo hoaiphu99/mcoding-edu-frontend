@@ -112,6 +112,7 @@ export default function CourseManage() {
                                 onDelete={() => handleDeleteLesson(lesson.lesson_id)}
                                 onEdit={() => setIsEdit(true)}
                                 isLesson={Boolean(true)}
+                                lessonId={lesson.lesson_id}
                               />
                             </ListItemSecondaryAction>
                           </ListItemButton>

@@ -1,7 +1,10 @@
 import * as Yup from 'yup'
-import { useCallback, useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { Icon } from '@iconify/react'
+// import questionMarkCircleOutline from '@iconify/icons-eva/question-mark-circle-outline'
+import cloudUploadFill from '@iconify/icons-eva/cloud-upload-fill'
 import axios from 'axios'
-import { styled } from '@mui/material/styles'
+// import { styled } from '@mui/material/styles'
 import { useFormik, Form, FormikProvider } from 'formik'
 import { useSnackbar } from 'notistack'
 import PropTypes from 'prop-types'
@@ -19,21 +22,26 @@ import {
   Box,
   Modal,
   CircularProgress,
+  // Tooltip,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { createLesson, updateLesson } from '../../../../redux/actions'
 import { courseLessonState$ } from '../../../../redux/selectors'
+// utils
+import { fData } from '../../../../utils/formatNumber'
+import { getDuration } from '../../../../utils/getVideoDuration'
+import { getGoogleDriveFileId } from '../../../../utils/getFileType'
 // Components
-import { UploadSingleFile } from '../../../upload'
+// import { UploadSingleFile } from '../../../upload'
 // ----------------------------------------------------------------------
 
-const LabelStyle = styled(Typography)(({ theme }) => ({
-  ...theme.typography.subtitle2,
-  color: theme.palette.text.secondary,
-  marginBottom: theme.spacing(1),
-}))
+// const LabelStyle = styled(Typography)(({ theme }) => ({
+//   ...theme.typography.subtitle2,
+//   color: theme.palette.text.secondary,
+//   marginBottom: theme.spacing(1),
+// }))
 
 const style = {
   position: 'absolute',
@@ -54,7 +62,7 @@ const ModalUpload = ({ open }) => (
   <Modal open={open}>
     <Box sx={style} aria-labelledby="modal-modal-title">
       <CircularProgress />
-      <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mr: 1.5 }}>
+      <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ ml: 1.5 }}>
         Đang upload video
       </Typography>
     </Box>
@@ -76,6 +84,7 @@ CourseAddLessonForm.propTypes = {
 export default function CourseAddLessonForm({ isEdit, open, onClose, section_id, lesson_id }) {
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
+  const fileInputRef = useRef(null)
 
   const [openModal, setOpenModal] = useState(false)
 
@@ -93,6 +102,10 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
     video_url: Yup.string().required('Link video bắt buộc'),
   })
 
+  const handleClickAttachPhoto = () => {
+    fileInputRef.current?.click()
+  }
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -100,11 +113,13 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
       name: (currentLesson && currentLesson.name) || '',
       video_url: (currentLesson && currentLesson.video_url) || '',
       video: null,
+      duration: (currentLesson && currentLesson.duration) || 0,
     },
     validationSchema: newLessonSchema,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
       let videoUrl = values.video_url
       if (values.video) {
+        setOpenModal(true)
         videoUrl = await handleUpload(values.video)
       }
       const data = {
@@ -113,8 +128,9 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
         video_url: videoUrl,
         lesson_number: values.lesson_number,
         name: values.name,
+        duration: values.duration,
       }
-      console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 117 ~ onSubmit: ~ data', data)
+      console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 129 ~ onSubmit: ~ data', data)
       try {
         if (!isEdit) {
           dispatch(createLesson.createLessonRequest({ data }))
@@ -141,25 +157,34 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
     onClose()
   }
 
-  const handleClickOpenModal = () => {
-    setOpenModal(true)
-  }
+  const descriptionElementRef = useRef(null)
+  useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef
+      if (descriptionElement !== null) {
+        descriptionElement.focus()
+      }
+    }
+  }, [open])
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0]
-      console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 101 ~ CourseAddLessonForm ~ file', file)
+  // const handleClickOpenModal = () => {
+  //   setOpenModal(true)
+  // }
 
-      setFieldValue(
-        'video',
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }),
-      )
-      setFieldValue('video_url', file.name)
-    },
-    [setFieldValue],
-  )
+  // const handleDrop = useCallback(
+  //   (acceptedFiles) => {
+  //     const file = acceptedFiles[0]
+
+  //     setFieldValue(
+  //       'video',
+  //       Object.assign(file, {
+  //         preview: URL.createObjectURL(file),
+  //       }),
+  //     )
+  //     setFieldValue('video_url', file.name)
+  //   },
+  //   [setFieldValue],
+  // )
 
   const handleUpload = async (file) => {
     const formData = new FormData()
@@ -171,7 +196,6 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
       const {
         data: { data },
       } = await axios.post('/api/upload/video', formData, config)
-      console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 132 ~ handleUpload ~ data', data)
 
       return data.webViewLink
     } catch (error) {
@@ -180,11 +204,28 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
     }
   }
 
+  const getDurationFromLinkGGDrive = async (url) => {
+    const isUrl = url.includes('drive.google.com')
+
+    if (isUrl) {
+      const id = getGoogleDriveFileId(url)
+      await axios
+        .get(`/api/upload/get-video/${id}`)
+        .then((res) => {
+          const { data } = res
+          setFieldValue('duration', Math.floor(data.data.videoMediaMetadata.durationMillis / 1000))
+        })
+        .catch((error) => {
+          console.log('🚀 ~ file: CourseNewLessonForm.js ~ line 219 ~ getDurationFromLinkGGDrive ~ error', error)
+        })
+    }
+  }
+
   return (
     <>
-      <Dialog open={open} sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 1035 } }}>
+      <Dialog open={open} sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 1035 } }} scroll="body">
         <DialogTitle sx={{ mb: 2 }}>{!isEdit ? 'Thêm bài học mới' : 'Cập nhật'}</DialogTitle>
-        <DialogContent>
+        <DialogContent ref={descriptionElementRef}>
           <DialogContentText sx={{ mb: 1.5 }}>Tạo bài học mới cho chương</DialogContentText>
           <FormikProvider value={formik}>
             <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
@@ -211,20 +252,78 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
                     label="Liên kết video"
                     {...getFieldProps('video_url')}
                     error={Boolean(touched.video_url && errors.video_url)}
-                    helperText={touched.video_url && errors.video_url}
+                    helperText={(touched.video_url && errors.video_url) || 'Chỉ chấp nhận link Google Drive'}
                   />
                   {disableForm ? (
-                    <Button color="inherit" variant="outlined" onClick={() => setDisableForm(false)}>
+                    <Button
+                      sx={{ height: '100%' }}
+                      color="inherit"
+                      variant="outlined"
+                      onClick={() => setDisableForm(false)}
+                    >
                       Sửa
                     </Button>
                   ) : (
-                    <Button color="inherit" variant="outlined" onClick={() => setDisableForm(true)}>
+                    <Button
+                      sx={{ height: '100%' }}
+                      color="inherit"
+                      variant="outlined"
+                      onClick={async () => {
+                        setDisableForm(true)
+                        await getDurationFromLinkGGDrive(values.video_url)
+                      }}
+                    >
                       Xong
                     </Button>
                   )}
                 </Stack>
                 <div>
-                  <LabelStyle>Hoặc tải video lên</LabelStyle>
+                  <Stack direction="row" alignItems="center" spacing={3}>
+                    <Button
+                      color="warning"
+                      variant="contained"
+                      onClick={handleClickAttachPhoto}
+                      startIcon={<Icon icon={cloudUploadFill} />}
+                    >
+                      Upload video
+                    </Button>
+
+                    <div>
+                      {values.video?.name && <Typography variant="subtitle2">{values.video.name}</Typography>}
+                      {values.video?.size && (
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {fData(values.video.size)}
+                        </Typography>
+                      )}
+                    </div>
+
+                    <input
+                      ref={fileInputRef}
+                      id="video"
+                      name="video"
+                      type="file"
+                      accept="video/*"
+                      onChange={async (event) => {
+                        const duration = await getDuration(event.target.files?.[0])
+                        setFieldValue('video', event.target.files?.[0])
+                        setFieldValue('video_url', event.target.files?.[0].name)
+                        setFieldValue('duration', Math.floor(duration))
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                  </Stack>
+                  {touched.video && errors.video && (
+                    <FormHelperText sx={{ px: 2, display: 'block' }} error>
+                      {errors.video}
+                    </FormHelperText>
+                  )}
+                </div>
+                {/* <div>
+                  <Tooltip title="Tải lên video < 1GB" placement="top-start">
+                    <LabelStyle>
+                      Hoặc tải video lên <Icon icon={questionMarkCircleOutline} width={14} height={14} />
+                    </LabelStyle>
+                  </Tooltip>
                   <UploadSingleFile
                     maxSize={1000 * 1024 * 1024}
                     accept="video/*"
@@ -238,7 +337,7 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
                       Lỗi: {touched.video && errors.video}
                     </FormHelperText>
                   )}
-                </div>
+                </div> */}
                 <Stack direction="row" justifyContent="flex-end">
                   <Button onClick={handleCancel} color="inherit" variant="outlined" sx={{ mr: 1.5 }}>
                     Hủy
@@ -247,7 +346,7 @@ export default function CourseAddLessonForm({ isEdit, open, onClose, section_id,
                     type="submit"
                     variant="contained"
                     loading={isSubmitting}
-                    onClick={handleClickOpenModal}
+                    // onClick={handleClickOpenModal}
                   >
                     {!isEdit ? 'Thêm' : 'Cập nhật'}
                   </LoadingButton>

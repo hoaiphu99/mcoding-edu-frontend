@@ -8,7 +8,7 @@ import AuthLayout from '../../layouts/AuthLayout'
 import Page from '../../components/Page'
 import { MHidden } from '../../components/@material-extend'
 import { LoginForm } from '../../components/authentication/login'
-import AuthSocial from '../../components/authentication/AuthSocial'
+// import AuthSocial from '../../components/authentication/AuthSocial'
 
 // ----------------------------------------------------------------------
 
@@ -66,15 +66,15 @@ export default function Login() {
             </Typography>
             <Typography sx={{ color: 'text.secondary' }}>Nhập thông tin tài khoản bên dưới.</Typography>
           </Stack>
-          <AuthSocial />
+          {/* <AuthSocial /> */}
 
           <LoginForm />
 
           <MHidden width="smUp">
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-              Don’t have an account?&nbsp;
+              Chưa có tài khoản?&nbsp;
               <Link variant="subtitle2" component={RouterLink} to="register">
-                Get started
+                Đăng ký ngay
               </Link>
             </Typography>
           </MHidden>

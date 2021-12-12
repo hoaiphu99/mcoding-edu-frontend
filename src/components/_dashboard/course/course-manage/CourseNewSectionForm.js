@@ -89,14 +89,16 @@ export default function CourseNewSectionForm({ isEdit, open, onClose, section_id
                 type="number"
                 {...getFieldProps('section_number')}
                 error={Boolean(touched.section_number && errors.section_number)}
-                helperText={touched.section_number && errors.section_number}
+                helperText={
+                  (touched.section_number && errors.section_number) || 'Nếu khóa học không có chương để mặc định là 0'
+                }
               />
               <TextField
                 fullWidth
                 label="Tên chương"
                 {...getFieldProps('name')}
                 error={Boolean(touched.name && errors.name)}
-                helperText={touched.name && errors.name}
+                helperText={(touched.name && errors.name) || 'Nhập giá trị bất kì nếu khóa học không có chương'}
               />
               <Stack direction="row" justifyContent="flex-end">
                 <Button onClick={handleCancel} color="inherit" variant="outlined" sx={{ mr: 1.5 }}>

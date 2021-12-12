@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
 import { Icon } from '@iconify/react'
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import editFill from '@iconify/icons-eva/edit-fill'
 import trash2Outline from '@iconify/icons-eva/trash-2-outline'
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill'
 import bookOpenFill from '@iconify/icons-eva/book-open-fill'
 import attachFill from '@iconify/icons-eva/attach-fill'
+import baselineAssignment from '@iconify/icons-ic/baseline-assignment'
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material'
 
@@ -18,9 +20,11 @@ CourseMoreMenu.propTypes = {
   onOpenAttach: PropTypes.func,
   onEdit: PropTypes.func,
   isLesson: PropTypes.bool,
+  lessonId: PropTypes.number,
 }
 
-export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onOpenAttach, onEdit, isLesson }) {
+export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onOpenAttach, onEdit, isLesson, lessonId }) {
+  const navigate = useNavigate()
   const ref = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -55,6 +59,14 @@ export default function CourseMoreMenu({ onDelete, onOpen, onOpenSection, onOpen
               <Icon icon={attachFill} width={24} height={24} />
             </ListItemIcon>
             <ListItemText primary="Quản lý tệp đính kèm" primaryTypographyProps={{ variant: 'body2' }} />
+          </MenuItem>
+        )}
+        {isLesson && (
+          <MenuItem onClick={() => navigate(`assignments/${lessonId}`)}>
+            <ListItemIcon>
+              <Icon icon={baselineAssignment} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText primary="Bài tập" primaryTypographyProps={{ variant: 'body2' }} />
           </MenuItem>
         )}
 
