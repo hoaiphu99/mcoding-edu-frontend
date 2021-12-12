@@ -1,5 +1,6 @@
-import { INIT_STATE } from '../initialState'
-import { getType, getStudentList, bannedStudent } from '../actions'
+import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
+
+import { getType, getStudentList, bannedStudent, changeStudentPassword } from '../actions'
 
 export const studentReducers = (state = INIT_STATE.students, action) => {
   switch (action.type) {
@@ -49,6 +50,27 @@ export const studentReducers = (state = INIT_STATE.students, action) => {
         loading: false,
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
+    // change student password
+    case getType(changeStudentPassword.changeStudentPasswordRequest()):
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      }
+    case getType(changeStudentPassword.changeStudentPasswordSuccess()):
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.UPDATE,
+        loading: false,
+        error: null,
+      }
+    case getType(changeStudentPassword.changeStudentPasswordFailure()):
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+
     default:
       return state
   }

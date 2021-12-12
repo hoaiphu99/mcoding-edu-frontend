@@ -7,8 +7,10 @@ import { Stack, Card, TextField } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { changeUserPassword } from '../../../../redux/actions'
-import { userProfileState$ } from '../../../../redux/selectors'
+import { changeUserPassword, changeStudentPassword } from '../../../../redux/actions'
+import { userProfileState$, studentsState$ } from '../../../../redux/selectors'
+// hooks
+import useAuth from '../../../../hooks/useAuth'
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +18,8 @@ export default function AccountChangePassword() {
   const { enqueueSnackbar } = useSnackbar()
   const dispatch = useDispatch()
   const { success, error } = useSelector(userProfileState$)
+  const { success: successStudent, error: errorStudent } = useSelector(studentsState$)
+  const { user } = useAuth()
 
   const ChangePassWordSchema = Yup.object().shape({
     oldPassword: Yup.string().required('Nhập mật khẩu cũ'),
@@ -24,13 +28,13 @@ export default function AccountChangePassword() {
   })
 
   useEffect(() => {
-    if (success === 'update') {
+    if (success === 'update' || successStudent === 'update') {
       enqueueSnackbar('Lưu thành công', { variant: 'success' })
     }
-    if (error) {
-      enqueueSnackbar(error, { variant: 'error' })
+    if (error || errorStudent) {
+      enqueueSnackbar(error || errorStudent, { variant: 'error' })
     }
-  }, [success, error, enqueueSnackbar])
+  }, [success, error, successStudent, errorStudent, enqueueSnackbar])
 
   const formik = useFormik({
     initialValues: {
@@ -41,7 +45,8 @@ export default function AccountChangePassword() {
     validationSchema: ChangePassWordSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
-        dispatch(changeUserPassword.changeUserPasswordRequest({ data: values }))
+        if (user?.username) dispatch(changeUserPassword.changeUserPasswordRequest({ data: values }))
+        else if (user?.student_id) dispatch(changeStudentPassword.changeStudentPasswordRequest({ data: values }))
         setSubmitting(false)
         resetForm()
       } catch (error) {

@@ -9,7 +9,7 @@ export {
   editUserStatus,
   changeUserPassword,
 } from './userActions'
-export { getStudentList, bannedStudent } from './studentActions'
+export { getStudentList, bannedStudent, changeStudentPassword } from './studentActions'
 export {
   getAllCourses,
   getAllCoursesPublic,

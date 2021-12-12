@@ -11,3 +11,9 @@ export const bannedStudent = createActions({
   bannedStudentSuccess: (payload) => payload,
   bannedStudentFailure: (err) => err,
 })
+
+export const changeStudentPassword = createActions({
+  changeStudentPasswordRequest: (payload) => payload,
+  changeStudentPasswordSuccess: (payload) => payload,
+  changeStudentPasswordFailure: (err) => err,
+})

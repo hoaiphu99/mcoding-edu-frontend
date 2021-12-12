@@ -17,6 +17,7 @@ export const updatePassword = (payload) => axios.put(`/api/users/change-password
 export const fetchStudents = () => axios.get(`/api/students`)
 export const banStudent = (payload) =>
   axios.put(`/api/students/${payload.student_id}/banned?isBanned=${payload.isBanned}`)
+export const updateStudentPassword = (payload) => axios.put(`/api/students/change-password`, payload)
 
 // Category
 export const fetchCategories = () => axios.get(`/api/categories`)
