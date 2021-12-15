@@ -20,6 +20,7 @@ import {
   getStudentsInCourse,
   deleteStudentInCourse,
   getLessonById,
+  leaveACourse,
 } from '../actions'
 
 // @desc reducer for courses
@@ -433,7 +434,6 @@ export const myCoursesReducers = (state = INIT_STATE.coursesMy, action) => {
       return {
         ...state,
         success: SUCCESS_ACTION_TYPE.LOAD,
-        loading: false,
         data: action.payload.data,
         error: null,
       }
@@ -441,9 +441,30 @@ export const myCoursesReducers = (state = INIT_STATE.coursesMy, action) => {
       return {
         ...state,
         success: null,
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    // leave a course
+    case getType(leaveACourse.leaveACourseRequest()):
+      return {
+        ...state,
+        error: null,
+      }
+    case getType(leaveACourse.leaveACourseSuccess()): {
+      const newData = state.data.filter((item) => item.course_id !== action.payload)
+      return {
+        ...state,
+        success: SUCCESS_ACTION_TYPE.DELETE,
+        data: newData,
+        error: null,
+      }
+    }
+    case getType(leaveACourse.leaveACourseFailure()):
+      return {
+        ...state,
         loading: false,
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
+
     case 'RESET_STATE':
       return {
         ...state,

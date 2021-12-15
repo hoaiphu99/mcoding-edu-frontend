@@ -1,5 +1,13 @@
 import { INIT_STATE, SUCCESS_ACTION_TYPE } from '../initialState'
-import { getType, getUsers, getUserProfile, bannedUser, editUserStatus, changeUserPassword } from '../actions'
+import {
+  getType,
+  getUsers,
+  getUserProfile,
+  bannedUser,
+  editUserStatus,
+  changeUserPassword,
+  updateUser,
+} from '../actions'
 
 export function userReducers(state = INIT_STATE.users, action) {
   switch (action.type) {
@@ -13,7 +21,7 @@ export function userReducers(state = INIT_STATE.users, action) {
     case getType(getUsers.getUsersSuccess()):
       return {
         success: SUCCESS_ACTION_TYPE.LOAD,
-        loading: false,
+
         data: action.payload.data,
         error: null,
       }
@@ -21,7 +29,7 @@ export function userReducers(state = INIT_STATE.users, action) {
       return {
         ...state,
         success: null,
-        loading: false,
+
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case getType(bannedUser.bannedUserRequest()):
@@ -40,7 +48,7 @@ export function userReducers(state = INIT_STATE.users, action) {
       })
       return {
         success: SUCCESS_ACTION_TYPE.UPDATE,
-        loading: false,
+
         data: newData,
         error: null,
       }
@@ -49,7 +57,7 @@ export function userReducers(state = INIT_STATE.users, action) {
       return {
         ...state,
         success: null,
-        loading: false,
+
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // edit user status
@@ -69,7 +77,7 @@ export function userReducers(state = INIT_STATE.users, action) {
       })
       return {
         success: SUCCESS_ACTION_TYPE.UPDATE,
-        loading: false,
+
         data: newData,
         error: null,
       }
@@ -78,7 +86,34 @@ export function userReducers(state = INIT_STATE.users, action) {
       return {
         ...state,
         success: null,
-        loading: false,
+
+        error: action.payload.error ? action.payload.error.message : action.payload.message,
+      }
+    // update user
+    case getType(updateUser.updateUserRequest()):
+      return {
+        ...state,
+        success: null,
+        loading: true,
+        error: null,
+      }
+    case getType(updateUser.updateUserSuccess()): {
+      const newData = state.data.map((item) => {
+        if (item.username === action.payload.data.username) {
+          return action.payload.data
+        }
+        return item
+      })
+      return {
+        success: SUCCESS_ACTION_TYPE.UPDATE,
+        data: newData,
+        error: null,
+      }
+    }
+    case getType(updateUser.updateUserFailure()):
+      return {
+        ...state,
+        success: null,
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
 
@@ -98,20 +133,20 @@ export function userReducers(state = INIT_STATE.users, action) {
 //     case getType(authUser.authUserSuccess()):
 //       localStorage.setItem('userInfo', JSON.stringify(action.payload.data))
 //       return {
-//         loading: false,
+//
 //         data: action.payload.data,
 //         error: null,
 //       }
 //     case getType(authUser.authUserFailure()):
 //       return {
 //         ...state,
-//         loading: false,
+//
 //         error: action.payload.error ? action.payload.error.message : action.payload.message,
 //       }
 //     case getType(authUser.authUserLogout()):
 //       localStorage.removeItem('userInfo')
 //       return {
-//         loading: false,
+//
 //         data: null,
 //         error: null,
 //       }
@@ -126,7 +161,7 @@ export function userReducers(state = INIT_STATE.users, action) {
 //       localStorage.setItem('userInfo', JSON.stringify(action.payload.data))
 //       return {
 //         success: action.payload.success,
-//         loading: false,
+//
 //         data: action.payload.data,
 //         error: null,
 //       }
@@ -134,7 +169,7 @@ export function userReducers(state = INIT_STATE.users, action) {
 //       return {
 //         ...state,
 //         success: action.payload.success,
-//         loading: false,
+//
 //         error: action.payload.error ? action.payload.error.message : action.payload.message,
 //       }
 //     default:
@@ -154,7 +189,7 @@ export const userProfileReducers = (state = INIT_STATE.userProfile, action) => {
     case getType(getUserProfile.getUserProfileSuccess()):
       return {
         success: SUCCESS_ACTION_TYPE.LOAD,
-        loading: false,
+
         data: action.payload.data,
         error: null,
       }
@@ -162,7 +197,7 @@ export const userProfileReducers = (state = INIT_STATE.userProfile, action) => {
       return {
         ...state,
         success: null,
-        loading: false,
+
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     // change password
@@ -177,14 +212,14 @@ export const userProfileReducers = (state = INIT_STATE.userProfile, action) => {
       return {
         ...state,
         success: SUCCESS_ACTION_TYPE.UPDATE,
-        loading: false,
+
         error: null,
       }
     case getType(changeUserPassword.changeUserPasswordFailure()):
       return {
         ...state,
         success: null,
-        loading: false,
+
         error: action.payload.error ? action.payload.error.message : action.payload.message,
       }
     case 'RESET_STATE':

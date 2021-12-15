@@ -8,6 +8,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'
 export const fetchUsers = () => axios.get(`/api/users`)
 export const login = (payload) => axios.post(`/api/users/login`, payload)
 export const register = (payload) => axios.post(`/api/users`, payload)
+export const editUser = (payload) => axios.put(`/api/users/${payload.username}`, payload)
 export const fetchUserProfile = () => axios.get(`/api/users/profile`)
 export const banUser = (payload) => axios.put(`/api/users/${payload.username}/banned?isBanned=${payload.isBanned}`)
 export const updateUserStatus = (payload) => axios.put(`/api/users/${payload.username}/status?status=${payload.status}`)
@@ -18,6 +19,7 @@ export const fetchStudents = () => axios.get(`/api/students`)
 export const banStudent = (payload) =>
   axios.put(`/api/students/${payload.student_id}/banned?isBanned=${payload.isBanned}`)
 export const updateStudentPassword = (payload) => axios.put(`/api/students/change-password`, payload)
+export const leaveCourse = (payload) => axios.delete(`/api/students/course/${payload}/leave`)
 
 // Category
 export const fetchCategories = () => axios.get(`/api/categories`)

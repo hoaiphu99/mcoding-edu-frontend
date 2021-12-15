@@ -34,12 +34,11 @@ export const PATH_DASHBOARD = {
     userList: path(ROOTS_DASHBOARD, '/users/user-list'),
     studentList: path(ROOTS_DASHBOARD, '/users/student-list'),
     newUser: path(ROOTS_DASHBOARD, '/users/new-user'),
-    pageFive: path(ROOTS_DASHBOARD, '/users/five'),
-    pageSix: path(ROOTS_DASHBOARD, '/users/six'),
   },
   students: {
     root: path(ROOTS_DASHBOARD, '/students'),
     studentList: path(ROOTS_DASHBOARD, '/students/student-list'),
+    newStudent: path(ROOTS_DASHBOARD, '/students/new-student'),
   },
   courses: {
     root: path(ROOTS_DASHBOARD, '/courses'),

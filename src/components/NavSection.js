@@ -188,7 +188,9 @@ export default function NavSection({ navConfig, isShow = true, ...other }) {
             {isShow && <ListSubheaderStyle>{subheader}</ListSubheaderStyle>}
             {items.map((item) => {
               if (
-                (item.path === '/bang-dieu-khien/users' || item.path === '/bang-dieu-khien/students') &&
+                (item.path === '/bang-dieu-khien/users' ||
+                  item.path === '/bang-dieu-khien/students' ||
+                  item.path === '/bang-dieu-khien/categories') &&
                 user?.role_id !== 1
               ) {
                 return null

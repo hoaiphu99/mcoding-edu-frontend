@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects'
-import { getStudentList, bannedStudent, changeStudentPassword } from '../actions'
-import { fetchStudents, banStudent, updateStudentPassword } from '../../api'
+import { getStudentList, bannedStudent, changeStudentPassword, leaveACourse } from '../actions'
+import { fetchStudents, banStudent, updateStudentPassword, leaveCourse } from '../../api'
 
 function* getStudentListSaga() {
   try {
@@ -33,10 +33,20 @@ function* changeStudentPasswordSaga(action) {
   }
 }
 
+function* leaveACourseSaga(action) {
+  try {
+    yield call(leaveCourse, action.payload.course_id)
+    yield put(leaveACourse.leaveACourseSuccess(action.payload.course_id))
+  } catch (error) {
+    yield put(leaveACourse.leaveACourseFailure(error.response && error.response.data ? error.response.data : error))
+  }
+}
+
 function* studentSaga() {
   yield takeLatest(getStudentList.getStudentListRequest, getStudentListSaga)
   yield takeLatest(bannedStudent.bannedStudentRequest, banStudentSaga)
   yield takeLatest(changeStudentPassword.changeStudentPasswordRequest, changeStudentPasswordSaga)
+  yield takeLatest(leaveACourse.leaveACourseRequest, leaveACourseSaga)
 }
 
 export default studentSaga

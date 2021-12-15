@@ -29,7 +29,8 @@ import Label from '../../../components/Label'
 import Scrollbar from '../../../components/Scrollbar'
 import SearchNotFound from '../../../components/SearchNotFound'
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs'
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../../../components/_dashboard/user/user-list'
+import { UserListHead, UserListToolbar } from '../../../components/_dashboard/user/user-list'
+import { StudentMoreMenu } from '../../../components/_dashboard/student/student-list'
 //
 import { getStudentList, bannedStudent } from '../../../redux/actions'
 import { studentsState$ } from '../../../redux/selectors'
@@ -214,7 +215,11 @@ export default function StudentList() {
                         </TableCell>
 
                         <TableCell align="right">
-                          <UserMoreMenu onBanned={() => handleBannedUser(student_id, is_banned)} isBanned={is_banned} />
+                          <StudentMoreMenu
+                            onBanned={() => handleBannedUser(student_id, is_banned)}
+                            isBanned={is_banned}
+                            studentId={student_id}
+                          />
                         </TableCell>
                       </TableRow>
                     )

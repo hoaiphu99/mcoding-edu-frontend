@@ -4,7 +4,7 @@ import personRemoveFill from '@iconify/icons-eva/person-remove-fill'
 import { useSnackbar } from 'notistack'
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 // material
 import {
   Card,
@@ -38,6 +38,7 @@ const TABLE_HEAD = [
   { id: 'student_id', label: 'Mã học viên', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'name', label: 'Họ tên', alignRight: false },
+  { id: 'info', alignRight: false },
   { id: '' },
 ]
 
@@ -75,6 +76,7 @@ function applySortFilter(array, comparator, query) {
 export default function UserList() {
   const { id } = useParams()
   const { enqueueSnackbar } = useSnackbar()
+  const navigate = useNavigate()
 
   const [page, setPage] = useState(0)
   const [order, setOrder] = useState('asc')
@@ -213,6 +215,14 @@ export default function UserList() {
                         </TableCell>
                         <TableCell align="left">{email}</TableCell>
                         <TableCell align="left">{name}</TableCell>
+                        <TableCell align="right">
+                          <Button
+                            variant="contained"
+                            onClick={() => navigate(`${PATH_DASHBOARD.students.root}/${student_id}`)}
+                          >
+                            Xem thông tin
+                          </Button>
+                        </TableCell>
                         <TableCell align="right">
                           <Button
                             variant="outlined"

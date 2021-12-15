@@ -44,14 +44,13 @@ export default function Router() {
         { element: <Navigate to="/bang-dieu-khien/chinh" replace /> },
         { path: 'chinh', element: <GeneralAnalytics /> },
         { path: 'bieu-do-thong-ke', element: <ChartAnalytics /> },
-        { path: 'three', element: <PageThree /> },
         {
           path: 'users',
           children: [
             { element: <Navigate to="/bang-dieu-khien/users/user-list" replace /> },
             { path: 'user-list', element: <UserList /> },
-            { path: 'five', element: <PageFive /> },
-            { path: 'six', element: <PageSix /> },
+            { path: 'new-user', element: <UserCreate /> },
+            { path: ':username/edit', element: <UserCreate /> },
           ],
         },
         {
@@ -62,6 +61,7 @@ export default function Router() {
               path: 'student-list',
               element: <StudentList />,
             },
+            { path: ':studentId', element: <StudentCreate /> },
           ],
         },
         {
@@ -144,11 +144,8 @@ export default function Router() {
 // IMPORT COMPONENTS
 
 // Dashboard
-const PageThree = Loadable(lazy(() => import('../pages/PageThree')))
 const UserList = Loadable(lazy(() => import('../pages/dashboard/user/UserList')))
 const StudentList = Loadable(lazy(() => import('../pages/dashboard/student/StudentList')))
-const PageFive = Loadable(lazy(() => import('../pages/PageFive')))
-const PageSix = Loadable(lazy(() => import('../pages/PageSix')))
 const NotFound = Loadable(lazy(() => import('../pages/Page404')))
 const Login = Loadable(lazy(() => import('../pages/authentication/Login')))
 const LoginTeachable = Loadable(lazy(() => import('../pages/authentication/LoginTeachable')))
@@ -169,5 +166,7 @@ const CourseLearning = Loadable(lazy(() => import('../pages/CourseLearning')))
 const Profile = Loadable(lazy(() => import('../pages/Profile')))
 const ResetPassword = Loadable(lazy(() => import('../pages/authentication/ResetPassword')))
 const NewPassword = Loadable(lazy(() => import('../pages/authentication/NewPassword')))
+const UserCreate = Loadable(lazy(() => import('../pages/dashboard/user/UserCreate')))
+const StudentCreate = Loadable(lazy(() => import('../pages/dashboard/student/StudentCreate')))
 // Main
 const LandingPage = Loadable(lazy(() => import('../pages/HomePage')))

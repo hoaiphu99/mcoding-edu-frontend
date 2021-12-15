@@ -3,13 +3,14 @@ export const getType = (reduxAction) => reduxAction.type
 export {
   getUsers,
   registerUser,
+  updateUser,
   authUser,
   getUserProfile,
   bannedUser,
   editUserStatus,
   changeUserPassword,
 } from './userActions'
-export { getStudentList, bannedStudent, changeStudentPassword } from './studentActions'
+export { getStudentList, bannedStudent, changeStudentPassword, leaveACourse } from './studentActions'
 export {
   getAllCourses,
   getAllCoursesPublic,

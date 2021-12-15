@@ -104,7 +104,9 @@ export default function CourseLearning() {
           <Card sx={{ mb: 2 }}>
             <CardHeader title="Bình luận" />
             <CardContent>
-              {user.student_id && <CourseCommentForm lessonID={lessonID} />}
+              {(user.student_id || user?.username === course.user.username) && (
+                <CourseCommentForm lessonID={lessonID} />
+              )}
 
               {comments && comments.length <= 0 ? (
                 <Typography variant="subtitle1">Không có bình luận nào</Typography>

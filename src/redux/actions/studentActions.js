@@ -17,3 +17,9 @@ export const changeStudentPassword = createActions({
   changeStudentPasswordSuccess: (payload) => payload,
   changeStudentPasswordFailure: (err) => err,
 })
+
+export const leaveACourse = createActions({
+  leaveACourseRequest: (payload) => payload,
+  leaveACourseSuccess: (payload) => payload,
+  leaveACourseFailure: (err) => err,
+})

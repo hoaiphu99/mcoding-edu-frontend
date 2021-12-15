@@ -40,7 +40,7 @@ const sidebarConfig = [
         icon: ICONS.user,
         children: [
           { title: 'tất cả', path: PATH_DASHBOARD.users.userList },
-          { title: 'thêm mới', path: PATH_DASHBOARD.users.newUser },
+          // { title: 'thêm mới', path: PATH_DASHBOARD.users.newUser },
         ],
       },
       {

@@ -13,6 +13,12 @@ export const registerUser = createActions({
   registerUserFailure: (err) => err,
 })
 
+export const updateUser = createActions({
+  updateUserRequest: (payload) => payload,
+  updateUserSuccess: (payload) => payload,
+  updateUserFailure: (err) => err,
+})
+
 export const getUsers = createActions({
   getUsersRequest: (payload) => payload,
   getUsersSuccess: (payload) => payload,

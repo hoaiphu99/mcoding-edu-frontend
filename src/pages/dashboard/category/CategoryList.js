@@ -90,7 +90,7 @@ export default function CategoryList() {
   const [categoryId, setCategoryId] = useState(null)
 
   const { enqueueSnackbar } = useSnackbar()
-  const { navigate } = useNavigate()
+  const navigate = useNavigate()
 
   const { user } = useAuth()
 

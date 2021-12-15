@@ -283,6 +283,7 @@ export default function UserList() {
 
                         <TableCell align="right">
                           <UserMoreMenu
+                            username={username}
                             onBanned={() => handleBannedUser(username, status_code)}
                             statusCode={status_code}
                           />

@@ -5,7 +5,18 @@ import { useSnackbar } from 'notistack'
 import { useCallback, useEffect } from 'react'
 import { Form, FormikProvider, useFormik } from 'formik'
 // material
-import { Box, Grid, Card, Stack, TextField, Typography, FormHelperText, FormControlLabel, Switch } from '@mui/material'
+import {
+  Box,
+  Grid,
+  Card,
+  Stack,
+  TextField,
+  Typography,
+  FormHelperText,
+  FormControlLabel,
+  Switch,
+  MenuItem,
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
 // hooks
@@ -20,6 +31,13 @@ import { fData } from '../../../../utils/formatNumber'
 // import countries from '../countries'
 
 // ----------------------------------------------------------------------
+
+const EDUCATION_LEVEL = [
+  { value: '1', label: 'Học sinh' },
+  { value: '2', label: 'Sinh viên' },
+  { value: '3', label: 'Đã tốt nghiệp' },
+  { value: '4', label: 'Khác' },
+]
 
 export default function Account() {
   const isMountedRef = useIsMountedRef()
@@ -178,7 +196,15 @@ export default function Account() {
                   <TextField fullWidth label="Email" {...getFieldProps('email')} />
                   <TextField fullWidth label="Số điện thoại" {...getFieldProps('phone')} />
                 </Stack>
-                {user?.student_id && <TextField fullWidth label="Học vấn" {...getFieldProps('education')} />}
+                {user?.student_id && (
+                  <TextField select label="Học vấn" {...getFieldProps('education')}>
+                    {EDUCATION_LEVEL.map((option) => (
+                      <MenuItem key={option.value} value={option.label}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
                 {user?.username && (
                   <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                     <TextField
