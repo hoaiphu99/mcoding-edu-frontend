@@ -58,7 +58,7 @@ export default function CourseLearning() {
       dispatch(getAllCourses.getAllCoursesRequest({ query: 'all=true' }))
     }
 
-    if (!course || course.course_id !== courseID) {
+    if (course?.course_id !== courseID && courseID) {
       dispatch(getCourseLesson.getCourseLessonRequest({ id: courseID }))
     }
     if (course) {

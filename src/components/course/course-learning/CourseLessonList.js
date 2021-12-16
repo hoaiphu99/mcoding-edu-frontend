@@ -49,6 +49,7 @@ CourseLessonList.propTypes = {
 
 export default function CourseLessonList({ course, onChangeLesson }) {
   const { sections } = course
+  console.log('🚀 ~ file: CourseLessonList.js ~ line 52 ~ CourseLessonList ~ sections', sections)
 
   const { user } = useAuth()
 
