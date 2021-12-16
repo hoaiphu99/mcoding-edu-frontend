@@ -111,7 +111,8 @@ function AuthProvider({ children }) {
     const initialize = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken')
-        setSession(accessToken)
+        const refreshToken = window.localStorage.getItem('refreshToken')
+        setSession(accessToken, refreshToken || '')
 
         if (accessToken && isValidToken(accessToken)) {
           const { id } = getDecodedToken(accessToken)
@@ -139,7 +140,25 @@ function AuthProvider({ children }) {
               },
             })
           }
+        } else if (refreshToken && isValidToken(refreshToken)) {
+          const response = await axios.post('/api/auth/refresh-token', {
+            refreshToken,
+          })
+          const { data } = response.data
+          console.log('🚀 ~ file: JWTContext.js ~ line 148 ~ initialize ~ data', data)
+
+          setSession(data.access_token, refreshToken)
+
+          dispatch({
+            type: 'INITIALIZE',
+            payload: {
+              isAuthenticated: true,
+              user: data,
+            },
+          })
         } else {
+          setSession(null, null)
+
           dispatch({
             type: 'INITIALIZE',
             payload: {
@@ -163,11 +182,12 @@ function AuthProvider({ children }) {
     initialize()
   }, [])
 
-  const login = async (username, password) => {
+  const login = async (username, password, remember) => {
     await axios
       .post('/api/users/login', {
         username,
         password,
+        remember,
       })
       .then((response) => {
         dispatch({
@@ -176,7 +196,7 @@ function AuthProvider({ children }) {
         const { data, is2fa } = response.data
         let isVerified = false
         if (!is2fa) {
-          setSession(data.access_token)
+          setSession(data.access_token, data.refresh_token || '')
           isVerified = true
         }
 
@@ -201,18 +221,19 @@ function AuthProvider({ children }) {
       })
   }
 
-  const loginVerify = async (username, code) => {
+  const loginVerify = async (username, code, remember) => {
     await axios
       .post('/api/users/login/verify', {
         username,
         code,
+        remember,
       })
       .then((response) => {
         dispatch({
           type: 'RESET_ERROR',
         })
         const { data } = response.data
-        setSession(data.access_token)
+        setSession(data.access_token, data.refresh_token || '')
         dispatch({
           type: 'LOGIN',
           payload: {
@@ -234,11 +255,12 @@ function AuthProvider({ children }) {
       })
   }
 
-  const studentLogin = async (email, password) => {
+  const studentLogin = async (email, password, remember) => {
     await axios
       .post('/api/students/login', {
         email,
         password,
+        remember,
       })
       .then((response) => {
         dispatch({
@@ -247,7 +269,7 @@ function AuthProvider({ children }) {
         const { data, is2fa } = response.data
         let isVerified = false
         if (!is2fa) {
-          setSession(data.access_token)
+          setSession(data.access_token, data.refresh_token || '')
           isVerified = true
         }
 
@@ -272,18 +294,19 @@ function AuthProvider({ children }) {
       })
   }
 
-  const studentLoginVerify = async (email, code) => {
+  const studentLoginVerify = async (email, code, remember) => {
     await axios
       .post('/api/students/login/verify', {
         email,
         code,
+        remember,
       })
       .then((response) => {
         dispatch({
           type: 'RESET_ERROR',
         })
         const { data } = response.data
-        setSession(data.access_token)
+        setSession(data.access_token, data.refresh_token || '')
         dispatch({
           type: 'LOGIN',
           payload: {
@@ -379,7 +402,7 @@ function AuthProvider({ children }) {
   }
 
   const logout = async () => {
-    setSession(null)
+    setSession(null, null)
     dispatch({ type: 'LOGOUT' })
     dispatch({
       type: 'RESET_ERROR',

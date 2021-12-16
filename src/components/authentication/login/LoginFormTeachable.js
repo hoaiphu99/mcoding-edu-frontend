@@ -76,7 +76,7 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async () => {
       try {
-        await login(values.username, values.password)
+        await login(values.username, values.password, values.remember)
       } catch (error) {
         console.log('🚀 ~ file: LoginFormTeachable.js ~ line 53 ~ onSubmit: ~ error', error)
       }
@@ -91,7 +91,7 @@ export default function LoginForm() {
 
   const handleVerify = async () => {
     console.log(OTP)
-    await loginVerify(values.username, OTP)
+    await loginVerify(values.username, OTP, values.remember)
   }
 
   return (

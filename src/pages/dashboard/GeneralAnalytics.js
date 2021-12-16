@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 // material
 import { Box, Grid, Container, Typography } from '@mui/material'
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import { getCourseTotal, getUserTotal, getStudentTotal } from '../../redux/actions'
 import { analyticsState$ } from '../../redux/selectors'
+// hooks
+import useAuth from '../../hooks/useAuth'
 // components
 import Page from '../../components/Page'
 import { TeachableTotal, StudentTotal, CourseTotal } from '../../components/_dashboard/app'
@@ -12,16 +15,21 @@ import { TeachableTotal, StudentTotal, CourseTotal } from '../../components/_das
 // ----------------------------------------------------------------------
 
 export default function GeneraAnalytics() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const {
     data: { courseTotal, userTotal, studentTotal },
   } = useSelector(analyticsState$)
 
   useEffect(() => {
+    if (!user) {
+      navigate('/login', { replace: true })
+    }
     dispatch(getCourseTotal.getCourseTotalRequest())
     dispatch(getUserTotal.getUserTotalRequest())
     dispatch(getStudentTotal.getStudentTotalRequest())
-  }, [dispatch])
+  }, [dispatch, user, navigate])
 
   return (
     <Page title="Bảng điều khiển">

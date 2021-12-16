@@ -27,12 +27,14 @@ const AuthVerify = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
     const handleLogout = async () => {
       await logout()
     }
     if (token) {
       const decodedJwt = parseJwt(token)
-      if (decodedJwt?.exp * 1000 < Date.now()) {
+      const decodedRefreshJwt = parseJwt(refreshToken)
+      if (decodedJwt?.exp * 1000 < Date.now() && decodedRefreshJwt?.exp * 1000 < Date.now()) {
         handleLogout()
         setOpen(true)
       }
