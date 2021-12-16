@@ -68,7 +68,7 @@ export default function CourseDetails() {
   }, [dispatch, courses, error, enqueueSnackbar])
 
   useEffect(() => {
-    if (!course || course.course_id !== courseID) {
+    if (course?.course_id !== courseID && courseID) {
       dispatch(getCourseDetails.getCourseDetailsRequest({ id: courseID }))
       if (user && user.student_id) {
         const data = {
